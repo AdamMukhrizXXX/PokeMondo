@@ -2,6 +2,7 @@
 
 import { splitCountdown, useCountdown } from "../lib/pokedex-server";
 import { RedeemForm } from "./AdminAccess";
+import type { RedeemResult } from "../lib/admin-access";
 
 function two(n: number) {
   return String(n).padStart(2, "0");
@@ -12,7 +13,7 @@ export default function PokedexClosed({
   onRedeem,
 }: {
   until: number;
-  onRedeem: (code: string) => boolean;
+  onRedeem: (code: string) => RedeemResult;
 }) {
   const msLeft = useCountdown(until);
   const c = msLeft !== null ? splitCountdown(msLeft) : null;

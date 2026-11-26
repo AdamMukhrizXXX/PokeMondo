@@ -52,3 +52,21 @@
 ### TDD
 - **TDD-EX1** Butang hanya wujud dalam UI Cadangan; UI penuh kekal menggunakan ikon amaran untuk menukar mod.
 - **TDD-EX2** Pilihan diingati: selepas keluar, muat semula seterusnya kekal ke UI penuh.
+
+## Had Penggunaan Kod Redeem (Fasa Tambahan)
+
+### URD
+- **URD-LM1** Kod `ADMINSERVER`: boleh digunakan **10 kali sehari** dan ada **had mingguan** (30×/minggu); **reset minggu hadapan** (automatik, Isnin–Ahad).
+- **URD-LM2** Kod `SERVERFREE`: memaparkan **100 Pokémon sekaligus**, boleh digunakan **5 kali** dengan **had bulanan**; **reset bulan hadapan** (automatik, hari 1).
+
+### ADD
+- **ADD-LM1** `CODE_LIMITS` dalam `admin-access.ts`: `ADMINSERVER { accessLimit: 40, daily: 10, weekly: 30, monthly: ∞ }`, `SERVERFREE { accessLimit: 100, daily: ∞, weekly: ∞, monthly: 5 }` — mudah diubah.
+- **ADD-LM2** Kiraan penggunaan per kod dalam `localStorage "md-admin-usage"` dengan kunci tingkap bergulir: harian (`YYYY-MM-DD`), mingguan (Isnin minggu itu), bulanan (`YYYY-MM`). Bila kunci tingkap bertukar, kiraan **reset automatik** (bukan manual).
+- **ADD-LM3** `checkLimits()` disemak sebelum redeem: paparan mingguan → harian → bulanan dengan mesaj khusus (cth. "Had mingguan ADMINSERVER tercapai (30×/minggu) — reset secara automatik pada minggu hadapan.").
+- **ADD-LM4** Setiap redeem yang berjaya merekod 1 penggunaan pada semua tingkap yang berkuatkuasa; akses sedia ada kekal aktif walaupun had tercapai lewat.
+- **ADD-LM5** Banner akses memapar **baki** semasa: ADMINSERVER "Baki: X/10 hari ini · Y/30 minggu ini"; SERVERFREE "Baki bulan ini: Z/5". "Rawak semula" tidak merekod penggunaan (permainan semula set 40/100 sedia ada).
+
+### TDD
+- **TDD-LM1** Redeem ke-11 dalam hari yang sama (ADMINSERVER) ditolak dengan mesj had harian; redeem pertama esok diizinkan.
+- **TDD-LM2** Redeem ke-6 dalam bulan yang sama (SERVERFREE) ditolak dengan mesj had bulanan; reset pada hari 1 bulan hadapan.
+- **TDD-LM3** Akses SERVERFREE memilih 100 ID unik; ADMINSERVER kekal 40.

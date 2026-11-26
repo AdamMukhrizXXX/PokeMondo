@@ -2,25 +2,23 @@
 
 import { useState } from "react";
 import { playUiSfx } from "../lib/sound";
-import type { AdminAccess } from "../lib/admin-access";
+import { accessLimitOf, getCodeUsage, type AdminAccess, type RedeemResult } from "../lib/admin-access";
 
-export function RedeemForm({ onRedeem }: { onRedeem: (code: string) => boolean }) {
+export function RedeemForm({ onRedeem }: { onRedeem: (code: string) => RedeemResult }) {
   const [code, setCode] = useState("");
   const [err, setErr] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
         if (!code.trim()) return;
-        const ok = onRedeem(code);
-        playUiSfx(ok ? "success" : "error");
-        if (ok) {
-          setCode("");
-          setErr(false);
-        } else {
-          setErr(true);
-        }
+        const r = onRedeem(code);
+        playUiSfx(r.ok ? "success" : "error");
+        setMsg(r.error);
+        setErr(!r.ok);
+        if (r.ok) setCode("");
       }}
       className="mt-4 flex flex-col items-center gap-2"
     >
@@ -45,9 +43,9 @@ export function RedeemForm({ onRedeem }: { onRedeem: (code: string) => boolean }
           Redeem
         </button>
       </div>
-      {err && (
+      {msg && (
         <p className="text-xs font-semibold" style={{ color: "var(--md-error)" }} role="alert">
-          Kod tidak sah — semak ejaan dan cuba lagi.
+          {msg}
         </p>
       )}
     </form>
@@ -78,7 +76,8 @@ export function AdminBanner({
         />
         <p className="min-w-0 flex-1 text-sm font-semibold text-on-surface">
           Akses khas aktif (kod <span className="font-mono font-bold uppercase">{access.code}</span>) — pelayan terbuka
-          terhad: <strong className="tabular-nums">{count}</strong> Pokémon rawak sahaja sehingga pelayan dibuka penuh.
+          terhad: <strong className="tabular-nums">{count}</strong> Pokémon rawak sahaja (had{" "}
+          {accessLimitOf(access.code)}). <Balance access={access} />
         </p>
         <button
           type="button"
@@ -99,5 +98,17 @@ export function AdminBanner({
         </button>
       </div>
     </div>
+  );
+}
+
+function Balance({ access }: { access: AdminAccess }) {
+  const u = getCodeUsage(access.code);
+  if (Number.isFinite(u.monthLeft)) {
+    return <span className="tabular-nums text-on-surface-variant">Baki bulan ini: {u.monthLeft}/5.</span>;
+  }
+  return (
+    <span className="tabular-nums text-on-surface-variant">
+      Baki: {u.dayLeft}/10 hari ini · {u.weekLeft}/30 minggu ini.
+    </span>
   );
 }

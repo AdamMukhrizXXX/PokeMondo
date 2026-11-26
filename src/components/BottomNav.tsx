@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useScrollSpy } from "../lib/pokemon";
-import { useRipple } from "./Ripple";
 
 const NAV_ITEMS = [
   { id: "rumah", label: "Rumah", icon: "M4 11.5 12 4l8 7.5M6 10v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9" },
@@ -11,17 +10,24 @@ const NAV_ITEMS = [
   { id: "info", label: "Info", icon: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 4.5v.01M12 11v5.5" },
 ];
 
-const SPREAD = 96;
-const MAX_BOOST = 0.32;
+const ARC_START = 88;
+const ARC_END = 24;
+const RADIUS = 92;
+const HUB_HALF = 1.75;
+
+function arcPos(i: number, n: number) {
+  const deg = ARC_START - (i * (ARC_START - ARC_END)) / (n - 1);
+  const a = (deg * Math.PI) / 180;
+  return { x: Math.cos(a) * RADIUS, y: Math.sin(a) * RADIUS };
+}
+
+const RING_R_REM = RADIUS / 16 + 1.5;
+const DIAM_REM = RING_R_REM * 2;
 
 export default function BottomNav() {
-  const active = useScrollSpy(NAV_ITEMS.map((n) => n.id));
+  const active = useScrollSpy(NAV_ITEMS.map((nItem) => nItem.id));
+  const [open, setOpen] = useState(false);
   const barRef = useRef<HTMLDivElement | null>(null);
-  const dockRef = useRef<HTMLDivElement | null>(null);
-  const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const pillRef = useRef<HTMLDivElement | null>(null);
-  const rafRef = useRef(0);
-  const ripple = useRipple();
 
   useEffect(() => {
     let raf = 0;
@@ -46,39 +52,20 @@ export default function BottomNav() {
   }, []);
 
   useEffect(() => {
-    const item = itemRefs.current[NAV_ITEMS.findIndex((n) => n.id === active)];
-    const pill = pillRef.current;
-    if (!item || !pill) return;
-    pill.style.width = `${item.offsetWidth}px`;
-    pill.style.transform = `translate3d(${item.offsetLeft}px, 0, 0) scale(1)`;
-    pill.style.opacity = "1";
-  }, [active]);
-
-  const magnify = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.clientX === 0 && e.clientY === 0) return;
-    cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
-      for (const el of itemRefs.current) {
-        if (!el) continue;
-        const r = el.getBoundingClientRect();
-        const d = Math.abs(e.clientX - (r.left + r.width / 2));
-        const t = Math.exp(-(d * d) / (2 * SPREAD * SPREAD));
-        const s = 1 + MAX_BOOST * t;
-        el.style.transform = `translateY(${(-10 * t).toFixed(1)}px) scale(${s.toFixed(3)})`;
-      }
-    });
-  };
-
-  const reset = () => {
-    cancelAnimationFrame(rafRef.current);
-    for (const el of itemRefs.current) {
-      if (el) el.style.transform = "";
-    }
-  };
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
 
   const go = (id: string) => {
+    setOpen(false);
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
+
+  const n = NAV_ITEMS.length;
 
   return (
     <>
@@ -88,77 +75,126 @@ export default function BottomNav() {
         className="fixed inset-x-0 top-0 z-50 h-1 origin-left bg-primary will-change-transform"
         style={{ transform: "scaleX(0)" }}
       />
-      <nav
-        aria-label="Navigasi utama"
-        className="fixed inset-x-0 bottom-0 z-40 flex justify-center pb-[max(env(safe-area-inset-bottom),0.9rem)]"
-      >
+
+      {open && (
         <div
-          ref={dockRef}
-          onMouseMove={magnify}
-          onMouseLeave={reset}
-          className="pop-in relative flex items-end gap-1 rounded-[1.75rem] border border-outline-variant bg-surface-container-low/90 p-2 shadow-e3 backdrop-blur-xl"
+          aria-hidden
+          className="fixed inset-0 z-40"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
+      <div className="fixed bottom-[max(env(safe-area-inset-bottom),1.25rem)] left-4 z-50 sm:left-6">
+        <div
+          aria-hidden
+          className={`absolute rounded-full border border-outline-variant/70 bg-surface-container-low/40 backdrop-blur-md transition-all duration-500 ${
+            open ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
+          style={{
+            width: `${DIAM_REM}rem`,
+            height: `${DIAM_REM}rem`,
+            left: `calc(${HUB_HALF}rem - ${RING_R_REM}rem)`,
+            bottom: `calc(${HUB_HALF}rem - ${RING_R_REM}rem)`,
+            transform: open ? "scale(1)" : "scale(0.85)",
+            transitionTimingFunction: "cubic-bezier(0.34, 1.3, 0.5, 1)",
+          }}
+        />
+
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-label={open ? "Tutup menu navigasi" : "Buka menu navigasi"}
+          className="relative grid size-14 place-items-center rounded-full bg-primary text-on-primary shadow-e3 transition-transform hover:scale-105 active:scale-90"
         >
-          <div
-            ref={pillRef}
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.1"
+            strokeLinecap="round"
             aria-hidden
-            className="absolute top-2 left-0 h-[calc(100%-1rem)] rounded-[1.2rem] bg-secondary-container opacity-0 shadow-e1 transition-[transform,width,opacity] duration-500"
+            className="transition-transform duration-500"
             style={{
+              transform: open ? "rotate(180deg)" : undefined,
               transitionTimingFunction: "cubic-bezier(0.34, 1.3, 0.5, 1)",
-              width: "3.5rem",
             }}
-          />
+          >
+            {open ? (
+              <path d="M6 6l12 12M18 6 6 18" />
+            ) : (
+              <>
+                <path d="M5 7h14" />
+                <path d="M5 12h14" />
+                <path d="M5 17h9" />
+              </>
+            )}
+          </svg>
+        </button>
+
+        <nav
+          aria-label="Navigasi utama"
+          className="pointer-events-none absolute"
+          style={{ left: `${HUB_HALF}rem`, bottom: `${HUB_HALF}rem` }}
+        >
           {NAV_ITEMS.map((item, i) => {
             const isActive = active === item.id;
+            const { x, y } = arcPos(i, n);
             return (
-              <button
+              <span
                 key={item.id}
-                ref={(el) => {
-                  itemRefs.current[i] = el;
+                className="absolute left-0 top-0 block will-change-transform"
+                style={{
+                  transform: open
+                    ? `translate3d(calc(${x.toFixed(1)}px - 50%), calc(-${y.toFixed(1)}px + 50%), 0) scale(1)`
+                    : "translate3d(-50%, 50%, 0) scale(0.1)",
+                  opacity: open ? 1 : 0,
+                  transformOrigin: "center",
+                  transition: `transform .6s cubic-bezier(0.34, 1.56, 0.45, 1) ${(open ? i : n - 1 - i) * 50}ms, opacity .32s ease ${(open ? i : n - 1 - i) * 50}ms`,
+                  pointerEvents: open ? "auto" : "none",
                 }}
-                type="button"
-                onClick={(e) => {
-                  ripple(e);
-                  go(item.id);
-                }}
-                aria-current={isActive ? "true" : undefined}
-                aria-label={item.label}
-                className={`group relative z-10 flex h-14 w-16 items-center justify-center overflow-visible rounded-[1.2rem] transition-colors sm:w-20 ${
-                  isActive
-                    ? "text-on-secondary-container"
-                    : "text-on-surface-variant hover:text-on-surface"
-                }`}
               >
-                <span
-                  className="pointer-events-none absolute -top-11 left-1/2 -translate-x-1/2 translate-y-1 rounded-full bg-inverse-surface px-3 py-1 font-display text-xs font-bold whitespace-nowrap text-inverse-on-surface opacity-0 shadow-e2 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
-                  role="presentation"
+                <button
+                  type="button"
+                  tabIndex={open ? 0 : -1}
+                  aria-current={isActive ? "true" : undefined}
+                  aria-label={`Ke ${item.label}`}
+                  onClick={() => go(item.id)}
+                  className={`group relative grid size-12 place-items-center rounded-full border shadow-e2 transition-colors ${
+                    isActive
+                      ? "border-transparent bg-primary text-on-primary"
+                      : "border-outline-variant bg-surface-container-low/95 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface"
+                  }`}
                 >
-                  {item.label}
-                </span>
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={isActive ? 2.25 : 1.75}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden
-                  className="transition-transform duration-300 group-hover:-translate-y-0.5"
-                >
-                  <path d={item.icon} />
-                </svg>
-                {isActive && (
-                  <span
+                  <svg
+                    width="21"
+                    height="21"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={isActive ? 2.25 : 1.85}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     aria-hidden
-                    className="absolute -bottom-1 size-1 rounded-full bg-primary"
-                  />
-                )}
-              </button>
+                  >
+                    <path d={item.icon} />
+                  </svg>
+                  <span
+                    role="presentation"
+                    className={`pointer-events-none absolute left-1/2 top-full mt-1.5 -translate-x-1/2 rounded-full bg-inverse-surface px-2.5 py-0.5 font-display text-[10px] font-bold whitespace-nowrap text-inverse-on-surface shadow-e2 transition-opacity duration-300 ${
+                      open ? "opacity-100" : "opacity-0"
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+                </button>
+              </span>
             );
           })}
-        </div>
-      </nav>
+        </nav>
+      </div>
     </>
   );
 }

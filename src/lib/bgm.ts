@@ -74,6 +74,8 @@ function setupAudio(): HTMLAudioElement {
   audio.preload = "none";
   audio.volume = masterVol;
   audio.addEventListener("ended", () => {
+    const finished = playlist[currentIndex]?.title ?? "";
+    window.dispatchEvent(new CustomEvent("md-bgm-ended", { detail: { title: finished } }));
     void nextBgm(true);
   });
   audio.addEventListener("play", emit);

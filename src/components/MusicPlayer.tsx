@@ -81,6 +81,7 @@ export default function MusicPlayer({
   const barRef = useRef<HTMLDivElement | null>(null);
   const timeRef = useRef<HTMLSpanElement | null>(null);
   const durRef = useRef<HTMLSpanElement | null>(null);
+  const leftRef = useRef<HTMLSpanElement | null>(null);
   const seekRef = useRef<HTMLDivElement | null>(null);
   const miniRef = useRef<HTMLSpanElement | null>(null);
   const ripple = useRipple();
@@ -103,6 +104,27 @@ export default function MusicPlayer({
     };
   }, []);
 
+  const [endNote, setEndNote] = useState("");
+  const endTimer = useRef(0);
+
+  useEffect(() => {
+    const onEnded = (e: Event) => {
+      const title = (e as CustomEvent<{ title?: string }>).detail?.title ?? "";
+      setEndNote(
+        title
+          ? `“${title}” tamat — auto tukar ke lagu seterusnya.`
+          : "Lagu tamat — auto tukar ke lagu seterusnya.",
+      );
+      window.clearTimeout(endTimer.current);
+      endTimer.current = window.setTimeout(() => setEndNote(""), 5000);
+    };
+    window.addEventListener("md-bgm-ended", onEnded);
+    return () => {
+      window.removeEventListener("md-bgm-ended", onEnded);
+      window.clearTimeout(endTimer.current);
+    };
+  }, []);
+
   useEffect(() => {
     if (!playing) return;
     let raf = 0;
@@ -114,6 +136,10 @@ export default function MusicPlayer({
         }
         if (timeRef.current) timeRef.current.textContent = fmt(el.currentTime);
         if (durRef.current && el.duration) durRef.current.textContent = fmt(el.duration);
+        if (leftRef.current) {
+          const left2 = el.duration ? Math.max(0, el.duration - el.currentTime) : 0;
+          leftRef.current.textContent = el.duration ? `−${fmt(left2)}` : "−−:−−";
+        }
         if (miniRef.current) {
           const left = el.duration ? Math.max(0, el.duration - el.currentTime) : 0;
           miniRef.current.textContent = el.duration ? fmt(left) : "--:--";
@@ -327,6 +353,15 @@ export default function MusicPlayer({
             </button>
           </div>
 
+          {endNote && (
+            <p
+              role="status"
+              className="mt-2 rounded-2xl bg-secondary-container px-3.5 py-2 text-[11px] font-semibold leading-snug text-on-secondary-container"
+            >
+              {endNote}
+            </p>
+          )}
+
           <div
             ref={seekRef}
             onClick={seek}
@@ -339,7 +374,12 @@ export default function MusicPlayer({
             </div>
             <div className="mt-1 flex justify-between font-display text-[10px] font-semibold text-on-surface-variant">
               <span ref={timeRef}>0:00</span>
-              <span ref={durRef}>-:--</span>
+              <span className="flex gap-2">
+                <span ref={leftRef} aria-label="Masa berbaki lagu ini" className="tabular-nums text-on-surface">
+                  −−:−−
+                </span>
+                <span ref={durRef}>-:--</span>
+              </span>
             </div>
           </div>
 

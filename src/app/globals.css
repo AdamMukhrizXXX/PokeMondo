@@ -371,6 +371,33 @@ body {
   opacity: 0.55;
 }
 
+.bg-wallpaper {
+  position: fixed;
+  inset: 0;
+  z-index: -20;
+  pointer-events: none;
+  background-image: var(--wp-url, none);
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.06);
+}
+
+.bg-wallpaper::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--md-surface);
+  opacity: var(--wp-dim, 0.45);
+}
+
+[data-wp="1"] .deco-img {
+  display: none;
+}
+
+[data-wp="1"] .bg-deco::before {
+  opacity: 0.18;
+}
+
 .deco-img {
   position: absolute;
   height: auto;

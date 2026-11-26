@@ -6,12 +6,15 @@ Pokédex web penuh — semua 1,025 Pokémon dari sembilan generasi terus dari [P
 
 - **Hero Section** — headline blur-reveal, latar aurora tonal, kaunter animasi, dan bar carian yang menapis Pokédex secara langsung.
 - **Pokédex penuh** — 1,025 spesies dimuat sekali melalui GraphQL PokéAPI (dengan sandaran REST), carian nama/nombor, penapis jenis dan generasi, susunan menaik/menurun.
-- **Scroll Scrub Gallery** — bahagian melekat yang dipacu skrol: tatal untuk menyusuri sembilan generasi secara mendatar dengan penunjuk kemajuan.
-- **Bottom Navigation** — bar navigasi gaya Material 3 dengan scroll-spy dan penunjuk kemajuan skrol di atas skrin, plus butang FAB "Rawak".
+- **Galeri Scroll Velocity** — dua baris teks berhalaju ikut kelajuan skrol + sembilan kad generasi (snap, paralaks artwork) menuju bahagian Pokédex.
+- **Navigasi Radial** — butang hub di penjuru kiri bawah membuka item navigasi dengan gerakan radial (arc + spring) di atas ring kaca Material 3, lengkap label, scroll-spy aktif, dan penunjuk kemajuan skrol di atas skrin, plus butang FAB "Rawak".
 - **Modal Butiran** — statistik penuh, genus, flavor text, kebolehan, dan navigasi sebelum/seterusnya untuk mana-mana Pokémon.
 - **Sistem Suara Pokémon** — suara seruan (cry) untuk semua 1,025 Pokémon dari PokéAPI cries, dimainkan melalui Web Audio API dengan satu AudioContext kongsi, cache AudioBuffer, fade halus, butang main pada setiap kad, penderak animasi dalam modal (autoplay), dan butang mute global yang diingati.
 - **Pemain Muzik OST** — 177 runtutan muzik latar dari siri permainan Pokémon (Red/Blue hingga Legends Z-A) distrim sebagai latar belakang: main/jeda, lagu sebelum/seterusnya, **auto-tukar lagu** apabila tamat, putar rawak, cuba-semula, kelantangan, Media Session (kawalan skrin kunci), dan bunyi diredam (duck) seketika bila seruan Pokémon dimainkan. **Import Muzik**: muat naik fail OST Pokémon anda sendiri (mp3/ogg/m4a/wav/flac, ≤ 25MB) dari peranti — disimpan kekal dalam pelayar (IndexedDB), boleh dimain/dipadam, dan terjana dalam auto-tukar serta putar rawak. Kredit muzik: Nintendo / Game Freak / The Pokémon Company.
 - **SFX Butang** — palet penuh kesan bunyi sintesis Web Audio (tiada fail): klik, toggle hidup/mati, buka/tutup modal & pemain muzik, tick penomboran, arpeggi Rawak, jaya/gagal import, dan denyut hover halus — semua melalui delegasi global (termasuk papan kekunci Enter/Space), mengikut toggle Bunyi, dan boleh disenyapkan dengan `data-no-sfx`.
+- **Jam Dunia (tengah-atas)** — jam masa nyata semua dunia: 9 rantau Pokémon + 85+ zon dunia (semua benua & negara utama) dengan carian negara/bandar, titik siang/malam, dan kemas kini setiap saat — tiada panggilan rangkaian.
+- **Latar Custom** — pengunjung boleh memuat naik gambar sendiri sebagai latar belakang web (maks 12MB), disimpan kekal dalam pelayar (IndexedDB), dengan kawalan keamatan dan kabur (blur); imej hiasan Pokémon lalai tersembunyi secara automatik apabila latar custom aktif.
+- **Deteksi tamat muzik** — kiraan detik masa berbaki ditunjuk secara masa nyata (pill mini & pemain penuh), dan apabila lagu tamat sistem mengesan secara automatik serta menunj: "… tamat — auto tukar ke lagu seterusnya".
 - **Tema Material You** — sistem token M3 (surface tonal, container, outline), mod cerah/gelap dengan kekal pilihan pengguna, ripple pada butang, sudut besar, dan warna dinamik mengikut jenis Pokémon.
 
 ## Teknologi

@@ -12,6 +12,7 @@ import { FadeIn } from "./Reveal";
 import SoundToggle from "./SoundToggle";
 import MusicPlayer from "./MusicPlayer";
 import WorldClock from "./WorldClock";
+import WallpaperControl from "./WallpaperControl";
 import { initUiSfx } from "../lib/sound";
 
 export default function Home({ initialList = [] }: { initialList?: BasicPokemon[] }) {
@@ -43,6 +44,7 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
 
   return (
     <main className="pb-28">
+      <div aria-hidden className="bg-wallpaper" />
       <div aria-hidden className="bg-deco pointer-events-none fixed inset-0 -z-10 overflow-hidden">
         <img
           src={artworkUrl(384)}
@@ -75,6 +77,7 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
           <div className="flex gap-2 [&>button]:shadow-none">
             <SoundToggle />
             <ThemeToggle />
+            <WallpaperControl />
           </div>
           <button
             type="button"
@@ -104,6 +107,8 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
           <MusicPlayer expanded={playerOpen} onSetExpanded={setPlayerOpen} />
         </div>
       </div>
+
+      <WorldClock />
 
       <Hero
         query={query}
@@ -234,9 +239,6 @@ function InfoSection() {
                 </a>
               ))}
             </div>
-          </div>
-          <div className="border-t border-outline-variant p-8 sm:p-10">
-            <WorldClock />
           </div>
           <p className="border-t border-outline-variant px-8 py-5 text-xs text-on-surface-variant">
             Pokémon dan nama watak adalah tanda dagangan Nintendo / Game Freak /

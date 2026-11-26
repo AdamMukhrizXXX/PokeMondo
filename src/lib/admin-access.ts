@@ -179,15 +179,36 @@ export function accessLimitOf(code: string): number {
   return CODES.includes(code as RedeemCode) ? CODE_LIMITS[code as RedeemCode].accessLimit : ACCESS_LIMIT;
 }
 
+const EV_ADMIN = "md-admin";
+
 export function useAdminAccess(allIds: number[]) {
   const [access, setAccess] = useState<AdminAccess | null>(null);
 
   useEffect(() => {
     setAccess(readAccess());
+    const on = (e: Event) => {
+      const detail = (e as CustomEvent<AdminAccess | null>).detail;
+      if (detail === null || (detail && typeof detail.code === "string" && Array.isArray(detail.ids))) {
+        setAccess(detail);
+      }
+    };
+    window.addEventListener(EV_ADMIN, on);
+    return () => window.removeEventListener(EV_ADMIN, on);
   }, []);
 
   const redeem = useCallback(
-    (raw: string) => redeemCode(raw, allIds),
+    (raw: string) => {
+      const r = redeemCode(raw, allIds);
+      if (r.ok && r.access) {
+        setAccess(r.access);
+        try {
+          window.dispatchEvent(new CustomEvent(EV_ADMIN, { detail: r.access }));
+        } catch {
+          /* abaikan */
+        }
+      }
+      return r;
+    },
     [allIds],
   );
 

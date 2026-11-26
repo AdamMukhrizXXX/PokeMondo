@@ -8,7 +8,7 @@ const TIERS = [
   { name: "Akses Lanjutan", detail: "100 Pokémon sekaligus · 5×/sebulan (reset bulanan)" },
 ];
 
-export function RedeemSection({ onRedeem }: { onRedeem: (code: string) => RedeemResult }) {
+export function RedeemSection({ onRedeem }: { onRedeem: (code: string) => RedeemResult & { access: AdminAccess | null } }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -41,10 +41,11 @@ export function RedeemSection({ onRedeem }: { onRedeem: (code: string) => Redeem
   );
 }
 
-function RedeemDialog({ onClose, onRedeem }: { onClose: () => void; onRedeem: (code: string) => RedeemResult }) {
+function RedeemDialog({ onClose, onRedeem }: { onClose: () => void; onRedeem: (code: string) => RedeemResult & { access: AdminAccess | null } }) {
   const [code, setCode] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
+  const [okMsg, setOkMsg] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -62,20 +63,24 @@ function RedeemDialog({ onClose, onRedeem }: { onClose: () => void; onRedeem: (c
       setMsg("Masukkan kod dahulu.");
       return;
     }
-    let r: RedeemResult;
+    let r: RedeemResult & { access: AdminAccess | null };
     try {
       r = onRedeem(code);
     } catch {
-      r = { ok: false, error: "Ralat tidak dijangka — cuba lagi." };
+      r = { ok: false, error: "Ralat tidak dijangka — cuba lagi.", access: null };
     }
     setFailed(!r.ok);
     setMsg(r.error);
-    if (r.ok) {
+    if (r.ok && r.access) {
+      setOkMsg(`AKSES AKTIF \u2014 ${r.access.ids.length} Pok\u00e9mon dimuatkan.` + (document.getElementById("dex") ? "" : " Muat semula halaman jika tiada Pok\u00e9mon muncul."));
       try {
         import("../lib/sound").then((m) => m.playUiSfx("success")).catch(() => {});
       } catch {
         /* audio tidak tersedia */
       }
+      window.setTimeout(() => {
+        document.getElementById("dex")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 450);
     } else {
       try {
         import("../lib/sound").then((m) => m.playUiSfx("error")).catch(() => {});
@@ -186,7 +191,12 @@ function RedeemDialog({ onClose, onRedeem }: { onClose: () => void; onRedeem: (c
               {preview}
             </p>
           )}
-          {msg && (
+          {okMsg && (
+            <p className="mt-2 text-center text-xs font-extrabold" style={{ color: "var(--md-tertiary)" }} role="status">
+              {okMsg}
+            </p>
+          )}
+          {msg && !okMsg && (
             <p
               className="mt-2 text-center text-xs font-semibold"
               role="alert"
@@ -209,7 +219,7 @@ function RedeemDialog({ onClose, onRedeem }: { onClose: () => void; onRedeem: (c
               type="submit"
               data-sfx="dice"
               className="h-10 rounded-full bg-primary px-6 font-display text-sm font-bold text-on-primary shadow-e1 transition-transform active:scale-95 disabled:opacity-40"
-              disabled={!code.trim()}
+              disabled={!code.trim() || okMsg !== null}
             >
               Redeem
             </button>

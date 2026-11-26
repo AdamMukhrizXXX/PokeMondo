@@ -2,7 +2,7 @@
 
 import { splitCountdown, useCountdown } from "../lib/pokedex-server";
 import { RedeemSection } from "./AdminAccess";
-import type { RedeemResult } from "../lib/admin-access";
+import type { AdminAccess, RedeemResult } from "../lib/admin-access";
 
 function two(n: number) {
   return String(n).padStart(2, "0");
@@ -13,7 +13,7 @@ export default function PokedexClosed({
   onRedeem,
 }: {
   until: number;
-  onRedeem: (code: string) => RedeemResult;
+  onRedeem: (code: string) => RedeemResult & { access: AdminAccess | null };
 }) {
   const msLeft = useCountdown(until);
   const c = msLeft !== null ? splitCountdown(msLeft) : null;

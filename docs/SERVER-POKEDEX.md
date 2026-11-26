@@ -86,3 +86,18 @@
 ### TDD
 - **TDD-RD1** Dialog tidak wujud dalam HTML SSR (hanya selepas klik butang); smoke SSR mengesan butang "Guna Kod Redeem".
 - **TDD-RD2** `tsc --noEmit` dan `next build` (statik) lulus.
+
+## Pembaikan Redeem v3 (Fasa Tambahan)
+
+### URD
+- **URD-FX1** Selepas redeem berjaya, Pokémon **pasti muncul** dan pengunjung dibawa terus ke grid.
+
+### ADD
+- **ADD-FX1** Laluan propagasi berganda: setelah redeem berjaya, `setAccess` dipanggil DAN CustomEvent `md-admin` disiarkan; `useAdminAccess` mendengar acara itu — kegagalan satu laluan tidak mematahkan pertukaran UI.
+- **ADD-FX2** Dialog menunj **maklum balas kejayaan jelas**: "AKSES AKTIF — N Pokémon dimuatkan." (warna tersier, `role="status"`), butang Redeem dinyahaktif semasa proses.
+- **ADD-FX3** **Auto-skrol**: 450 ms selepas kejayaan, halaman meluncur licin ke seksyen Pokédex (`#dex`) supaya grid Pokémon terhad (40/100) kelihatan serta-merta.
+- **ADD-FX4** Ralat tidak dijangka dalam redeem dibalut try/catch dan dipapar sebagai mesj dalam dialog.
+- **ADD-FX5** Logik had disahkan dengan ujian unit node (localStorage disimulasikan): redeem ke-11 harian ditolak, ke-6 bulanan SERVERFREE ditolak, 100 ID unik tersimpan, `dexList` disaring dengan betul.
+
+### TDD
+- **TDD-FX1** `tsc --noEmit`, `next build` (statik) dan smoke SSR lulus.

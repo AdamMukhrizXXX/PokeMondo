@@ -37,3 +37,19 @@ Dokumen ringkas mengikut struktur URD/ADD/MDD/TDD (ID stabil) untuk empat sistem
 - **TDD-MM2** Lega habis → `md-bgm-ended` → nota status muncul & hilang selepas 5s.
 - **TDD-LB1** Muat naik imej >12MB / bukan imej ditolak dengan mesej `--md-error`; padam memulihkan hiasan Pokémon.
 - **TDD-RN1** Menu tertutup: item `opacity:0` + `pointer-events:none`; terbuka: arc + label; item aktif `bg-primary` + `aria-current`.
+
+## Sistem UI Cadangan (Fasa Tambahan)
+
+### URD
+- **URD-UC1** Jika UI utama bug/ralat, pengunjung masih boleh memakai UI Cadangan.
+
+### ADD
+- **ADD-UC1** `ErrorBoundary` (class React, tiada dependencies) melindungi setiap seksyen: Hero, Galeri, Pokédex, Info, Jam Dunia, Pemain Muzik, Navigasi, Modal Butiran, dan kawalan penjuru atas.
+- **ADD-UC2** Fallback lalai: kad M3 dengan ikon amaran, mesaj ringkas, butang **Cuba semula** (reset state) dan **Guna UI Cadangan** (`setUiMode("simple")`), plus butiran ralat tersembunyi (`<details>`).
+- **ADD-UC3** Ikon amaran kekal di penjuru atas kanan membuka panel status mod: tukar penuh↔ringkas; titik oren bila UI Cadangan aktif; diingati melalui `localStorage "md-ui-mode"` + CustomEvent `md-ui-mode`.
+- **ADD-UC4** `SimpleHome` ialah UI Cadangan: input carian (sila `simplify()`), penapis jenis `<select> asli`, pagination asas (60/halaman), grid sprite 1,025 Pokémon, dan `DetailModal` yang sama — sifar rAF/IO/animasi berat.
+- **ADD-UC5** Ralat dicetak ke konsol (`componentDidCatch`) untuk debug tanpa meranapkan halaman.
+
+### TDD
+- **TDD-UC1** SSR lalai = UI penuh; mod ringkas hanya aktif selepas mount jika localStorage pernah ditetapkan (hydration-safe).
+- **TDD-UC2** Boundary terpencil: ralat satu seksyen hanya gantikan seksyen itu.

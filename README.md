@@ -15,6 +15,7 @@ Pokédex web penuh — semua 1,025 Pokémon dari sembilan generasi terus dari [P
 - **Jam Dunia (tengah-atas)** — jam masa nyata semua dunia: 9 rantau Pokémon + 85+ zon dunia (semua benua & negara utama) dengan carian negara/bandar, titik siang/malam, dan kemas kini setiap saat — tiada panggilan rangkaian.
 - **Latar Custom** — pengunjung boleh memuat naik gambar sendiri sebagai latar belakang web (maks 12MB), disimpan kekal dalam pelayar (IndexedDB), dengan kawalan keamatan dan kabur (blur); imej hiasan Pokémon lalai tersembunyi secara automatik apabila latar custom aktif.
 - **Deteksi tamat muzik** — kiraan detik masa berbaki ditunjuk secara masa nyata (pill mini & pemain penuh), dan apabila lagu tamat sistem mengesan secara automatik serta menunj: "… tamat — auto tukar ke lagu seterusnya".
+- **Sistem UI Cadangan** — jika UI utama bermasalah, setiap seksyen dilindungi Error Boundary: kad ralat dengan ikon amaran muncul di tempatnya lengkap butang "Cuba semula" dan "Guna UI Cadangan". UI Cadangan ialah versi ringkas stabil (carian, penapis jenis, halaman, sprite, modal butiran) tanpa animasi; boleh ditukar/balik melalui ikon amaran di penjuru atas kanan dan pilihan diingati dalam pelayar.
 - **Tema Material You** — sistem token M3 (surface tonal, container, outline), mod cerah/gelap dengan kekal pilihan pengguna, ripple pada butang, sudut besar, dan warna dinamik mengikut jenis Pokémon.
 
 ## Teknologi

@@ -13,6 +13,10 @@ import SoundToggle from "./SoundToggle";
 import MusicPlayer from "./MusicPlayer";
 import WorldClock from "./WorldClock";
 import WallpaperControl from "./WallpaperControl";
+import FallbackModeButton from "./FallbackModeButton";
+import ErrorBoundary from "./ErrorBoundary";
+import SimpleHome from "./SimpleHome";
+import { useUiMode } from "../lib/ui-mode";
 import { initUiSfx } from "../lib/sound";
 
 export default function Home({ initialList = [] }: { initialList?: BasicPokemon[] }) {
@@ -22,6 +26,7 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
   const [playerOpen, setPlayerOpen] = useState(false);
 
   useEffect(() => initUiSfx(), []);
+  const uiMode = useUiMode();
 
   const byId = useCallback(
     (id: number) => list.find((p) => p.id === id) ?? { id, name: "", types: null },
@@ -41,6 +46,10 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
   }, []);
 
   const selected = selectedId !== null ? byId(selectedId) : null;
+
+  if (uiMode === "simple") {
+    return <SimpleHome list={list} loading={loading} degraded={degraded} />;
+  }
 
   return (
     <main className="pb-28">
@@ -78,6 +87,7 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
             <SoundToggle />
             <ThemeToggle />
             <WallpaperControl />
+            <FallbackModeButton />
           </div>
           <button
             type="button"
@@ -104,40 +114,56 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
           </button>
         </div>
         <div className="mt-2 flex justify-end">
-          <MusicPlayer expanded={playerOpen} onSetExpanded={setPlayerOpen} />
+          <ErrorBoundary label="Pemain Muzik">
+            <MusicPlayer expanded={playerOpen} onSetExpanded={setPlayerOpen} />
+          </ErrorBoundary>
         </div>
       </div>
 
-      <WorldClock />
+      <ErrorBoundary label="Jam Dunia">
+        <WorldClock />
+      </ErrorBoundary>
 
-      <Hero
-        query={query}
-        onQueryChange={setQuery}
-        total={list.length}
-        onExplore={scrollToDex}
-      />
+      <ErrorBoundary label="Hero">
+        <Hero
+          query={query}
+          onQueryChange={setQuery}
+          total={list.length}
+          onExplore={scrollToDex}
+        />
+      </ErrorBoundary>
 
-      <ScrubGallery />
+      <ErrorBoundary label="Galeri Generasi">
+        <ScrubGallery />
+      </ErrorBoundary>
 
-      <Pokedex
-        list={list}
-        loading={loading}
-        degraded={degraded}
-        query={query}
-        onQueryChange={setQuery}
-        onOpen={(p) => openDetail(p.id)}
-      />
+      <ErrorBoundary label="Pokédex">
+        <Pokedex
+          list={list}
+          loading={loading}
+          degraded={degraded}
+          query={query}
+          onQueryChange={setQuery}
+          onOpen={(p) => openDetail(p.id)}
+        />
+      </ErrorBoundary>
 
-      <InfoSection />
+      <ErrorBoundary label="Info">
+        <InfoSection />
+      </ErrorBoundary>
 
-      <BottomNav />
+      <ErrorBoundary label="Navigasi">
+        <BottomNav />
+      </ErrorBoundary>
 
       {selected && (
-        <DetailModal
-          pokemon={selected}
-          onClose={closeModal}
-          onNavigate={(id) => setSelectedId(id)}
-        />
+        <ErrorBoundary label="Modal Butiran">
+          <DetailModal
+            pokemon={selected}
+            onClose={closeModal}
+            onNavigate={(id) => setSelectedId(id)}
+          />
+        </ErrorBoundary>
       )}
     </main>
   );

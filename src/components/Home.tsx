@@ -10,6 +10,7 @@ import DetailModal from "../components/DetailModal";
 import ThemeToggle from "../components/ThemeToggle";
 import { FadeIn } from "./Reveal";
 import SoundToggle from "./SoundToggle";
+import MusicPlayer from "./MusicPlayer";
 
 export default function Home({ initialList = [] }: { initialList?: BasicPokemon[] }) {
   const { list, loading, degraded } = usePokedex(initialList);
@@ -62,6 +63,8 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
       />
 
       <InfoSection />
+
+      <MusicPlayer />
 
       <button
         type="button"

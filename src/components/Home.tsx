@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { artworkUrl, usePokedex, type BasicPokemon } from "../lib/pokemon";
 import BottomNav from "../components/BottomNav";
 import Hero from "../components/Hero";
@@ -20,6 +20,8 @@ import SimpleHome from "./SimpleHome";
 import { useUiMode } from "../lib/ui-mode";
 import { useServerStatus } from "../lib/pokedex-server";
 import PokedexClosed from "./PokedexClosed";
+import { useAdminAccess } from "../lib/admin-access";
+import { AdminBanner } from "./AdminAccess";
 import { initUiSfx } from "../lib/sound";
 
 export default function Home({ initialList = [] }: { initialList?: BasicPokemon[] }) {
@@ -31,6 +33,8 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
   useEffect(() => initUiSfx(), []);
   const uiMode = useUiMode();
   const server = useServerStatus();
+  const allIds = useMemo(() => list.map((p) => p.id), [list]);
+  const admin = useAdminAccess(allIds);
 
   const byId = useCallback(
     (id: number) => list.find((p) => p.id === id) ?? { id, name: "", types: null },
@@ -41,9 +45,17 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
 
   const closeModal = useCallback(() => setSelectedId(null), []);
 
+  const dexList = useMemo(
+    () => (admin.access ? list.filter((p) => admin.access!.ids.includes(p.id)) : list),
+    [admin.access, list],
+  );
+
   const random = useCallback(() => {
-    openDetail(1 + Math.floor(1025 * Math.random()));
-  }, [openDetail]);
+    const pool = admin.access && server.closed && dexList.length > 0 ? dexList : list;
+    if (pool.length === 0) return;
+    const pick = pool[Math.floor(pool.length * Math.random())];
+    openDetail(pick.id);
+  }, [admin.access, server.closed, dexList, list, openDetail]);
 
   const scrollToDex = useCallback(() => {
     document.getElementById("dex")?.scrollIntoView({ behavior: "smooth" });
@@ -52,7 +64,14 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
   const selected = selectedId !== null ? byId(selectedId) : null;
 
   if (uiMode === "simple") {
-    return <SimpleHome list={list} loading={loading} degraded={degraded} serverClosed={server.closed} />;
+    return (
+      <SimpleHome
+        list={admin.access && server.closed ? dexList : list}
+        loading={loading}
+        degraded={degraded}
+        serverClosed={server.closed && !admin.access}
+      />
+    );
   }
 
   return (
@@ -145,17 +164,27 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
       </ErrorBoundary>
 
       <ErrorBoundary label="Pokédex">
-        {server.closed ? (
-          <PokedexClosed until={server.until} />
+        {server.closed && !admin.access ? (
+          <PokedexClosed until={server.until} onRedeem={admin.redeem} />
         ) : (
-          <Pokedex
-            list={list}
-            loading={loading}
-            degraded={degraded}
-            query={query}
-            onQueryChange={setQuery}
-            onOpen={(p) => openDetail(p.id)}
-          />
+          <>
+            {admin.access && server.closed && (
+              <AdminBanner
+                access={admin.access}
+                count={dexList.length}
+                onReroll={admin.reroll}
+                onUnredeem={admin.unredeem}
+              />
+            )}
+            <Pokedex
+              list={dexList}
+              loading={loading}
+              degraded={degraded}
+              query={query}
+              onQueryChange={setQuery}
+              onOpen={(p) => openDetail(p.id)}
+            />
+          </>
         )}
       </ErrorBoundary>
 

@@ -19,3 +19,22 @@
 - **TDD-SP1** Statik + hydration-safe: SSR dan mount pertama papar DITUTUP (masa kini < 2027); kiraan detik hanya berjalan selepas mount.
 - **TDD-SP2** Bila `Date.now() > CLOSED_UNTIL`, status berubah menjadi TERBUKA pada kitaran 1 saat berikutnya tanpa muat semula.
 - **TDD-SP3** `npx tsc --noEmit`, `next build` (statik) dan smoke SSR lulus.
+
+## Sistem Akses Admin Redeem (Fasa Tambahan)
+
+### URD
+- **URD-AR1** Akses admin/default dengan **kod redeem rahsia** untuk akses percuma pelayan walaupun tertutup.
+- **URD-AR2** Dua kod sahaja: `ADMINSERVER` dan `SERVERFREE` (tak peka huruf besar/kecil).
+- **URD-AR3** Akses percuma **hanya memaparkan 40 Pokémon rawak** — bukan penuh 1,025.
+
+### ADD
+- **ADD-AR1** `src/lib/admin-access.ts`: `redeemCode()` sahkan kod (Normalize + UPPERCASE) terhadap `["ADMINSERVER","SERVERFREE"]` kod; bila sah, pilih **40 ID rawak** (Fisher–Yates shuffle pada pool 1,025) dan simpan `{code, ids}` dalam `localStorage "md-admin-access"` — kekal selepas muat semula.
+- **ADD-AR2** UI: borang **Redeem** dalam kad PokedexClosed ("Ada kod redeem?"); sah → SFX `success` + pelayan buka mod terhad; tidak sah → SFX `error` + mesaj `role="alert"`.
+- **ADD-AR3** `AdminBanner` di atas Pokédex: papar kod aktif, bilangan (40), butang **Rawak semula** (40 baru, SFX dadu) dan **Tamat akses** (buang localStorage → kembali ke kad DITUTUP).
+- **ADD-AR4** Mod terhad mengikat semua laluan data: grid + carian + penapis + halaman membaca `dexList` (40 sahaja), butang **Rawak** di penjuru atas memilih dari 40 itu, dan UI Cadangan (SimpleHome) menerima senarai terhad yang sama.
+- **ADD-AR5** Bila pelayan telah dibuka sebenar (selepas 31 Dis 2027), akses redeem tidak memberi apa-apa kesan (senarai penuh terbuka); akses hanya relevan semasa tertutup.
+
+### TDD
+- **TDD-AR1** Kod salahhuruf (cth. `adminserver`, ` ServerFree `) tetap diterima; kod lain ditolak.
+- **TDD-AR2** 40 ID sentiasa unik dan subset pool; "Rawak semula" menghasilkan set berbeza (secara stokastik).
+- **TDD-AR3** `tsc --noEmit`, `next build` (statik) dan smoke SSR lulus.

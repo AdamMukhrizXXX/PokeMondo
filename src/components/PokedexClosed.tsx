@@ -1,12 +1,19 @@
 "use client";
 
 import { splitCountdown, useCountdown } from "../lib/pokedex-server";
+import { RedeemForm } from "./AdminAccess";
 
 function two(n: number) {
   return String(n).padStart(2, "0");
 }
 
-export default function PokedexClosed({ until }: { until: number }) {
+export default function PokedexClosed({
+  until,
+  onRedeem,
+}: {
+  until: number;
+  onRedeem: (code: string) => boolean;
+}) {
   const msLeft = useCountdown(until);
   const c = msLeft !== null ? splitCountdown(msLeft) : null;
 
@@ -85,6 +92,14 @@ export default function PokedexClosed({ until }: { until: number }) {
           <p className="mt-6 text-xs text-on-surface-variant">
             Hero, Galeri Generasi, Muzik, Jam Dunia dan sistem lain masih boleh dinikmati seperti biasa.
           </p>
+        </div>
+
+        <div className="border-t border-outline-variant px-8 py-6 text-center sm:px-10">
+          <p className="font-display text-sm font-bold text-on-surface">Ada kod redeem?</p>
+          <p className="mx-auto mt-1 max-w-sm text-xs text-on-surface-variant">
+            Akses khas membuka pelayan dalam mod terhad: <strong className="text-on-surface">40 Pokémon rawak sahaja</strong>.
+          </p>
+          <RedeemForm onRedeem={onRedeem} />
         </div>
       </div>
     </div>

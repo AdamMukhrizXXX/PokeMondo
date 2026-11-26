@@ -14,6 +14,7 @@ import MusicPlayer from "./MusicPlayer";
 import WorldClock from "./WorldClock";
 import WallpaperControl from "./WallpaperControl";
 import FallbackModeButton from "./FallbackModeButton";
+import AiAssist from "./AiAssist";
 import ErrorBoundary from "./ErrorBoundary";
 import SimpleHome from "./SimpleHome";
 import { useUiMode } from "../lib/ui-mode";
@@ -88,6 +89,9 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
             <ThemeToggle />
             <WallpaperControl />
             <FallbackModeButton />
+            <ErrorBoundary label="AI Anal">
+              <AiAssist list={list} />
+            </ErrorBoundary>
           </div>
           <button
             type="button"

@@ -53,3 +53,19 @@ Dokumen ringkas mengikut struktur URD/ADD/MDD/TDD (ID stabil) untuk empat sistem
 ### TDD
 - **TDD-UC1** SSR lalai = UI penuh; mod ringkas hanya aktif selepas mount jika localStorage pernah ditetapkan (hydration-safe).
 - **TDD-UC2** Boundary terpencil: ralat satu seksyen hanya gantikan seksyen itu.
+
+## Sistem AI Anal Pokémon (Fasa Tambahan)
+
+### URD
+- **URD-AI1** Sistem AI boleh menganalisis semua 1,025 Pokémon. Wajib **AI sebenar** (API model bahasa), bukan AI bawaan/lokal.
+
+### ADD
+- **ADD-AI1** Bawa-kunci-anda-sendiri (BYOK) melalui `fetch` langsung — tiada dependencies baharu. 4 penyedia: **Mistral** (`api.mistral.ai/v1/chat/completions`, lalai `mistral-small-latest`), **Google Gemini** (`generativelanguage.googleapis.com/v1beta/...:generateContent`, lalai `gemini-2.0-flash`), **OpenAI** (`api.openai.com/v1`, lalai `gpt-4o-mini`), **OpenRouter** (`openrouter.ai/api/v1`, header `X-Title`, lalai model percuma).
+- **ADD-AI2** Kunci/penyedia/model disimpan hanya dalam `localStorage` (`md-ai-key`, `md-ai-provider`, `md-ai-model`) dan dihantar terus ke penyedia oleh pelayar pengunjung — tiada pelayan perantara, tiada kunci dikodkan.
+- **ADD-AI3** `datasetSummary(list)` mengira statistik dataset (kiraan per generasi, frekuensi jenis 6 teratas, pasangan dwi-jenis teratas, jumlah dwi-jenis) dan dihantar sebagai konteks bersama setiap soalan; system prompt bahasa Melayu dengan arahan anti-halusinasi.
+- **ADD-AI4** UI `AiAssist`: ikon sparkle di penjuru atas kanan (dalam `ErrorBoundary label="AI Anal"`), panel dua tab — **Sembang** (butang "Analisis Semua Pokémon (1,025)", 4 cadangan soalan, textarea Enter=hantar) dan **Tetapan** (penyedia, model, kunci, simpan/padam). Titik oren bila kunci aktif. Ralat NO_KEY/HTTP/CORS dipaparkan dalam gelembung mesaj.
+
+### TDD
+- **TDD-AI1** Statik: semua panggilan dilakukan dari klien selepas mount; SSR hanya memaparkan ikon.
+- **TDD-AI2** Kunci tidak pernah muncul dalam gelembung sembang atau konsol; medan kunci ialah password dan dikosong selepas simpan.
+- **TDD-AI3** Tiada key = `NO_KEY` (mesaj panduan membuka tab Tetapan); ralat HTTP memapar status + potongan badan respons.

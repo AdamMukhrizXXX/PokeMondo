@@ -21,7 +21,7 @@ Dokumen ringkas mengikut struktur URD/ADD/MDD/TDD (ID stabil) untuk empat sistem
 - **ADD-LB1** `src/lib/ui-db.ts` — IndexedDB `pokemondo-ui` / store `wallpaper` (blob ≤ 12MB); URL object dicache dan dipulihkan.
 - **ADD-LB2** Latar digunakan melalui CSS var `--wp-url` / `--wp-dim` / `--wp-blur` pada `<html>` + lapisan tetap `.bg-wallpaper` (z -20) dengan lapisan redup `::after`.
 - **ADD-LB3** Apabila latar custom aktif (`data-wp="1"`), imej hiasan Pokémon (`.deco-img`) disembunyikan dan aurora diredam kepada 0.18 supaya gambar pengguna menonjol.
-- **ADD-RN1** Hub bulat (kiri-bawah, `aria-expanded`) membuka 4 item pada arc 88°→24°, radius 92px, spring `cubic-bezier(0.34, 1.56, 0.45, 1)` + jeda berkumpulan 50ms/item.
+- **ADD-RN1** Hub bulat (tengah-bawah, `aria-expanded`) membuka 4 item pada arc 150°→30°, radius 92px, spring `cubic-bezier(0.34, 1.56, 0.45, 1)` + jeda berkumpulan 50ms/item.
 - **ADD-RN2** Ring kaca (bulatan `border`) = landasan radial; klik luar / Escape / pilih item menutup menu; item aktif mengikut scroll-spy sedia ada.
 - **ADD-RN3** Bar kemajuan skrol atas dikekalkan; semua bunyi mengikut palet SFX sedia ada (`aria-expanded` → open/close automatik).
 

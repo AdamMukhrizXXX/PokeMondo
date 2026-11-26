@@ -10,8 +10,8 @@ const NAV_ITEMS = [
   { id: "info", label: "Info", icon: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 4.5v.01M12 11v5.5" },
 ];
 
-const ARC_START = 88;
-const ARC_END = 24;
+const ARC_START = 150;
+const ARC_END = 30;
 const RADIUS = 92;
 const HUB_HALF = 1.75;
 
@@ -84,7 +84,7 @@ export default function BottomNav() {
         />
       )}
 
-      <div className="fixed bottom-[max(env(safe-area-inset-bottom),1.25rem)] left-4 z-50 sm:left-6">
+      <div className="fixed bottom-[max(env(safe-area-inset-bottom),1.25rem)] left-1/2 z-50 -translate-x-1/2">
         <div
           aria-hidden
           className={`absolute rounded-full border border-outline-variant/70 bg-surface-container-low/40 backdrop-blur-md transition-all duration-500 ${

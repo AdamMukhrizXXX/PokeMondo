@@ -247,6 +247,28 @@ body {
   }
 }
 
+
+@keyframes pop-in-dock {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.pop-in {
+  animation: pop-in-dock 0.7s var(--ease-spring) 0.35s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pop-in {
+    animation: none;
+  }
+}
+
 .magnet {
   transition: transform 0.3s var(--ease-emphasized);
   will-change: transform;

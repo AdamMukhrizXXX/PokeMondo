@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useScrollSpy } from "../lib/pokemon";
-import { useRipple } from "../components/Ripple";
+import { useRipple } from "./Ripple";
 
 const NAV_ITEMS = [
   { id: "rumah", label: "Rumah", icon: "M4 11.5 12 4l8 7.5M6 10v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9" },
@@ -11,9 +11,16 @@ const NAV_ITEMS = [
   { id: "info", label: "Info", icon: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 4.5v.01M12 11v5.5" },
 ];
 
+const SPREAD = 96;
+const MAX_BOOST = 0.32;
+
 export default function BottomNav() {
   const active = useScrollSpy(NAV_ITEMS.map((n) => n.id));
   const barRef = useRef<HTMLDivElement | null>(null);
+  const dockRef = useRef<HTMLDivElement | null>(null);
+  const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const pillRef = useRef<HTMLDivElement | null>(null);
+  const rafRef = useRef(0);
   const ripple = useRipple();
 
   useEffect(() => {
@@ -38,6 +45,37 @@ export default function BottomNav() {
     };
   }, []);
 
+  useEffect(() => {
+    const item = itemRefs.current[NAV_ITEMS.findIndex((n) => n.id === active)];
+    const pill = pillRef.current;
+    if (!item || !pill) return;
+    pill.style.width = `${item.offsetWidth}px`;
+    pill.style.transform = `translate3d(${item.offsetLeft}px, 0, 0) scale(1)`;
+    pill.style.opacity = "1";
+  }, [active]);
+
+  const magnify = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.clientX === 0 && e.clientY === 0) return;
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      for (const el of itemRefs.current) {
+        if (!el) continue;
+        const r = el.getBoundingClientRect();
+        const d = Math.abs(e.clientX - (r.left + r.width / 2));
+        const t = Math.exp(-(d * d) / (2 * SPREAD * SPREAD));
+        const s = 1 + MAX_BOOST * t;
+        el.style.transform = `translateY(${(-10 * t).toFixed(1)}px) scale(${s.toFixed(3)})`;
+      }
+    });
+  };
+
+  const reset = () => {
+    cancelAnimationFrame(rafRef.current);
+    for (const el of itemRefs.current) {
+      if (el) el.style.transform = "";
+    }
+  };
+
   const go = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
@@ -52,26 +90,50 @@ export default function BottomNav() {
       />
       <nav
         aria-label="Navigasi utama"
-        className="fixed inset-x-0 bottom-0 z-40 flex justify-center pb-[max(env(safe-area-inset-bottom),0.75rem)]"
+        className="fixed inset-x-0 bottom-0 z-40 flex justify-center pb-[max(env(safe-area-inset-bottom),0.9rem)]"
       >
-        <div className="flex items-center gap-1 rounded-full border border-outline-variant bg-surface-container-low/95 p-1.5 shadow-e3 backdrop-blur-md">
-          {NAV_ITEMS.map((item) => {
+        <div
+          ref={dockRef}
+          onMouseMove={magnify}
+          onMouseLeave={reset}
+          className="pop-in relative flex items-end gap-1 rounded-[1.75rem] border border-outline-variant bg-surface-container-low/90 p-2 shadow-e3 backdrop-blur-xl"
+        >
+          <div
+            ref={pillRef}
+            aria-hidden
+            className="absolute top-2 left-0 h-[calc(100%-1rem)] rounded-[1.2rem] bg-secondary-container opacity-0 shadow-e1 transition-[transform,width,opacity] duration-500"
+            style={{
+              transitionTimingFunction: "cubic-bezier(0.34, 1.3, 0.5, 1)",
+              width: "3.5rem",
+            }}
+          />
+          {NAV_ITEMS.map((item, i) => {
             const isActive = active === item.id;
             return (
               <button
                 key={item.id}
+                ref={(el) => {
+                  itemRefs.current[i] = el;
+                }}
                 type="button"
                 onClick={(e) => {
                   ripple(e);
                   go(item.id);
                 }}
                 aria-current={isActive ? "true" : undefined}
-                className={`relative flex h-14 items-center gap-2 overflow-hidden rounded-full px-4 font-display text-sm font-semibold transition-colors ${
+                aria-label={item.label}
+                className={`group relative z-10 flex h-14 w-16 items-center justify-center overflow-visible rounded-[1.2rem] transition-colors sm:w-20 ${
                   isActive
-                    ? "bg-secondary-container text-on-secondary-container"
-                    : "text-on-surface-variant hover:bg-surface-container-high"
+                    ? "text-on-secondary-container"
+                    : "text-on-surface-variant hover:text-on-surface"
                 }`}
               >
+                <span
+                  className="pointer-events-none absolute -top-11 left-1/2 -translate-x-1/2 translate-y-1 rounded-full bg-inverse-surface px-3 py-1 font-display text-xs font-bold whitespace-nowrap text-inverse-on-surface opacity-0 shadow-e2 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+                  role="presentation"
+                >
+                  {item.label}
+                </span>
                 <svg
                   width="24"
                   height="24"
@@ -82,10 +144,16 @@ export default function BottomNav() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   aria-hidden
+                  className="transition-transform duration-300 group-hover:-translate-y-0.5"
                 >
                   <path d={item.icon} />
                 </svg>
-                <span className={isActive ? "inline" : "hidden sm:inline"}>{item.label}</span>
+                {isActive && (
+                  <span
+                    aria-hidden
+                    className="absolute -bottom-1 size-1 rounded-full bg-primary"
+                  />
+                )}
               </button>
             );
           })}

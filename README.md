@@ -29,6 +29,24 @@ npm run dev
 
 Buka `http://localhost:3000`. Untuk binaan produksi: `npm run build && npm start`.
 
+## Deploy ke Vercel
+
+### Cara dashboard (paling pantas)
+1. Buka [vercel.com/new](https://vercel.com/new) dan pilih repo **PokeMondo**.
+2. Vercel mengesan Next.js secara automatik — tiada tetapan diperlukan (`vercel.json` sudah disertakan).
+3. Klik **Deploy**. Setiap push kemudian ke `main` akan auto-deploy.
+
+### Cara CLI
+
+```bash
+npm i -g vercel
+vercel login
+vercel --prod
+```
+
+Jika domain produksi berbeza daripada `https://pokemondo.vercel.app`, set env variable
+`NEXT_PUBLIC_SITE_URL` pada tetapan projek Vercel supaya metadata Open Graph memakai URL yang betul.
+
 ## Kredit
 
 - Data: [PokéAPI](https://pokeapi.co)

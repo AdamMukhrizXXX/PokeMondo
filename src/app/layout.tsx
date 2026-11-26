@@ -14,10 +14,28 @@ const dmSans = DM_Sans({
   weight: ["400", "500", "700"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pokemondo.vercel.app";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "PokeMondo — Pokédex untuk Semua",
   description:
     "Jelajahi 1025 Pokémon dari sembilan generasi. Carian pantas, penapis jenis senyap, dan galeri scrub dahulu — semua data dari PokéAPI.",
+  keywords: ["pokemon", "pokédex", "pokeapi", "next.js", "material you"],
+  openGraph: {
+    title: "PokeMondo — Pokédex untuk Semua",
+    description:
+      "Semua 1025 Pokémon, sembilan generasi, hero section dengan scroll scrub dan tema Material You.",
+    url: siteUrl,
+    siteName: "PokeMondo",
+    locale: "ms_MY",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "PokeMondo — Pokédex untuk Semua",
+    description: "1025 Pokémon, 9 generasi, satu Pokédex yang cantik.",
+  },
 };
 
 export const viewport: Viewport = {

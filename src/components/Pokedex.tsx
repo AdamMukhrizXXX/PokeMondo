@@ -115,6 +115,7 @@ export default function Pokedex({
               ripple(e);
               setDesc((d) => !d);
             }}
+            aria-pressed={desc}
             className="flex h-11 items-center gap-2 overflow-hidden rounded-full border border-outline-variant px-5 font-display text-sm font-semibold text-on-surface-variant transition-colors hover:bg-surface-container"
           >
             <svg
@@ -235,6 +236,7 @@ export default function Pokedex({
                   type="button"
                   onClick={() => goto(pageSafe - 1)}
                   disabled={pageSafe <= 1}
+                  data-sfx="tick"
                   aria-label="Halaman sebelum"
                   className="grid size-10 place-items-center rounded-full border border-outline-variant text-on-surface-variant transition-colors hover:bg-surface-container disabled:opacity-40 disabled:hover:bg-transparent"
                 >
@@ -252,6 +254,7 @@ export default function Pokedex({
                       key={p}
                       type="button"
                       onClick={() => goto(p)}
+                      data-sfx="tick"
                       aria-current={p === pageSafe ? "page" : undefined}
                       aria-label={`Halaman ${p}`}
                       className={
@@ -268,6 +271,7 @@ export default function Pokedex({
                   type="button"
                   onClick={() => goto(pageSafe + 1)}
                   disabled={pageSafe >= totalPages}
+                  data-sfx="tick"
                   aria-label="Halaman seterusnya"
                   className="grid size-10 place-items-center rounded-full border border-outline-variant text-on-surface-variant transition-colors hover:bg-surface-container disabled:opacity-40 disabled:hover:bg-transparent"
                 >

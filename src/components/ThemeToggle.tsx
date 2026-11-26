@@ -25,6 +25,7 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
       type="button"
       onClick={toggle}
       aria-label={theme === "dark" ? "Mod cerah" : "Mod gelap"}
+      aria-pressed={theme === "dark"}
       className={`relative overflow-hidden rounded-full bg-secondary-container text-on-secondary-container shadow-e1 transition-transform active:scale-90 ${
         compact ? "grid size-10 place-items-center" : "flex h-10 items-center gap-2 px-4"
       }`}

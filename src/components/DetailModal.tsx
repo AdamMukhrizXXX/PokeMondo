@@ -13,7 +13,7 @@ import {
 } from "../lib/pokemon";
 import { useRipple } from "../components/Ripple";
 import { CryBars } from "./SoundToggle";
-import { isSoundEnabled, playCry, stopCry, useCryState } from "../lib/sound";
+import { isSoundEnabled, playCry, playUiSfx, stopCry, useCryState } from "../lib/sound";
 
 const STAT_ROWS: Array<{ key: keyof PokemonDetail["stats"]; label: string; max: number }> = [
   { key: "hp", label: "HP", max: 255 },
@@ -56,6 +56,7 @@ export default function DetailModal({
   }, [pokemon.id]);
 
   useEffect(() => {
+    playUiSfx("open");
     return () => stopCry();
   }, []);
 
@@ -73,7 +74,10 @@ export default function DetailModal({
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        playUiSfx("close");
+        onClose();
+      }
     };
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
@@ -110,6 +114,7 @@ export default function DetailModal({
             <button
               type="button"
               onClick={onClose}
+              data-sfx="close"
               aria-label="Tutup"
               className="grid size-10 place-items-center overflow-hidden rounded-full bg-white/20 transition-transform hover:rotate-90 active:scale-90"
             >

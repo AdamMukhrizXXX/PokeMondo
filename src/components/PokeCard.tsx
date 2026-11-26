@@ -31,6 +31,7 @@ function PokeCardInner({
     <button
       type="button"
       data-spot
+      data-no-hover-sfx="true"
       onClick={() => onOpen(p)}
       className="card-press card-rise group relative flex flex-col overflow-hidden rounded-3xl border border-outline-variant text-left shadow-e1 hover:-translate-y-1 hover:shadow-e3"
       style={{

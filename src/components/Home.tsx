@@ -79,6 +79,7 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
           <button
             type="button"
             onClick={random}
+            data-sfx="dice"
             aria-label="Buka Pokémon rawak"
             className="grid size-10 place-items-center rounded-full bg-primary text-on-primary shadow-e1 transition-transform active:scale-90"
           >

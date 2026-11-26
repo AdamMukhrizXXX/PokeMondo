@@ -25,6 +25,7 @@ import {
   type ImportedMeta,
 } from "../lib/import-db";
 import { useRipple } from "./Ripple";
+import { playUiSfx } from "../lib/sound";
 
 const SIZE = "3.75rem";
 
@@ -39,7 +40,7 @@ function IconBtn({
   onClick,
   label,
   children,
-  active = false,
+  active,
   small = false,
 }: {
   onClick: () => void;
@@ -53,6 +54,7 @@ function IconBtn({
       type="button"
       onClick={onClick}
       aria-label={label}
+      aria-pressed={active}
       className={`grid place-items-center rounded-full transition-all active:scale-90 ${
         small ? "size-9" : "size-11"
       } ${active ? "bg-secondary-container text-on-secondary-container" : "text-on-surface-variant hover:bg-surface-container-high"}`}
@@ -184,6 +186,7 @@ export default function MusicPlayer({
           : "",
     );
     setBusy(false);
+    playUiSfx(saved.length > 0 ? "success" : "error");
     if (fileRef.current) fileRef.current.value = "";
   }, []);
 
@@ -227,6 +230,7 @@ export default function MusicPlayer({
         <button
           type="button"
           aria-label={playing ? "Buka pemain muzik" : "Mainkan muzik latar"}
+          data-sfx="open"
           onClick={(e) => {
             ripple(e);
             if (!playing) void resumeBgm();
@@ -313,6 +317,7 @@ export default function MusicPlayer({
             <button
               type="button"
               aria-label="Tutup pemain muzik"
+              data-sfx="close"
               onClick={() => onSetExpanded(false)}
               className="grid size-8 place-items-center rounded-full bg-surface-container-high text-on-surface-variant transition-colors hover:bg-surface-container-highest"
             >

@@ -16,6 +16,7 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
   const { list, loading, degraded } = usePokedex(initialList);
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [playerOpen, setPlayerOpen] = useState(false);
 
   const byId = useCallback(
     (id: number) => list.find((p) => p.id === id) ?? { id, name: "", types: null },
@@ -43,12 +44,45 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
         <ThemeToggle />
       </div>
 
+      <div className="fixed left-4 top-4 z-40 flex items-start gap-2 sm:left-6 sm:top-6">
+        <MusicPlayer expanded={playerOpen} onSetExpanded={setPlayerOpen} />
+        <span
+          className={`overflow-hidden transition-all duration-300 ease-out ${
+            playerOpen
+              ? "pointer-events-none max-w-0 -translate-x-2 opacity-0"
+              : "max-w-16 opacity-100"
+          }`}
+        >
+          <button
+            type="button"
+            onClick={random}
+            aria-label="Buka Pokémon rawak"
+            className="grid size-[3.75rem] place-items-center rounded-full bg-primary text-on-primary shadow-e2 transition-transform active:scale-90"
+          >
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <rect x="3" y="3" width="18" height="18" rx="5" />
+              <path d="M8 12h8" />
+              <path d="m13 8 4 4-4 4" />
+            </svg>
+          </button>
+        </span>
+      </div>
+
       <Hero
         query={query}
         onQueryChange={setQuery}
         total={list.length}
         onExplore={scrollToDex}
-        onRandom={random}
       />
 
       <ScrubGallery />
@@ -63,31 +97,6 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
       />
 
       <InfoSection />
-
-      <MusicPlayer />
-
-      <button
-        type="button"
-        onClick={random}
-        aria-label="Buka Pokémon rawak"
-        className="fixed bottom-24 right-4 z-40 flex h-14 items-center gap-2 overflow-hidden rounded-2xl bg-primary px-5 font-display font-bold text-on-primary shadow-e3 transition-transform active:scale-90 sm:right-6"
-      >
-        <svg
-          className="spin-once"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          aria-hidden
-        >
-          <circle cx="12" cy="12" r="9" />
-          <path d="M12 3a9 9 0 0 1 8.49 6" />
-          <path d="M12 3a9 9 0 0 0-8.49 6" strokeLinecap="round" />
-        </svg>
-        Rawak
-      </button>
 
       <BottomNav />
 

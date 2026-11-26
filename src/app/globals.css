@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  --md-error: #b3261e;
   --md-primary: #9c4130;
   --md-on-primary: #ffffff;
   --md-primary-container: #ffd9d0;
@@ -28,6 +29,7 @@
 }
 
 [data-theme="dark"] {
+  --md-error: #ffb4a9;
   --md-primary: #ffb4a1;
   --md-on-primary: #5f1502;
   --md-primary-container: #7d2c16;

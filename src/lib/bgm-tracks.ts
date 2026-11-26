@@ -1,6 +1,6 @@
-import type { BgmTrack } from "./bgm";
+export type RawBgmTrack = { file: string; title: string; game: string };
 
-export const BGM_TRACKS: BgmTrack[] = [
+export const BGM_TRACKS: RawBgmTrack[] = [
   { file: "arceus-arceus.mp3", title: "Arceus", game: "Legends: Arceus" },
   { file: "arceus-dialga_palkia.mp3", title: "Dialga Palkia", game: "Legends: Arceus" },
   { file: "arceus-giratina.mp3", title: "Giratina", game: "Legends: Arceus" },

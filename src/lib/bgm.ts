@@ -2,20 +2,38 @@
 
 import { useEffect, useState } from "react";
 import { BGM_TRACKS } from "./bgm-tracks";
+import { getBlobUrl, type ImportedMeta } from "./import-db";
 
 export type BgmTrack = {
-  file: string;
+  id: string;
   title: string;
   game: string;
+  url?: string;
 };
 
 const BASE_URL = "https://raw.githubusercontent.com/MonkeyBusinessXD/Pokemon-Music/main/";
 
-export const BGM_COUNT = BGM_TRACKS.length;
+const REMOTE: BgmTrack[] = BGM_TRACKS.map((t) => ({
+  id: t.file,
+  title: t.title,
+  game: t.game,
+  url: BASE_URL + t.file,
+}));
 
+function prettyName(name: string) {
+  const base = name.replace(/\.[^.]+$/, "").replace(/[_\-\s]+/g, " ").trim();
+  return base.replace(/\b\w/g, (c) => c.toUpperCase()) || "Trek import";
+}
+
+let playlist: BgmTrack[] = [...REMOTE];
+let imported: BgmTrack[] = [];
 let audio: HTMLAudioElement | null = null;
 let masterVol = 0.55;
 let duckTimer = 0;
+
+function rebuild() {
+  playlist = [...REMOTE, ...imported];
+}
 
 function loadPref(key: string, fallback = "") {
   try {
@@ -40,13 +58,13 @@ function emit() {
         playing: !!audio && !audio.paused && !audio.ended,
         index: currentIndex,
         shuffle,
-        volume: masterVol,
+        count: playlist.length,
       },
     }),
   );
 }
 
-let currentIndex = Math.floor(Math.random() * BGM_COUNT);
+let currentIndex = Math.floor(Math.random() * REMOTE.length);
 let shuffle = loadPref("md-bgm-shuffle") === "on";
 
 function setupAudio(): HTMLAudioElement {
@@ -87,19 +105,56 @@ export function setBgmOn(on: boolean) {
 }
 
 export function getBgmTrack(i = currentIndex) {
-  return BGM_TRACKS[((i % BGM_COUNT) + BGM_COUNT) % BGM_COUNT];
+  return playlist[((i % playlist.length) + playlist.length) % playlist.length] ?? REMOTE[0];
 }
 
 export function getBgmIndex() {
   return currentIndex;
 }
 
+export function removeImportedBgm(key: string) {
+  const wasCurrent = playlist[currentIndex]?.id === key;
+  imported = imported.filter((t) => t.id !== key);
+  rebuild();
+  currentIndex = Math.min(currentIndex, playlist.length - 1);
+  if (wasCurrent && audio && !audio.paused) {
+    void playIndex(currentIndex);
+  } else {
+    emit();
+  }
+}
+
+export function addImportedBgm(metas: ImportedMeta[]) {
+  const fresh = metas
+    .map((m) => ({ id: m.key, title: prettyName(m.title), game: "Import" }))
+    .filter((t) => !imported.some((x) => x.id === t.id));
+  if (fresh.length === 0) return;
+  imported = [...imported, ...fresh];
+  rebuild();
+  emit();
+}
+
+export function playBgmById(id: string) {
+  const i = playlist.findIndex((t) => t.id === id);
+  if (i >= 0) return playIndex(i);
+  return Promise.resolve();
+}
+
 async function playIndex(i: number) {
   const el = setupAudio();
-  currentIndex = ((i % BGM_COUNT) + BGM_COUNT) % BGM_COUNT;
+  if (playlist.length === 0) return;
+  currentIndex = ((i % playlist.length) + playlist.length) % playlist.length;
   savePref("md-bgm", "on");
-  const track = BGM_TRACKS[currentIndex];
-  el.src = BASE_URL + track.file;
+  const track = playlist[currentIndex];
+  let src = track.url ?? "";
+  if (track.id.startsWith("imp-")) {
+    src = (await getBlobUrl(track.id)) ?? "";
+  }
+  if (!src) {
+    emit();
+    return;
+  }
+  if (el.src !== src) el.src = src;
   try {
     await el.play();
   } catch {
@@ -151,8 +206,8 @@ export async function nextBgm(auto = false) {
   void auto;
   if (shuffle) {
     let n = currentIndex;
-    while (BGM_COUNT > 1 && n === currentIndex) {
-      n = Math.floor(Math.random() * BGM_COUNT);
+    while (playlist.length > 1 && n === currentIndex) {
+      n = Math.floor(Math.random() * playlist.length);
     }
     return playIndex(n);
   }
@@ -194,6 +249,7 @@ export type BgmUiState = {
   playing: boolean;
   index: number;
   shuffle: boolean;
+  count: number;
 };
 
 export function useBgmState(): BgmUiState {
@@ -201,6 +257,7 @@ export function useBgmState(): BgmUiState {
     playing: false,
     index: currentIndex,
     shuffle,
+    count: playlist.length,
   });
   useEffect(() => {
     const on = () =>
@@ -208,6 +265,7 @@ export function useBgmState(): BgmUiState {
         playing: !!audio && !audio.paused && !audio.ended,
         index: currentIndex,
         shuffle,
+        count: playlist.length,
       });
     on();
     window.addEventListener("md-bgm", on);

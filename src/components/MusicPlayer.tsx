@@ -1,20 +1,29 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  BGM_COUNT,
+  addImportedBgm,
   getBgmShuffle,
   getBgmTrack,
   getBgmVolume,
   isBgmOn,
   nextBgm,
   pauseBgm,
+  playBgmById,
   prevBgm,
+  removeImportedBgm,
   resumeBgm,
   setBgmVolume,
   toggleShuffleBgm,
   useBgmState,
 } from "../lib/bgm";
+import {
+  deleteImported,
+  isImportSupported,
+  listImported,
+  putImported,
+  type ImportedMeta,
+} from "../lib/import-db";
 import { useRipple } from "./Ripple";
 
 const SIZE = "3.75rem";
@@ -60,9 +69,13 @@ export default function MusicPlayer({
   expanded: boolean;
   onSetExpanded: (v: boolean) => void;
 }) {
-  const { playing, index, shuffle } = useBgmState();
+  const { playing, index, shuffle, count } = useBgmState();
   const [volValue, setVolValue] = useState(() => Math.round(getBgmVolume() * 100));
   const track = getBgmTrack(index);
+  const [imports, setImports] = useState<ImportedMeta[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [importErr, setImportErr] = useState("");
+  const fileRef = useRef<HTMLInputElement | null>(null);
   const barRef = useRef<HTMLDivElement | null>(null);
   const timeRef = useRef<HTMLSpanElement | null>(null);
   const durRef = useRef<HTMLSpanElement | null>(null);
@@ -71,6 +84,20 @@ export default function MusicPlayer({
 
   useEffect(() => {
     setVolValue(Math.round(getBgmVolume() * 100));
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    listImported()
+      .then((metas) => {
+        if (cancelled) return;
+        setImports(metas);
+        addImportedBgm(metas);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -115,6 +142,58 @@ export default function MusicPlayer({
       setBgmVolume(v);
     }
   };
+
+  const AUDIO_RE = /\.(mp3|ogg|oga|m4a|aac|wav|flac|opus)$/i;
+  const MAX_AUDIO = 25 * 1024 * 1024;
+
+  const onPick = useCallback(async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setBusy(true);
+    setImportErr("");
+    const saved: ImportedMeta[] = [];
+    let skipped = 0;
+    for (const f of Array.from(files)) {
+      const valid = (f.type.startsWith("audio/") || AUDIO_RE.test(f.name)) && f.size > 0 && f.size <= MAX_AUDIO;
+      if (!valid) {
+        skipped += 1;
+        continue;
+      }
+      try {
+        saved.push(await putImported(f, f.name));
+      } catch {
+        skipped += 1;
+      }
+    }
+    if (saved.length > 0) addImportedBgm(saved);
+    try {
+      setImports(await listImported());
+    } catch {
+      /* kekal senarai lama */
+    }
+    setImportErr(
+      saved.length === 0
+        ? "Tiada fail audio sah (mp3 / ogg / m4a / wav / flac, ≤ 25MB)."
+        : skipped > 0
+          ? `${skipped} fail dilangkau (bukan audio atau melebihi 25MB).`
+          : "",
+    );
+    setBusy(false);
+    if (fileRef.current) fileRef.current.value = "";
+  }, []);
+
+  const onRemoveImport = useCallback(async (key: string) => {
+    try {
+      await deleteImported(key);
+    } catch {
+      /* ignore */
+    }
+    removeImportedBgm(key);
+    try {
+      setImports(await listImported());
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   const firstGesture = useRef(false);
   useEffect(() => {
@@ -213,7 +292,7 @@ export default function MusicPlayer({
               <p className="truncate text-xs text-on-surface-variant">
                 {track.game}
                 <span className="mx-1.5 text-outline">|</span>
-                {(index + 1).toString()}/{BGM_COUNT}
+                {(index + 1).toString()}/{count}
               </p>
             </div>
             <button
@@ -333,6 +412,76 @@ export default function MusicPlayer({
             <span className="w-9 text-right font-display text-[11px] font-bold text-on-surface-variant">
               {volValue}%
             </span>
+          </div>
+
+          <div className="mt-3 border-t border-outline-variant pt-3">
+            <div className="flex items-center justify-between gap-2">
+              <p className="font-display text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
+                Muzik import ({imports.length})
+              </p>
+              <button
+                type="button"
+                disabled={busy || !isImportSupported()}
+                onClick={() => fileRef.current?.click()}
+                className="flex h-8 items-center gap-1.5 rounded-full bg-secondary-container px-3 font-display text-xs font-bold text-on-secondary-container transition-all active:scale-95 disabled:opacity-50"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M12 16V4m0 0 -5 5m5-5 5 5" />
+                  <path d="M4 18v2h16v-2" />
+                </svg>
+                {busy ? "Mengimport…" : "Import"}
+              </button>
+            </div>
+            <input
+              ref={fileRef}
+              type="file"
+              multiple
+              accept="audio/*,.mp3,.ogg,.oga,.m4a,.aac,.wav,.flac,.opus"
+              onChange={(e) => void onPick(e.target.files)}
+              className="hidden"
+              aria-hidden
+              tabIndex={-1}
+            />
+            {importErr && (
+              <p className="mt-1.5 text-[11px] font-medium" style={{ color: "var(--md-error)" }}>
+                {importErr}
+              </p>
+            )}
+            {imports.length > 0 && (
+              <ul className="no-scrollbar mt-2 max-h-36 space-y-1 overflow-y-auto">
+                {imports.map((m) => (
+                  <li
+                    key={m.key}
+                    className={`flex items-center gap-1 rounded-xl px-2 py-1 ${
+                      track.id === m.key ? "bg-secondary-container/70" : "bg-surface-container"
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => void playBgmById(m.key)}
+                      className="min-w-0 flex-1 truncate py-0.5 text-left text-xs font-semibold text-on-surface"
+                      aria-label={`Main ${m.title}`}
+                    >
+                      {m.title}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void onRemoveImport(m.key)}
+                      aria-label={`Buang ${m.title}`}
+                      className="grid size-6 shrink-0 place-items-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-highest"
+                    >
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
+                        <path d="M6 6l12 12M18 6 6 18" />
+                      </svg>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <p className="mt-1.5 text-[10px] leading-snug text-on-surface-variant/80">
+              Fail OST Pokémon anda (mp3 / ogg / m4a / wav / flac) disimpan dalam pelayar ini
+              dan kekal selepas refresh.
+            </p>
           </div>
         </div>
       )}

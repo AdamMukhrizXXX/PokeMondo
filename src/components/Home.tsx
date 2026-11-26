@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { usePokedex, type BasicPokemon } from "../lib/pokemon";
+import { artworkUrl, usePokedex, type BasicPokemon } from "../lib/pokemon";
 import BottomNav from "../components/BottomNav";
 import Hero from "../components/Hero";
 import ScrubGallery from "../components/ScrubGallery";
@@ -39,29 +39,48 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
 
   return (
     <main className="pb-28">
-      <div className="fixed right-4 top-4 z-50 flex gap-2 sm:right-6 sm:top-6">
-        <SoundToggle />
-        <ThemeToggle />
+      <div aria-hidden className="bg-deco pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <img
+          src={artworkUrl(384)}
+          alt=""
+          draggable={false}
+          width={1024}
+          height={1024}
+          className="deco-img -top-[6%] right-[-8%] w-[42vw] max-w-[36rem] rotate-12"
+        />
+        <img
+          src={artworkUrl(6)}
+          alt=""
+          draggable={false}
+          width={1024}
+          height={1024}
+          className="deco-img bottom-[2%] left-[-9%] w-[38vw] max-w-[32rem] -rotate-6"
+        />
+        <img
+          src={artworkUrl(448)}
+          alt=""
+          draggable={false}
+          width={1024}
+          height={1024}
+          className="deco-img deco-float top-[42%] left-[34%] hidden w-[24vw] max-w-[22rem] lg:block"
+        />
       </div>
 
-      <div className="fixed left-4 top-4 z-40 flex items-start gap-2 sm:left-6 sm:top-6">
-        <MusicPlayer expanded={playerOpen} onSetExpanded={setPlayerOpen} />
-        <span
-          className={`overflow-hidden transition-all duration-300 ease-out ${
-            playerOpen
-              ? "pointer-events-none max-w-0 -translate-x-2 opacity-0"
-              : "max-w-16 opacity-100"
-          }`}
-        >
+      <div className="fixed right-4 top-4 z-50 sm:right-6 sm:top-6">
+        <div className="flex items-center gap-2 rounded-full border border-outline-variant bg-surface-low/80 p-1.5 shadow-e2 backdrop-blur-md">
+          <div className="flex gap-2 [&>button]:shadow-none">
+            <SoundToggle />
+            <ThemeToggle />
+          </div>
           <button
             type="button"
             onClick={random}
             aria-label="Buka Pokémon rawak"
-            className="grid size-[3.75rem] place-items-center rounded-full bg-primary text-on-primary shadow-e2 transition-transform active:scale-90"
+            className="grid size-10 place-items-center rounded-full bg-primary text-on-primary shadow-e1 transition-transform active:scale-90"
           >
             <svg
-              width="22"
-              height="22"
+              width="20"
+              height="20"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -75,7 +94,10 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
               <path d="m13 8 4 4-4 4" />
             </svg>
           </button>
-        </span>
+        </div>
+        <div className="mt-2 flex justify-end">
+          <MusicPlayer expanded={playerOpen} onSetExpanded={setPlayerOpen} />
+        </div>
       </div>
 
       <Hero

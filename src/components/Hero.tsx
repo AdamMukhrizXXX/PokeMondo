@@ -71,23 +71,6 @@ export default function Hero({
       id="rumah"
       className="relative flex min-h-svh flex-col justify-center overflow-hidden px-5 pt-14 sm:px-8 lg:px-16"
     >
-      <div
-        aria-hidden
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(38rem 30rem at 12% 12%, var(--md-primary-container), transparent 68%), radial-gradient(30rem 26rem at 88% 42%, var(--md-tertiary-container), transparent 64%), radial-gradient(34rem 28rem at 42% 96%, var(--md-secondary-container), transparent 62%)",
-        }}
-      />
-      <div
-        aria-hidden
-        className="absolute -left-16 top-24 size-56 rounded-full bg-primary-container/40 blur-2xl motion-safe:animate-[drift_48s_linear_infinite]"
-      />
-      <div
-        aria-hidden
-        className="absolute bottom-16 right-[18%] size-48 rounded-full bg-tertiary-container/50 blur-2xl motion-safe:animate-[drift_56s_linear_infinite_reverse]"
-      />
-
       <img
         src={artworkUrl(25)}
         alt="Pikachu"
@@ -98,7 +81,7 @@ export default function Hero({
 
       <div className="relative z-20 mx-auto w-full max-w-6xl">
         <p
-          className="shiny-text anim-rise mb-5 inline-flex items-center gap-2 rounded-full border border-outline-variant bg-surface-low px-4 py-1.5 font-display text-xs font-semibold uppercase tracking-widest"
+          className="shiny-text anim-rise mb-5 inline-flex items-center gap-2 rounded-full border border-outline-variant bg-surface-low/80 px-4 py-1.5 font-display text-xs font-semibold uppercase tracking-widest backdrop-blur-md"
           style={{ animationDelay: "0s" }}
         >
           Data langsung dari PokéAPI
@@ -128,7 +111,7 @@ export default function Hero({
           className="anim-rise mt-9 flex flex-col gap-3 sm:flex-row sm:items-center"
           style={{ animationDelay: "1s" }}
         >
-          <div className="flex h-14 w-full max-w-md items-center gap-3 rounded-full border border-outline-variant bg-surface-container-low px-5 shadow-e1 transition-shadow focus-within:shadow-e2">
+          <div className="flex h-14 w-full max-w-md items-center gap-3 rounded-full border border-outline-variant bg-surface-container-low/70 px-5 shadow-e1 backdrop-blur-md transition-shadow focus-within:shadow-e2">
             <svg
               width="20"
               height="20"

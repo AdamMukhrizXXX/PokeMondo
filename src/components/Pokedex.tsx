@@ -112,7 +112,7 @@ export default function Pokedex({
           </button>
         </div>
 
-        <div className="mt-6 flex items-center gap-3 rounded-full border border-outline-variant bg-surface-container-low px-5 shadow-e1 focus-within:shadow-e2" style={{ height: "3.25rem" }}>
+        <div className="mt-6 flex items-center gap-3 rounded-full border border-outline-variant bg-surface-container-low/70 px-5 shadow-e1 backdrop-blur-md focus-within:shadow-e2" style={{ height: "3.25rem" }}>
           <svg
             width="20"
             height="20"

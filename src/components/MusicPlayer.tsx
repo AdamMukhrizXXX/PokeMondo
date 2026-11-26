@@ -205,12 +205,12 @@ export default function MusicPlayer({
             </div>
             <button
               type="button"
-              aria-label="Kecilkan pemain"
+              aria-label="Tutup pemain muzik"
               onClick={() => onSetExpanded(false)}
-              className="grid size-8 place-items-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-high"
+              className="grid size-8 place-items-center rounded-full bg-surface-container-high text-on-surface-variant transition-colors hover:bg-surface-container-highest"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
-                <path d="M5 12h14" />
+                <path d="M6 6l12 12M18 6 6 18" />
               </svg>
             </button>
           </div>

@@ -38,3 +38,17 @@
 - **TDD-AR1** Kod salahhuruf (cth. `adminserver`, ` ServerFree `) tetap diterima; kod lain ditolak.
 - **TDD-AR2** 40 ID sentiasa unik dan subset pool; "Rawak semula" menghasilkan set berbeza (secara stokastik).
 - **TDD-AR3** `tsc --noEmit`, `next build` (statik) dan smoke SSR lulus.
+
+## Sistem Exit UI Cadangan (Fasa Tambahan)
+
+### URD
+- **URD-EX1** Pengunjung dalam UI Cadangan (mod ringkas) boleh **keluar** dan kembali ke UI penuh dengan satu butang.
+
+### ADD
+- **ADD-EX1** Butang **"Keluar UI Cadangan"** dalam header `SimpleHome` (sebelah pill "Mod ringkas stabil"): panggil `setUiMode("full")` → `localStorage "md-ui-mode"` dikemas kini + CustomEvent `md-ui-mode` disiar → UI penuh dipapar serta-merta tanpa muat semula.
+- **ADD-EX2** SFX `toggle-off` dimainkan melalui delegasi global (`data-sfx`).
+- **ADD-EX3** Laluan masuk mod ringkas tidak berubah: ikon amaran → panel → "Guna UI Cadangan", atau butang "Guna UI Cadangan" pada kad ralat Error Boundary.
+
+### TDD
+- **TDD-EX1** Butang hanya wujud dalam UI Cadangan; UI penuh kekal menggunakan ikon amaran untuk menukar mod.
+- **TDD-EX2** Pilihan diingati: selepas keluar, muat semula seterusnya kekal ke UI penuh.

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { simplify, pixelUrl, paddedId, type BasicPokemon, type PokemonType, TYPE_COLORS, POKEMON_TYPES, capital } from "../lib/pokemon";
 import DetailModal from "./DetailModal";
+import { setUiMode } from "../lib/ui-mode";
 
 const PAGE = 60;
 
@@ -48,15 +49,26 @@ export default function SimpleHome({
           <h1 className="font-display text-2xl font-extrabold text-on-surface">
             PokéMondo — UI Cadangan
           </h1>
-          <span
-            className="rounded-full px-3 py-1 font-display text-xs font-bold"
-            style={{
-              background: "color-mix(in srgb, var(--md-tertiary-container) 70%, transparent)",
-              color: "var(--md-on-surface-variant)",
-            }}
-          >
-            Mod ringkas stabil
-          </span>
+          <div className="flex items-center gap-2">
+            <span
+              className="rounded-full px-3 py-1 font-display text-xs font-bold"
+              style={{
+                background: "color-mix(in srgb, var(--md-tertiary-container) 70%, transparent)",
+                color: "var(--md-on-surface-variant)",
+              }}
+            >
+              Mod ringkas stabil
+            </span>
+            <button
+              type="button"
+              onClick={() => setUiMode("full")}
+              data-sfx="toggle-off"
+              className="h-8 rounded-full px-4 font-display text-xs font-bold shadow-e1 transition-transform active:scale-95"
+              style={{ background: "var(--md-primary)", color: "var(--md-on-primary)" }}
+            >
+              Keluar UI Cadangan
+            </button>
+          </div>
         </div>
         <p className="mt-1 text-sm text-on-surface-variant">
           Versi ringkas tanpa animasi — dipakai apabila UI utama bermasalah. Semua 1,025 Pokémon

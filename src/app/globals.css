@@ -206,6 +206,52 @@ body {
   pointer-events: none;
 }
 
+
+@keyframes card-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-rise {
+  animation: card-rise 0.55s var(--ease-emphasized) both;
+}
+
+@media (pointer: fine) {
+  [data-spot] {
+    position: relative;
+  }
+
+  [data-spot]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    background: radial-gradient(
+      11rem circle at var(--spot-x, 50%) var(--spot-y, 50%),
+      color-mix(in srgb, #ffffff 18%, transparent),
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+
+  [data-spot]:hover::before {
+    opacity: 1;
+  }
+}
+
+.magnet {
+  transition: transform 0.3s var(--ease-emphasized);
+  will-change: transform;
+}
+
 .vertical-text {
   writing-mode: vertical-rl;
   text-orientation: mixed;

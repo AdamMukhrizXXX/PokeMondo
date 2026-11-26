@@ -27,8 +27,9 @@ function PokeCardInner({
   return (
     <button
       type="button"
+      data-spot
       onClick={() => onOpen(p)}
-      className="card-press anim-rise group relative flex flex-col overflow-hidden rounded-3xl border border-outline-variant text-left shadow-e1 hover:-translate-y-1 hover:shadow-e3"
+      className="card-press card-rise group relative flex flex-col overflow-hidden rounded-3xl border border-outline-variant text-left shadow-e1 hover:-translate-y-1 hover:shadow-e3"
       style={{
         background: tint,
         animationDelay: `${(index % 10) * 0.05}s`,
@@ -56,6 +57,7 @@ function PokeCardInner({
         src={artworkUrl(p.id)}
         alt={capital(p.name)}
         loading="lazy"
+        decoding="async"
         width="200"
         height="200"
         onError={(e) => {

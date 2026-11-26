@@ -19,7 +19,8 @@ export default function ScrubGallery() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [active, setActive] = useState(0);
-  const [shift, setShift] = useState(0);
+  const barRef = useRef<HTMLDivElement | null>(null);
+  const activeRef = useRef(0);
 
   useEffect(() => {
     let raf = 0;
@@ -28,11 +29,19 @@ export default function ScrubGallery() {
       const track = trackRef.current;
       if (!section || !track) return;
       const rect = section.getBoundingClientRect();
+      if (rect.bottom < -300 || rect.top > window.innerHeight + 300) return;
       const span = rect.height - window.innerHeight;
       const p = span > 0 ? Math.min(1, Math.max(0, -rect.top / span)) : 0;
-      const overflow = track.scrollWidth - window.innerWidth;
-      setShift(p * Math.max(0, overflow));
-      setActive(Math.min(GENS.length - 1, Math.floor(p * GENS.length * 0.999)));
+      const overflow = Math.max(0, track.scrollWidth - window.innerWidth);
+      track.style.transform = 'translate3d(' + (-p * overflow).toFixed(1) + 'px, 0, 0)';
+      const idx = Math.min(GENS.length - 1, Math.floor(p * GENS.length * 0.999));
+      if (idx !== activeRef.current) {
+        activeRef.current = idx;
+        setActive(idx);
+      }
+      if (barRef.current) {
+        barRef.current.style.width = (((idx + 1) / GENS.length) * 100).toFixed(1) + '%';
+      }
     };
     const onScroll = () => {
       cancelAnimationFrame(raf);
@@ -58,7 +67,7 @@ export default function ScrubGallery() {
         <div
           ref={trackRef}
           className="flex w-max items-center gap-6 px-[8vw] will-change-transform"
-          style={{ transform: `translate3d(${-shift}px, 0, 0)` }}
+          style={{ transform: "translate3d(0, 0, 0)" }}
         >
           {GENS.map((gen, i) => {
             const isActive = i === active;
@@ -142,12 +151,7 @@ export default function ScrubGallery() {
             Gen {current.numeral}
           </span>
           <div className="h-1 flex-1 overflow-hidden rounded-full bg-outline-variant">
-            <div
-              className="h-full rounded-full bg-primary transition-[width] duration-150"
-              style={{
-                width: `${((active + 1) / GENS.length) * 100}%`,
-              }}
-            />
+            <div ref={barRef} className="h-full rounded-full bg-primary" style={{ width: `${(1 / GENS.length) * 100}%` }} />
           </div>
           <span className="font-display text-xs font-bold text-on-surface-variant">
             {active + 1}/{GENS.length}

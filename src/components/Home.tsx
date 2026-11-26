@@ -1,16 +1,17 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { usePokedex } from "../lib/pokemon";
+import { usePokedex, type BasicPokemon } from "../lib/pokemon";
 import BottomNav from "../components/BottomNav";
 import Hero from "../components/Hero";
 import ScrubGallery from "../components/ScrubGallery";
 import Pokedex from "../components/Pokedex";
 import DetailModal from "../components/DetailModal";
 import ThemeToggle from "../components/ThemeToggle";
+import { FadeIn } from "./Reveal";
 
-export default function Home() {
-  const { list, loading, degraded } = usePokedex();
+export default function Home({ initialList = [] }: { initialList?: BasicPokemon[] }) {
+  const { list, loading, degraded } = usePokedex(initialList);
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
@@ -100,14 +101,14 @@ function InfoSection() {
   return (
     <section id="info" className="px-5 pb-8 pt-4 sm:px-8 lg:px-16">
       <div className="mx-auto max-w-7xl">
-        <div className="overflow-hidden rounded-[2rem] border border-outline-variant bg-surface-container-low">
+        <div className="overflow-hidden rounded-[2rem] border border-outline-variant bg-surface-container-low" style={{ contentVisibility: "auto", containIntrinsicSize: "640px" }}>
           <div className="grid gap-8 p-8 sm:p-10 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <p className="font-display text-sm font-bold uppercase tracking-[0.25em] text-primary">
-                Tentang
+                <FadeIn><span>Tentang</span></FadeIn>
               </p>
               <h2 className="mt-1 font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
-                Dibina dengan data terbuka
+                <RevealTentang />
               </h2>
               <p className="mt-4 max-w-xl leading-relaxed text-on-surface-variant">
                 PokeMondo adalah Pokédex web yang memuatkan semua 1025 spesies
@@ -200,5 +201,13 @@ function InfoSection() {
         </div>
       </div>
     </section>
+  );
+}
+
+function RevealTentang() {
+  return (
+    <FadeIn>
+      <span className="inline-block">Dibina dengan data terbuka</span>
+    </FadeIn>
   );
 }

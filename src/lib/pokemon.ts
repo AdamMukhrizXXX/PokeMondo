@@ -140,11 +140,13 @@ async function fetchBulkRest(signal: AbortSignal): Promise<BasicPokemon[]> {
   }));
 }
 
-export function usePokedex() {
-  const [list, setList] = useState<BasicPokemon[]>([]);
-  const [loading, setLoading] = useState(true);
+export function usePokedex(initial: BasicPokemon[] = []) {
+  const prefetched = initial.length > 0;
+  const [list, setList] = useState<BasicPokemon[]>(initial);
+  const [loading, setLoading] = useState(!prefetched);
   const [degraded, setDegraded] = useState(false);
   useEffect(() => {
+    if (prefetched) return;
     const controller = new AbortController();
     (async () => {
       try {
@@ -250,28 +252,6 @@ export function useInView<T extends HTMLElement>(rootMargin = "600px") {
   return { ref, inView };
 }
 
-export function useScrollProgress() {
-  const [progress, setProgress] = useState(0);
-  useEffect(() => {
-    let raf = 0;
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const max = document.documentElement.scrollHeight - window.innerHeight;
-        setProgress(max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0);
-      });
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, []);
-  return progress;
-}
 
 export function useScrollSpy(ids: string[]) {
   const [active, setActive] = useState(ids[0] ?? "");

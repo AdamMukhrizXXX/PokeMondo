@@ -1,6 +1,7 @@
 "use client";
 
-import { useScrollProgress, useScrollSpy } from "../lib/pokemon";
+import { useEffect, useRef } from "react";
+import { useScrollSpy } from "../lib/pokemon";
 import { useRipple } from "../components/Ripple";
 
 const NAV_ITEMS = [
@@ -12,8 +13,30 @@ const NAV_ITEMS = [
 
 export default function BottomNav() {
   const active = useScrollSpy(NAV_ITEMS.map((n) => n.id));
-  const progress = useScrollProgress();
+  const barRef = useRef<HTMLDivElement | null>(null);
   const ripple = useRipple();
+
+  useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (barRef.current) {
+        barRef.current.style.transform = `scaleX(${max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0})`;
+      }
+    };
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
 
   const go = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -23,8 +46,9 @@ export default function BottomNav() {
     <>
       <div
         aria-hidden
-        className="fixed inset-x-0 top-0 z-50 h-1 origin-left bg-primary transition-transform duration-100"
-        style={{ transform: `scaleX(${progress})` }}
+        ref={barRef}
+        className="fixed inset-x-0 top-0 z-50 h-1 origin-left bg-primary will-change-transform"
+        style={{ transform: "scaleX(0)" }}
       />
       <nav
         aria-label="Navigasi utama"

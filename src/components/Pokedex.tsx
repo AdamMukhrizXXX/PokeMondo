@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { RevealWords } from "./Reveal";
 import {
   GEN_RANGES,
   POKEMON_TYPES,
@@ -32,7 +33,13 @@ export default function Pokedex({
   const [type, setType] = useState<PokemonType | "all">("all");
   const [gen, setGen] = useState<GenFilter>("all");
   const [desc, setDesc] = useState(false);
+  const [window_, setWindow] = useState(120);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
   const ripple = useRipple();
+
+  useEffect(() => {
+    setWindow(120);
+  }, [query, type, gen, desc]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase().replace(/^#/, "");
@@ -50,7 +57,22 @@ export default function Pokedex({
     return rows;
   }, [list, query, type, gen, desc]);
 
-  const genLabels = GEN_RANGES.map((g) => g[2]);
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || window_ >= filtered.length) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setWindow((w) => Math.min(filtered.length, w + 120));
+        }
+      },
+      { rootMargin: "1400px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [filtered.length, window_, loading]);
+
+    const genLabels = GEN_RANGES.map((g) => g[2]);
 
   return (
     <section id="dex" className="relative px-5 pb-28 pt-10 sm:px-8 lg:px-16">
@@ -58,10 +80,10 @@ export default function Pokedex({
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="font-display text-sm font-bold uppercase tracking-[0.25em] text-primary">
-              Koleksi penuh
+              <RevealWords text="Koleksi penuh" />
             </p>
             <h2 className="mt-1 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
-              Pokédex Lengkap
+              <RevealWords text="Pokédex Lengkap" />
             </h2>
           </div>
           <button
@@ -169,11 +191,18 @@ export default function Pokedex({
             ))}
           </div>
         ) : (
-          <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {filtered.map((p, i) => (
-              <PokeCard key={p.id} p={p} index={i} onOpen={onOpen} />
-            ))}
-          </div>
+          <>
+            <div
+              className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+              style={{ contain: "layout style" }}
+              onMouseMove={spotlight}
+            >
+              {filtered.slice(0, window_).map((p, i) => (
+                <PokeCard key={p.id} p={p} index={i} onOpen={onOpen} />
+              ))}
+            </div>
+            {window_ < filtered.length && <div ref={sentinelRef} aria-hidden className="h-2" />}
+          </>
         )}
 
         {!loading && filtered.length === 0 && (
@@ -185,6 +214,14 @@ export default function Pokedex({
       </div>
     </section>
   );
+}
+
+function spotlight(e: React.MouseEvent<HTMLDivElement>) {
+  const card = (e.target as HTMLElement).closest<HTMLElement>("[data-spot]");
+  if (!card) return;
+  const r = card.getBoundingClientRect();
+  card.style.setProperty("--spot-x", `${e.clientX - r.left}px`);
+  card.style.setProperty("--spot-y", `${e.clientY - r.top}px`);
 }
 
 function Chip({

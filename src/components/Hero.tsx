@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { artworkUrl, pixelUrl, useCountUp } from "../lib/pokemon";
 import { useRipple } from "../components/Ripple";
+import { useMagnet } from "../lib/motion";
 
 function BlurWords({ text, delay = 0 }: { text: string; delay?: number }) {
   return (
@@ -25,7 +26,7 @@ function MarqueeRow() {
   const ids = [1, 4, 7, 25, 133, 143, 150, 94, 131, 6, 9, 3, 149, 39, 68, 65, 130, 59];
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-6 overflow-hidden opacity-25 md:opacity-35">
-      <div className="flex w-max animate-[marquee_38s_linear_infinite] items-end gap-10">
+      <div className="flex w-max animate-[marquee_38s_linear_infinite] items-end gap-10 will-change-transform">
         {[...ids, ...ids].map((id, i) => (
           <img
             key={`${id}-${i}`}
@@ -57,7 +58,8 @@ export default function Hero({
 }) {
   const ripple = useRipple();
   const [visible, setVisible] = useState(false);
-  const heroRef = useRef<HTMLElement | null>(null);
+  const ctaRef = useMagnet<HTMLDivElement>(0.18);
+  const randomRef = useMagnet<HTMLDivElement>(0.12);
 
   useEffect(() => {
     setVisible(true);
@@ -70,14 +72,24 @@ export default function Hero({
   return (
     <section
       id="rumah"
-      ref={heroRef}
       className="relative flex min-h-svh flex-col justify-center overflow-hidden px-5 pt-14 sm:px-8 lg:px-16"
     >
-      <div aria-hidden className="absolute inset-0">
-        <div className="absolute -left-32 -top-24 size-[34rem] rounded-full bg-primary-container opacity-60 blur-3xl motion-safe:animate-[drift_26s_linear_infinite]" />
-        <div className="absolute -right-24 top-1/3 size-[28rem] rounded-full bg-tertiary-container opacity-50 blur-3xl motion-safe:animate-[drift_34s_linear_infinite_reverse]" />
-        <div className="absolute bottom-10 left-1/3 size-[22rem] rounded-full bg-secondary-container opacity-70 blur-3xl motion-safe:animate-[drift_40s_linear_infinite]" />
-      </div>
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(38rem 30rem at 12% 12%, var(--md-primary-container), transparent 68%), radial-gradient(30rem 26rem at 88% 42%, var(--md-tertiary-container), transparent 64%), radial-gradient(34rem 28rem at 42% 96%, var(--md-secondary-container), transparent 62%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="absolute -left-16 top-24 size-56 rounded-full bg-primary-container/40 blur-2xl motion-safe:animate-[drift_48s_linear_infinite]"
+      />
+      <div
+        aria-hidden
+        className="absolute bottom-16 right-[18%] size-48 rounded-full bg-tertiary-container/50 blur-2xl motion-safe:animate-[drift_56s_linear_infinite_reverse]"
+      />
 
       <img
         src={artworkUrl(25)}
@@ -143,13 +155,14 @@ export default function Hero({
               className="h-full w-full bg-transparent text-base text-on-surface outline-none placeholder:text-on-surface-variant/70"
             />
           </div>
+          <div ref={ctaRef} className="magnet shrink-0">
           <button
             type="button"
             onClick={(e) => {
               ripple(e);
               onExplore();
             }}
-            className="flex h-14 shrink-0 items-center justify-center gap-2 overflow-hidden rounded-full bg-primary px-7 font-display text-base font-bold text-on-primary shadow-e1 transition-transform active:scale-95"
+            className="flex h-14 items-center justify-center gap-2 overflow-hidden rounded-full bg-primary px-7 font-display text-base font-bold text-on-primary shadow-e1 transition-transform active:scale-95"
           >
             Terokai Pokédex
             <svg
@@ -166,6 +179,7 @@ export default function Hero({
               <path d="M12 19V5m-6 6 6 6 6-6" />
             </svg>
           </button>
+          </div>
         </div>
 
         <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 pb-20 text-on-surface-variant">
@@ -186,14 +200,15 @@ export default function Hero({
               <p className="text-sm font-medium">{label as string}</p>
             </div>
           ))}
+          <div ref={randomRef} className="magnet ml-auto">
+          <div className="anim-rise" style={{ animationDelay: "1.5s" }}>
           <button
             type="button"
             onClick={(e) => {
               ripple(e);
               onRandom();
             }}
-            className="anim-rise ml-auto flex items-center gap-2 rounded-full border border-outline-variant px-5 py-3 font-display text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container"
-            style={{ animationDelay: "1.5s" }}
+            className="flex items-center gap-2 rounded-full border border-outline-variant px-5 py-3 font-display text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container"
           >
             <svg
               width="18"
@@ -212,6 +227,8 @@ export default function Hero({
             </svg>
             Pokémon rawak
           </button>
+          </div>
+          </div>
         </div>
       </div>
 

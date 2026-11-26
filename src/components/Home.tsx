@@ -18,6 +18,8 @@ import AiAssist from "./AiAssist";
 import ErrorBoundary from "./ErrorBoundary";
 import SimpleHome from "./SimpleHome";
 import { useUiMode } from "../lib/ui-mode";
+import { useServerStatus } from "../lib/pokedex-server";
+import PokedexClosed from "./PokedexClosed";
 import { initUiSfx } from "../lib/sound";
 
 export default function Home({ initialList = [] }: { initialList?: BasicPokemon[] }) {
@@ -28,6 +30,7 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
 
   useEffect(() => initUiSfx(), []);
   const uiMode = useUiMode();
+  const server = useServerStatus();
 
   const byId = useCallback(
     (id: number) => list.find((p) => p.id === id) ?? { id, name: "", types: null },
@@ -49,7 +52,7 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
   const selected = selectedId !== null ? byId(selectedId) : null;
 
   if (uiMode === "simple") {
-    return <SimpleHome list={list} loading={loading} degraded={degraded} />;
+    return <SimpleHome list={list} loading={loading} degraded={degraded} serverClosed={server.closed} />;
   }
 
   return (
@@ -142,14 +145,18 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
       </ErrorBoundary>
 
       <ErrorBoundary label="Pokédex">
-        <Pokedex
-          list={list}
-          loading={loading}
-          degraded={degraded}
-          query={query}
-          onQueryChange={setQuery}
-          onOpen={(p) => openDetail(p.id)}
-        />
+        {server.closed ? (
+          <PokedexClosed until={server.until} />
+        ) : (
+          <Pokedex
+            list={list}
+            loading={loading}
+            degraded={degraded}
+            query={query}
+            onQueryChange={setQuery}
+            onOpen={(p) => openDetail(p.id)}
+          />
+        )}
       </ErrorBoundary>
 
       <ErrorBoundary label="Info">

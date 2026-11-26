@@ -12,6 +12,8 @@ import {
   type PokemonType,
 } from "../lib/pokemon";
 import { useRipple } from "../components/Ripple";
+import { CryBars } from "./SoundToggle";
+import { isSoundEnabled, playCry, stopCry, useCryState } from "../lib/sound";
 
 const STAT_ROWS: Array<{ key: keyof PokemonDetail["stats"]; label: string; max: number }> = [
   { key: "hp", label: "HP", max: 255 },
@@ -37,6 +39,7 @@ export default function DetailModal({
 }) {
   const [detail, setDetail] = useState<PokemonDetail | null>(null);
   const [error, setError] = useState(false);
+  const { playingId } = useCryState();
   const ripple = useRipple();
   const accent = detail?.types?.[0]
     ? TYPE_COLORS[detail.types[0] as PokemonType]
@@ -44,6 +47,17 @@ export default function DetailModal({
   const total = detail
     ? Object.values(detail.stats).reduce((a, b) => a + b, 0)
     : 0;
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (isSoundEnabled()) void playCry(pokemon.id, 0.4);
+    }, 420);
+    return () => clearTimeout(t);
+  }, [pokemon.id]);
+
+  useEffect(() => {
+    return () => stopCry();
+  }, []);
 
   useEffect(() => {
     setDetail(null);
@@ -116,7 +130,7 @@ export default function DetailModal({
           <h2 className="mt-2 font-display text-4xl font-extrabold capitalize tracking-tight drop-shadow-sm">
             {pokemon.name.replace(/-/g, " ")}
           </h2>
-          <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap items-center gap-2">
             {(detail?.types ?? pokemon.types ?? []).map((t) => (
               <span
                 key={t}
@@ -126,6 +140,38 @@ export default function DetailModal({
               </span>
             ))}
           </div>
+          <button
+            type="button"
+            onClick={() =>
+              playingId === pokemon.id ? stopCry() : void playCry(pokemon.id, 0.4)
+            }
+            className={`relative mt-4 flex h-10 items-center gap-2.5 overflow-hidden rounded-full px-4 font-display text-sm font-bold transition-all active:scale-95 ${
+              playingId === pokemon.id
+                ? "bg-white text-on-primary-container"
+                : "bg-white/25 text-white backdrop-blur-sm hover:bg-white/40"
+            }`}
+            style={{ color: playingId === pokemon.id ? "var(--md-on-primary-container)" : undefined }}
+          >
+            {playingId === pokemon.id ? (
+              <CryBars active />
+            ) : (
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden
+              >
+                <path d="M11 5.5 6.5 9.5H3v5h3.5L11 18.5v-13Z" />
+                <path d="M15 9a4.4 4.4 0 0 1 0 6" />
+              </svg>
+            )}
+            {playingId === pokemon.id ? "Sedang bersuara" : "Dengar suara"}
+          </button>
           <img
             src={artworkUrl(pokemon.id)}
             alt={pokemon.name}

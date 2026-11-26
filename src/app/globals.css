@@ -158,6 +158,16 @@ body {
   }
 }
 
+@keyframes eq-bar {
+  0%,
+  100% {
+    transform: scaleY(0.4);
+  }
+  50% {
+    transform: scaleY(1.7);
+  }
+}
+
 @keyframes ripple {
   to {
     transform: scale(3.2);

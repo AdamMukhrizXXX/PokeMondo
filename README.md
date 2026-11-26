@@ -9,6 +9,7 @@ Pokédex web penuh — semua 1,025 Pokémon dari sembilan generasi terus dari [P
 - **Scroll Scrub Gallery** — bahagian melekat yang dipacu skrol: tatal untuk menyusuri sembilan generasi secara mendatar dengan penunjuk kemajuan.
 - **Bottom Navigation** — bar navigasi gaya Material 3 dengan scroll-spy dan penunjuk kemajuan skrol di atas skrin, plus butang FAB "Rawak".
 - **Modal Butiran** — statistik penuh, genus, flavor text, kebolehan, dan navigasi sebelum/seterusnya untuk mana-mana Pokémon.
+- **Sistem Suara Pokémon** — suara seruan (cry) untuk semua 1,025 Pokémon dari PokéAPI cries, dimainkan melalui Web Audio API dengan satu AudioContext kongsi, cache AudioBuffer, fade halus, butang main pada setiap kad, penderak animasi dalam modal (autoplay), dan butang mute global yang diingati.
 - **Tema Material You** — sistem token M3 (surface tonal, container, outline), mod cerah/gelap dengan kekal pilihan pengguna, ripple pada butang, sudut besar, dan warna dinamik mengikut jenis Pokémon.
 
 ## Teknologi

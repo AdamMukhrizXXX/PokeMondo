@@ -10,6 +10,8 @@ import {
   type BasicPokemon,
   type PokemonType,
 } from "../lib/pokemon";
+import { CryBars } from "./SoundToggle";
+import { playCry, stopCry, useCryState } from "../lib/sound";
 
 function PokeCardInner({
   p,
@@ -20,6 +22,7 @@ function PokeCardInner({
   index: number;
   onOpen: (p: BasicPokemon) => void;
 }) {
+  const { playingId } = useCryState();
   const primary = p.types?.[0];
   const accent = primary ? TYPE_COLORS[primary as PokemonType] : "#85736d";
   const tint = primary ? `color-mix(in srgb, ${accent} 16%, var(--md-surface-container-low))` : "var(--md-surface-container-low)";
@@ -47,10 +50,42 @@ function PokeCardInner({
           {paddedId(p.id)}
         </span>
         <span
-          aria-hidden
-          className="size-2.5 rounded-full opacity-70 ring-2 ring-inset transition-transform duration-500 group-hover:rotate-180 group-hover:opacity-100"
-          style={{ background: accent, boxShadow: `inset 0 0 0 2px var(--md-surface)` }}
-        />
+          role="button"
+          tabIndex={-1}
+          aria-label={playingId === p.id ? "Hentikan suara" : `Dengar suara ${p.name.replace(/-/g, " ")}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (playingId === p.id) {
+              stopCry();
+            } else {
+              void playCry(p.id, 0.28);
+            }
+          }}
+          className={`relative grid size-8 cursor-pointer place-items-center rounded-full opacity-80 transition-all duration-300 hover:scale-110 group-hover:opacity-100 ${
+            playingId === p.id
+              ? "bg-inverse-surface text-inverse-on-surface ring-2 ring-primary/50 opacity-100"
+              : "bg-surface-container-highest text-on-surface-variant"
+          }`}
+        >
+          {playingId === p.id ? (
+            <CryBars active className="text-inverse-on-surface" />
+          ) : (
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <path d="M11 5.5 6.5 9.5H3v5h3.5L11 18.5v-13Z" />
+              <path d="M15 9a4.4 4.4 0 0 1 0 6" />
+            </svg>
+          )}
+        </span>
       </span>
 
       <img

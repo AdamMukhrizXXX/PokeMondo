@@ -9,6 +9,7 @@ import Pokedex from "../components/Pokedex";
 import DetailModal from "../components/DetailModal";
 import ThemeToggle from "../components/ThemeToggle";
 import { FadeIn } from "./Reveal";
+import SoundToggle from "./SoundToggle";
 
 export default function Home({ initialList = [] }: { initialList?: BasicPokemon[] }) {
   const { list, loading, degraded } = usePokedex(initialList);
@@ -36,7 +37,8 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
 
   return (
     <main className="pb-28">
-      <div className="fixed right-4 top-4 z-50 sm:right-6 sm:top-6">
+      <div className="fixed right-4 top-4 z-50 flex gap-2 sm:right-6 sm:top-6">
+        <SoundToggle />
         <ThemeToggle />
       </div>
 

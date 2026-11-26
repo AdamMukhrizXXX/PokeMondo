@@ -70,3 +70,19 @@
 - **TDD-LM1** Redeem ke-11 dalam hari yang sama (ADMINSERVER) ditolak dengan mesj had harian; redeem pertama esok diizinkan.
 - **TDD-LM2** Redeem ke-6 dalam bulan yang sama (SERVERFREE) ditolak dengan mesj had bulanan; reset pada hari 1 bulan hadapan.
 - **TDD-LM3** Akses SERVERFREE memilih 100 ID unik; ADMINSERVER kekal 40.
+
+## Dialog Redeem v2 (Fasa Tambahan)
+
+### URD
+- **URD-RD1** UI redeem lebih kemas dan estetik; setiap tindakan mesti ada **maklum balas jelas** (kejayaan/ralat/had).
+
+### ADD
+- **ADD-RD1** Butang berinkan ikon kunci "Guna Kod Redeem" dalam kad DITUTUP membuka **dialog M3** (overlay kabur, kad `rounded-[28px]` shadow-e3, `role="dialog" aria-modal`): tutup dengan butang X, **Batal**, klik latar, atau **Escape**; input autofokus, auto-uppercase.
+- **ADD-RD2** Dialog papar dua kad fasiliti tanpa mendedahkan kod ("Akses Piawai" 40 · 10×/hari · 30×/minggu; "Akses Lanjutan" 100 · 5×/sebulan).
+- **ADD-RD3** Semasa menaip kod yang sah, **baki langsung** dipapark (tertiary); ralat papar mesaj khusus dalam warna `--md-error` (`role="alert"`) — kod salah, kod kosong, had harian/mingguan/bulanan; butang Redeem dinyahaktif bila input kosong.
+- **ADD-RD4** Kejayaan: SFX success + kad DITUTUP diganti Banner Akses + Pokédex terhad serta-merta pada posisi skrol yang sama.
+- **ADD-RD5** Panggilan redeem dibalut try/catch — ralat tidak dijangka dipapar sebagai mesj, bukan kegagalan senyap.
+
+### TDD
+- **TDD-RD1** Dialog tidak wujud dalam HTML SSR (hanya selepas klik butang); smoke SSR mengesan butang "Guna Kod Redeem".
+- **TDD-RD2** `tsc --noEmit` dan `next build` (statik) lulus.

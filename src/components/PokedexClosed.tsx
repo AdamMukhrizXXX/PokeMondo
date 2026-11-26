@@ -1,7 +1,7 @@
 "use client";
 
 import { splitCountdown, useCountdown } from "../lib/pokedex-server";
-import { RedeemForm } from "./AdminAccess";
+import { RedeemSection } from "./AdminAccess";
 import type { RedeemResult } from "../lib/admin-access";
 
 function two(n: number) {
@@ -100,7 +100,7 @@ export default function PokedexClosed({
           <p className="mx-auto mt-1 max-w-sm text-xs text-on-surface-variant">
             Akses khas membuka pelayan dalam mod terhad: <strong className="text-on-surface">40 Pokémon rawak sahaja</strong>.
           </p>
-          <RedeemForm onRedeem={onRedeem} />
+          <RedeemSection onRedeem={onRedeem} />
         </div>
       </div>
     </div>

@@ -36,6 +36,7 @@ export default function SoundToggle() {
   return (
     <button
       type="button"
+      data-no-sfx="true"
       onClick={toggle}
       aria-label={enabled ? "Matikan bunyi" : "Hidupkan bunyi"}
       aria-pressed={enabled}

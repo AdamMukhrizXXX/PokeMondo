@@ -142,6 +142,7 @@ export default function DetailModal({
           </div>
           <button
             type="button"
+            data-no-sfx="true"
             onClick={() =>
               playingId === pokemon.id ? stopCry() : void playCry(pokemon.id, 0.4)
             }

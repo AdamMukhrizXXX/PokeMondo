@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { artworkUrl, usePokedex, type BasicPokemon } from "../lib/pokemon";
 import BottomNav from "../components/BottomNav";
 import Hero from "../components/Hero";
@@ -12,12 +12,15 @@ import { FadeIn } from "./Reveal";
 import SoundToggle from "./SoundToggle";
 import MusicPlayer from "./MusicPlayer";
 import WorldClock from "./WorldClock";
+import { initUiSfx } from "../lib/sound";
 
 export default function Home({ initialList = [] }: { initialList?: BasicPokemon[] }) {
   const { list, loading, degraded } = usePokedex(initialList);
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [playerOpen, setPlayerOpen] = useState(false);
+
+  useEffect(() => initUiSfx(), []);
 
   const byId = useCallback(
     (id: number) => list.find((p) => p.id === id) ?? { id, name: "", types: null },

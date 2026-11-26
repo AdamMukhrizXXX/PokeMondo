@@ -131,6 +131,51 @@ export async function playCry(id: number, volume = 0.32) {
   current = { id, src, gain };
 }
 
+export function playUiClick() {
+  if (!isSoundEnabled()) return;
+  const c = ensureCtx();
+  if (!c) return;
+  if (c.state === "suspended") void c.resume();
+  const t = c.currentTime;
+  const osc = c.createOscillator();
+  const gain = c.createGain();
+  osc.type = "triangle";
+  osc.frequency.setValueAtTime(760, t);
+  osc.frequency.exponentialRampToValueAtTime(360, t + 0.07);
+  gain.gain.setValueAtTime(0.0001, t);
+  gain.gain.exponentialRampToValueAtTime(0.06, t + 0.008);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
+  osc.connect(gain);
+  gain.connect(c.destination);
+  osc.start(t);
+  osc.stop(t + 0.1);
+}
+
+export function initUiSfx(): () => void {
+  if (typeof document === "undefined") return () => undefined;
+  const onDown = (e: PointerEvent) => {
+    const el = e.target instanceof Element ? e.target : null;
+    const btn = el?.closest("button");
+    if (!btn || btn.dataset.noSfx !== undefined) return;
+    if ((btn as HTMLButtonElement).disabled || btn.getAttribute("aria-disabled") === "true") return;
+    playUiClick();
+  };
+  const onKey = (e: KeyboardEvent) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const active = document.activeElement;
+    const btn = active instanceof Element ? active.closest("button") : null;
+    if (!btn || btn.dataset.noSfx !== undefined) return;
+    if ((btn as HTMLButtonElement).disabled) return;
+    playUiClick();
+  };
+  document.addEventListener("pointerdown", onDown, true);
+  document.addEventListener("keydown", onKey, true);
+  return () => {
+    document.removeEventListener("pointerdown", onDown, true);
+    document.removeEventListener("keydown", onKey, true);
+  };
+}
+
 export function useCryState() {
   const [playingId, setPlayingId] = useState<number | null>(null);
   const [enabled, setEnabled] = useState(true);

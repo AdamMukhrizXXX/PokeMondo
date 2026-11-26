@@ -11,6 +11,7 @@ import ThemeToggle from "../components/ThemeToggle";
 import { FadeIn } from "./Reveal";
 import SoundToggle from "./SoundToggle";
 import MusicPlayer from "./MusicPlayer";
+import WorldClock from "./WorldClock";
 
 export default function Home({ initialList = [] }: { initialList?: BasicPokemon[] }) {
   const { list, loading, degraded } = usePokedex(initialList);
@@ -229,6 +230,9 @@ function InfoSection() {
                 </a>
               ))}
             </div>
+          </div>
+          <div className="border-t border-outline-variant p-8 sm:p-10">
+            <WorldClock />
           </div>
           <p className="border-t border-outline-variant px-8 py-5 text-xs text-on-surface-variant">
             Pokémon dan nama watak adalah tanda dagangan Nintendo / Game Freak /

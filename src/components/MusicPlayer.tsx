@@ -80,6 +80,7 @@ export default function MusicPlayer({
   const timeRef = useRef<HTMLSpanElement | null>(null);
   const durRef = useRef<HTMLSpanElement | null>(null);
   const seekRef = useRef<HTMLDivElement | null>(null);
+  const miniRef = useRef<HTMLSpanElement | null>(null);
   const ripple = useRipple();
 
   useEffect(() => {
@@ -111,6 +112,11 @@ export default function MusicPlayer({
         }
         if (timeRef.current) timeRef.current.textContent = fmt(el.currentTime);
         if (durRef.current && el.duration) durRef.current.textContent = fmt(el.duration);
+        if (miniRef.current) {
+          const left = el.duration ? Math.max(0, el.duration - el.currentTime) : 0;
+          miniRef.current.textContent = el.duration ? fmt(left) : "--:--";
+          miniRef.current.style.color = left <= 10 && el.duration ? "var(--md-error)" : "";
+        }
       }
       raf = requestAnimationFrame(tick);
     };
@@ -226,7 +232,7 @@ export default function MusicPlayer({
             if (!playing) void resumeBgm();
             onSetExpanded(true);
           }}
-          className="flex items-center justify-center"
+          className="flex flex-col items-center justify-center gap-0.5"
           style={{ width: SIZE, height: SIZE }}
         >
           <span className="relative grid place-items-center">
@@ -258,6 +264,15 @@ export default function MusicPlayer({
               </span>
             )}
           </span>
+          {playing && (
+            <span
+              ref={miniRef}
+              aria-label="Masa tersisa lagu ini"
+              className="font-mono text-[9px] font-bold leading-none tabular-nums text-on-surface-variant"
+            >
+              --:--
+            </span>
+          )}
         </button>
       ) : (
         <div className="p-4">

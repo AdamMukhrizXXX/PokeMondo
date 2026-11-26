@@ -1,241 +1,168 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { artworkUrl, pixelUrl } from "../lib/pokemon";
+import { useEffect, useRef } from "react";
+import { artworkUrl, paddedId } from "../lib/pokemon";
+import { RevealWords } from "./Reveal";
 
 const GENS = [
-  { numeral: "I", region: "Kanto", range: [1, 151], idols: [1, 4, 7, 25, 143, 131] },
-  { numeral: "II", region: "Johto", range: [152, 251], idols: [152, 155, 158, 196, 248, 249] },
-  { numeral: "III", region: "Hoenn", range: [252, 386], idols: [252, 255, 258, 282, 359, 380] },
-  { numeral: "IV", region: "Sinnoh", range: [387, 493], idols: [387, 390, 393, 448, 445, 487] },
-  { numeral: "V", region: "Unova", range: [494, 649], idols: [495, 498, 501, 530, 612, 637] },
-  { numeral: "VI", region: "Kalos", range: [650, 721], idols: [650, 653, 656, 681, 700, 716] },
-  { numeral: "VII", region: "Alola", range: [722, 809], idols: [722, 725, 728, 778, 791, 800] },
-  { numeral: "VIII", region: "Galar", range: [810, 905], idols: [810, 813, 816, 887, 888, 889] },
-  { numeral: "IX", region: "Paldea", range: [906, 1025], idols: [906, 909, 912, 1000, 1007, 1017] },
+  { numeral: "I", region: "Kanto", range: [1, 151], idol: 1 },
+  { numeral: "II", region: "Johto", range: [152, 251], idol: 152 },
+  { numeral: "III", region: "Hoenn", range: [252, 386], idol: 252 },
+  { numeral: "IV", region: "Sinnoh", range: [387, 493], idol: 387 },
+  { numeral: "V", region: "Unova", range: [494, 649], idol: 495 },
+  { numeral: "VI", region: "Kalos", range: [650, 721], idol: 650 },
+  { numeral: "VII", region: "Alola", range: [722, 809], idol: 722 },
+  { numeral: "VIII", region: "Galar", range: [810, 905], idol: 810 },
+  { numeral: "IX", region: "Paldea", range: [906, 1025], idol: 906 },
 ];
 
-export default function ScrubGallery() {
-  const sectionRef = useRef<HTMLElement | null>(null);
+const ROW_A = ["Semua Pokémon", "Satu Pokédex", "1025 Spesies", "9 Generasi"];
+const ROW_B = ["Kanto", "Johto", "Hoenn", "Sinnoh", "Unova", "Kalos", "Alola", "Galar", "Paldea"];
+
+function Half({ items }: { items: string[] }) {
+  return (
+    <div className="flex items-center">
+      {[0, 1, 2, 3].map((rep) =>
+        items.map((t, i) => (
+          <span key={`${rep}-${i}`} className="flex items-center">
+            <span className={i % 2 ? "stroke-text" : ""}>{t}</span>
+            <span aria-hidden className="mx-6 size-2.5 shrink-0 rounded-full bg-primary/70 sm:mx-8" />
+          </span>
+        )),
+      )}
+    </div>
+  );
+}
+
+function VelocityRow({ items, reverse = false }: { items: string[]; reverse?: boolean }) {
+  const wrapRef = useRef<HTMLDivElement | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
-  const barRef = useRef<HTMLDivElement | null>(null);
-  const activeRef = useRef(0);
-  const [active, setActive] = useState(0);
 
   useEffect(() => {
-    const section = sectionRef.current;
+    const wrap = wrapRef.current;
     const track = trackRef.current;
-    if (!section || !track) return;
+    if (!wrap || !track) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const LERP = reduced ? 1 : 0.13;
-    let panels: HTMLElement[] = [];
+    let x = 0;
+    let lastY = window.scrollY;
     let raf = 0;
     let running = false;
-    let current = 0;
-    let prevTarget = 0;
 
     const frame = () => {
-      const rect = section.getBoundingClientRect();
-      if (rect.bottom < -400 || rect.top > window.innerHeight + 400) {
-        running = false;
-        return;
+      if (!running) return;
+      const y = window.scrollY;
+      const vel = y - lastY;
+      lastY = y;
+      const half = track.scrollWidth / 2;
+      if (half > 0) {
+        const speed = 0.45 + Math.min(Math.abs(vel) * 0.14, 6.5);
+        x += (reverse ? -1 : 1) * speed;
+        const t = -(((x % half) + half) % half);
+        track.style.transform = `translate3d(${t.toFixed(1)}px, 0, 0)`;
       }
-
-      const span = rect.height - window.innerHeight;
-      const target = span > 0 ? Math.min(1, Math.max(0, -rect.top / span)) : 0;
-      const vel = target - prevTarget;
-      prevTarget = target;
-
-      current += (target - current) * LERP;
-      if (Math.abs(target - current) < 0.0004) current = target;
-
-      const overflow = Math.max(0, track.scrollWidth - window.innerWidth);
-      const skew = reduced ? 0 : Math.max(-3.2, Math.min(3.2, vel * -260));
-      track.style.transform = `translate3d(${(-current * overflow).toFixed(1)}px, 0, 0) skewX(${skew.toFixed(2)}deg)`;
-
-      const vw = window.innerWidth;
-      const reads = panels.map((el) => el.getBoundingClientRect());
-      reads.forEach((r, i) => {
-        const el = panels[i];
-        const centre = r.left + r.width / 2;
-        const d = Math.min(1, Math.abs(centre - vw / 2) / (vw / 2 + r.width / 2));
-        el.style.transform = `scale(${(1 - d * 0.06).toFixed(3)})`;
-        el.style.opacity = (1 - d * 0.5).toFixed(3);
-      });
-
-      const idx = Math.min(
-        GENS.length - 1,
-        Math.floor((Math.max(current, target) * GENS.length) * 0.999),
-      );
-      if (idx !== activeRef.current) {
-        activeRef.current = idx;
-        setActive(idx);
-      }
-      if (barRef.current) {
-        barRef.current.style.width = `${(current * 100).toFixed(2)}%`;
-      }
-
       raf = requestAnimationFrame(frame);
     };
 
-    const start = () => {
-      if (!running) {
-        running = true;
-        raf = requestAnimationFrame(frame);
-      }
-    };
-
-    const measure = () => {
-      panels = Array.from(track.querySelectorAll<HTMLElement>("[data-panel]"));
-    };
-    measure();
-
     const io = new IntersectionObserver(
       (entries) => {
-        if (entries.some((e) => e.isIntersecting)) start();
+        const near = entries.some((e) => e.isIntersecting);
+        if (near && !running) {
+          running = true;
+          lastY = window.scrollY;
+          raf = requestAnimationFrame(frame);
+        } else if (!near && running) {
+          running = false;
+          cancelAnimationFrame(raf);
+        }
       },
-      { rootMargin: "400px" },
+      { rootMargin: "300px 0px" },
     );
-    io.observe(section);
-
-    const onResize = () => {
-      panels = Array.from(track.querySelectorAll<HTMLElement>("[data-panel]"));
-      start();
-    };
-    window.addEventListener("resize", onResize);
-
+    io.observe(wrap);
     return () => {
+      running = false;
       cancelAnimationFrame(raf);
       io.disconnect();
-      window.removeEventListener("resize", onResize);
     };
-  }, []);
-
-  const current = GENS[active];
-  const [lo, hi] = current.range;
-  const count = hi - lo + 1;
+  }, [reverse]);
 
   return (
-    <section id="galeri" ref={sectionRef} className="relative h-[340vh]">
-      <div className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-y-0 left-0 z-10 w-[6vw]"
-          style={{ background: "linear-gradient(90deg, var(--md-surface), transparent)" }}
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-[6vw]"
-          style={{ background: "linear-gradient(270deg, var(--md-surface), transparent)" }}
-        />
-
-        <div
-          ref={trackRef}
-          className="flex w-max items-center gap-6 px-[8vw] will-change-transform"
-          style={{ transform: "translate3d(0, 0, 0)" }}
-        >
-          {GENS.map((gen, i) => {
-            const isActive = i === active;
-            return (
-              <article
-                key={gen.numeral}
-                data-panel
-                className={`relative shrink-0 overflow-hidden rounded-3xl border border-outline-variant transition-[background-color,border-color,box-shadow] duration-500 ${
-                  isActive
-                    ? "bg-surface-container-high shadow-e3 border-primary/30"
-                    : "bg-surface-container-low"
-                }`}
-              >
-                <div className="flex items-start justify-between gap-6 px-8 pt-7">
-                  <div>
-                    <p
-                      className={`font-display text-sm font-bold uppercase tracking-[0.25em] transition-colors duration-500 ${
-                        isActive ? "text-primary" : "text-outline"
-                      }`}
-                    >
-                      Generasi {gen.numeral}
-                    </p>
-                    <h2 className="font-display text-4xl font-extrabold tracking-tight text-on-surface transition-colors duration-500 sm:text-5xl">
-                      {gen.region}
-                    </h2>
-                    <p className="mt-2 font-display text-sm font-semibold text-on-surface-variant">
-                      #{lo} – #{hi}
-                      <span className="mx-2 text-outline">|</span>
-                      {count} spesies
-                    </p>
-                  </div>
-                  <span
-                    aria-hidden
-                    className={`select-none font-display text-6xl font-black leading-none transition-colors duration-500 sm:text-7xl ${
-                      isActive ? "text-primary/25" : "text-outline-variant"
-                    }`}
-                  >
-                    {gen.numeral}
-                  </span>
-                </div>
-
-                <div className="mt-4 flex items-end gap-3 px-6 pb-6 pt-2">
-                  {gen.idols.map((id, k) => (
-                    <figure
-                      key={id}
-                      className={`group relative overflow-hidden rounded-2xl bg-surface ${
-                        isActive ? "shadow-e2" : "opacity-80"
-                      } ${k % 2 === 1 ? "translate-y-3" : ""} ${k === 0 ? "size-28 sm:size-36" : "size-20 sm:size-28"}`}
-                    >
-                      <img
-                        src={k % 3 === 2 ? pixelUrl(id) : artworkUrl(id)}
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                        width="140"
-                        height="140"
-                        className="size-full object-contain p-1.5 transition-transform duration-700 group-hover:scale-110"
-                      />
-                      <figcaption className="absolute bottom-1 right-1.5 rounded-full bg-inverse-surface/80 px-1.5 py-0.5 text-[10px] font-bold text-inverse-on-surface">
-                        #{id}
-                      </figcaption>
-                    </figure>
-                  ))}
-                </div>
-              </article>
-            );
-          })}
-
-          <article
-            data-panel
-            className="relative flex shrink-0 flex-col items-start justify-center gap-4 rounded-3xl border border-outline-variant bg-primary-container px-10 py-14 sm:px-16"
-          >
-            <h2 className="max-w-sm font-display text-4xl font-extrabold leading-tight text-on-primary-container sm:text-5xl">
-              Tiga generasi lagi menanti di Pokédex penuh.
-            </h2>
-            <button
-              type="button"
-              onClick={() =>
-                document.getElementById("dex")?.scrollIntoView({ behavior: "smooth" })
-              }
-              className="h-12 rounded-full bg-on-primary-container px-6 font-display font-bold text-primary-container transition-transform active:scale-95"
-            >
-              Buka Pokédex
-            </button>
-          </article>
-        </div>
-
-        <div className="pointer-events-none absolute inset-x-8 bottom-8 mx-auto flex max-w-md items-center gap-3">
-          <span
-            key={current.numeral}
-            className="anim-rise shrink-0 font-display text-xs font-bold uppercase tracking-widest text-on-surface-variant"
-          >
-            Gen {current.numeral}
-          </span>
-          <div className="h-1 flex-1 overflow-hidden rounded-full bg-outline-variant">
-            <div ref={barRef} className="h-full rounded-full bg-primary" style={{ width: "0%" }} />
-          </div>
-          <span className="shrink-0 font-display text-xs font-bold text-on-surface-variant">
-            {active + 1}/{GENS.length}
-          </span>
-        </div>
+    <div ref={wrapRef} aria-hidden className="overflow-hidden">
+      <div
+        ref={trackRef}
+        className="flex w-max items-center whitespace-nowrap font-display text-5xl font-extrabold uppercase tracking-tight text-on-surface/85 will-change-transform sm:text-6xl lg:text-7xl"
+      >
+        <Half items={items} />
+        <Half items={items} />
       </div>
+    </div>
+  );
+}
+
+function GenCard({ gen, index }: { gen: (typeof GENS)[number]; index: number }) {
+  return (
+    <div
+      className="card-rise w-[15.5rem] shrink-0 snap-start sm:w-64"
+      style={{ animationDelay: `${index * 0.05}s` }}
+    >
+      <button
+        type="button"
+        onClick={() => document.getElementById("dex")?.scrollIntoView({ behavior: "smooth" })}
+        aria-label={`Terokai generasi ${gen.region} dalam Pokédex`}
+        className="card-press group relative block w-full overflow-hidden rounded-3xl border border-outline-variant bg-surface-low/80 p-5 text-left shadow-e1 backdrop-blur-md transition-all duration-300 hover:-translate-y-1.5 hover:shadow-e3"
+      >
+        <div className="flex items-start justify-between gap-2">
+          <span className="text-gradient font-display text-5xl font-extrabold leading-none">
+            {gen.numeral}
+          </span>
+          <img
+            src={artworkUrl(gen.idol)}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            draggable={false}
+            width={112}
+            height={112}
+            className="size-20 object-contain drop-shadow-md transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110"
+          />
+        </div>
+        <p className="mt-3 font-display text-lg font-bold text-on-surface">{gen.region}</p>
+        <p className="text-xs font-medium text-on-surface-variant">
+          #{paddedId(gen.range[0])} – #{paddedId(gen.range[1])}
+        </p>
+      </button>
+    </div>
+  );
+}
+
+export default function ScrubGallery() {
+  return (
+    <section
+      id="galeri"
+      className="relative overflow-hidden py-20 sm:py-28"
+    >
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-16">
+        <p className="font-display text-sm font-bold uppercase tracking-[0.25em] text-primary">
+          <RevealWords text="Jelajah ikut generasi" />
+        </p>
+        <h2 className="mt-1 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
+          <RevealWords text="Sembilan Generasi" />
+        </h2>
+      </div>
+
+      <div className="mt-12 flex flex-col gap-7">
+        <VelocityRow items={ROW_A} />
+        <VelocityRow items={ROW_B} reverse />
+      </div>
+
+      <div className="no-scrollbar mt-12 flex snap-x snap-mandatory gap-5 overflow-x-auto px-5 pb-3 sm:px-8 lg:px-16">
+        {GENS.map((g, i) => (
+          <GenCard key={g.numeral} gen={g} index={i} />
+        ))}
+      </div>
+      <p className="mt-3 px-5 text-center text-xs font-medium text-on-surface-variant sm:px-8">
+        Leret kad untuk melayari generasi — tekan untuk terus ke Pokédex
+      </p>
     </section>
   );
 }

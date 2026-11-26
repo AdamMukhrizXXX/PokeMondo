@@ -400,6 +400,11 @@ body {
   }
 }
 
+.stroke-text {
+  -webkit-text-stroke: 1.5px var(--md-outline);
+  color: transparent;
+}
+
 .vertical-text {
   writing-mode: vertical-rl;
   text-orientation: mixed;

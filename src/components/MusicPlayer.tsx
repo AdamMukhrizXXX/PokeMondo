@@ -103,6 +103,19 @@ export default function MusicPlayer({
     setBgmVolume(Number(e.target.value) / 100);
   };
 
+  const lastVol = useRef(0.55);
+  const toggleMute = () => {
+    if (volValue > 0) {
+      lastVol.current = volValue / 100;
+      setVolValue(0);
+      setBgmVolume(0);
+    } else {
+      const v = lastVol.current || 0.55;
+      setVolValue(Math.round(v * 100));
+      setBgmVolume(v);
+    }
+  };
+
   const firstGesture = useRef(false);
   useEffect(() => {
     const onFirst = () => {
@@ -280,21 +293,46 @@ export default function MusicPlayer({
               </IconBtn>
             </div>
 
-            <div className="relative grid size-9 place-items-center">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-on-surface-variant" aria-hidden>
-                <path d="M11 5.5 6.5 9.5H3v5h3.5L11 18.5v-13Z" />
-                <path d="M15 9a4.4 4.4 0 0 1 0 6" />
+          </div>
+
+          <div className="mt-2 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleMute}
+              aria-label={volValue === 0 ? "Nyahsenyapkan muzik" : "Senyapkan muzik"}
+              className="grid size-9 shrink-0 place-items-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-high"
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                {volValue === 0 ? (
+                  <>
+                    <path d="M11 5.5 6.5 9.5H3v5h3.5L11 18.5v-13Z" />
+                    <path d="m16 9.5 5 5m0-5-5 5" />
+                  </>
+                ) : (
+                  <>
+                    <path d="M11 5.5 6.5 9.5H3v5h3.5L11 18.5v-13Z" />
+                    <path d="M15 9a4.4 4.4 0 0 1 0 6" />
+                    <path d="M17.8 6.6a8 8 0 0 1 0 10.8" />
+                  </>
+                )}
               </svg>
-              <input
-                type="range"
-                min={0}
-                max={100}
-                value={volValue}
-                onChange={vol}
-                aria-label="Kelantangan muzik"
-                className="absolute left-1/2 top-1/2 h-1.5 w-14 -translate-x-1/2 cursor-pointer appearance-none rounded-full bg-surface-container-highest accent-primary [&::-webkit-slider-thumb]:size-3 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary"
-              />
-            </div>
+            </button>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              step={5}
+              value={volValue}
+              onChange={vol}
+              aria-label="Kelantangan muzik"
+              className="h-1.5 flex-1 cursor-pointer appearance-none rounded-full [&::-webkit-slider-thumb]:size-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:shadow-e1 [&::-moz-range-thumb]:size-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:bg-primary"
+              style={{
+                background: `linear-gradient(to right, var(--md-primary) ${volValue}%, var(--md-surface-container-highest) ${volValue}%)`,
+              }}
+            />
+            <span className="w-9 text-right font-display text-[11px] font-bold text-on-surface-variant">
+              {volValue}%
+            </span>
           </div>
         </div>
       )}

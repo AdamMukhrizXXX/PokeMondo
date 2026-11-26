@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RevealWords } from "./Reveal";
 import {
   GEN_RANGES,
@@ -14,6 +14,20 @@ import PokeCard from "../components/PokeCard";
 import { useRipple } from "../components/Ripple";
 
 type GenFilter = "all" | (typeof GEN_RANGES)[number][2];
+
+const PAGE_SIZE = 60;
+
+function pageList(current: number, total: number): (number | "…")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const pages: (number | "…")[] = [1];
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+  if (start > 2) pages.push("…");
+  for (let i = start; i <= end; i++) pages.push(i);
+  if (end < total - 1) pages.push("…");
+  pages.push(total);
+  return pages;
+}
 
 export default function Pokedex({
   list,
@@ -33,12 +47,12 @@ export default function Pokedex({
   const [type, setType] = useState<PokemonType | "all">("all");
   const [gen, setGen] = useState<GenFilter>("all");
   const [desc, setDesc] = useState(false);
-  const [window_, setWindow] = useState(120);
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const [page, setPage] = useState(1);
+  const gridRef = useRef<HTMLDivElement | null>(null);
   const ripple = useRipple();
 
   useEffect(() => {
-    setWindow(120);
+    setPage(1);
   }, [query, type, gen, desc]);
 
   const filtered = useMemo(() => {
@@ -57,22 +71,23 @@ export default function Pokedex({
     return rows;
   }, [list, query, type, gen, desc]);
 
-  useEffect(() => {
-    const el = sentinelRef.current;
-    if (!el || window_ >= filtered.length) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setWindow((w) => Math.min(filtered.length, w + 120));
-        }
-      },
-      { rootMargin: "1400px 0px" },
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [filtered.length, window_, loading]);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const pageSafe = Math.min(page, totalPages);
+  const shown = filtered.slice((pageSafe - 1) * PAGE_SIZE, pageSafe * PAGE_SIZE);
 
-    const genLabels = GEN_RANGES.map((g) => g[2]);
+  const goto = useCallback(
+    (p: number) => {
+      const target = Math.min(totalPages, Math.max(1, p));
+      if (target === pageSafe) return;
+      setPage(target);
+      requestAnimationFrame(() => {
+        gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    },
+    [pageSafe, totalPages],
+  );
+
+  const genLabels = GEN_RANGES.map((g) => g[2]);
 
   return (
     <section id="dex" className="relative px-5 pb-28 pt-10 sm:px-8 lg:px-16">
@@ -175,12 +190,7 @@ export default function Pokedex({
           ))}
         </div>
 
-        <p className="mt-5 font-display text-sm font-semibold text-on-surface-variant" aria-live="polite">
-          {loading ? "Memuatkan Pokédex…" : `Memaparkan ${filtered.length} daripada ${list.length} Pokémon`}
-          {degraded ? " · mod ringan: jenis dimuat semasa tatal" : ""}
-        </p>
-
-        {loading ? (
+          {loading ? (
           <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {Array.from({ length: 15 }, (_, i) => (
               <div
@@ -192,16 +202,73 @@ export default function Pokedex({
           </div>
         ) : (
           <>
+            <p className="mt-5 font-display text-sm font-semibold text-on-surface-variant" aria-live="polite">
+              {filtered.length === 0
+                ? "Tiada Pokémon"
+                : `Memaparkan ${(pageSafe - 1) * PAGE_SIZE + 1}–${Math.min(pageSafe * PAGE_SIZE, filtered.length)} daripada ${filtered.length} Pokémon`}
+              {degraded ? " · mod ringan: jenis dimuat semasa tatal" : ""}
+            </p>
             <div
-              className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+              ref={gridRef}
+              className="mt-4 grid scroll-mt-20 grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
               style={{ contain: "layout style" }}
               onMouseMove={spotlight}
             >
-              {filtered.slice(0, window_).map((p, i) => (
+              {shown.map((p, i) => (
                 <PokeCard key={p.id} p={p} index={i} onOpen={onOpen} />
               ))}
             </div>
-            {window_ < filtered.length && <div ref={sentinelRef} aria-hidden className="h-2" />}
+            {totalPages > 1 && (
+              <nav
+                className="mt-10 flex flex-wrap items-center justify-center gap-1.5"
+                aria-label="Halaman Pokédex"
+              >
+                <button
+                  type="button"
+                  onClick={() => goto(pageSafe - 1)}
+                  disabled={pageSafe <= 1}
+                  aria-label="Halaman sebelum"
+                  className="grid size-10 place-items-center rounded-full border border-outline-variant text-on-surface-variant transition-colors hover:bg-surface-container disabled:opacity-40 disabled:hover:bg-transparent"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="m14 6-6 6 6 6" />
+                  </svg>
+                </button>
+                {pageList(pageSafe, totalPages).map((p, i) =>
+                  p === "…" ? (
+                    <span key={`gap-${i}`} className="px-1 font-display text-sm text-on-surface-variant">
+                      …
+                    </span>
+                  ) : (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => goto(p)}
+                      aria-current={p === pageSafe ? "page" : undefined}
+                      aria-label={`Halaman ${p}`}
+                      className={
+                        p === pageSafe
+                          ? "grid size-10 place-items-center rounded-full bg-primary font-display text-sm font-bold text-on-primary shadow-e1"
+                          : "grid size-10 place-items-center rounded-full border border-outline-variant font-display text-sm font-semibold text-on-surface-variant transition-colors hover:bg-surface-container"
+                      }
+                    >
+                      {p}
+                    </button>
+                  ),
+                )}
+                <button
+                  type="button"
+                  onClick={() => goto(pageSafe + 1)}
+                  disabled={pageSafe >= totalPages}
+                  aria-label="Halaman seterusnya"
+                  className="grid size-10 place-items-center rounded-full border border-outline-variant text-on-surface-variant transition-colors hover:bg-surface-container disabled:opacity-40 disabled:hover:bg-transparent"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d="m10 6 6 6-6 6" />
+                  </svg>
+                </button>
+              </nav>
+            )}
           </>
         )}
 

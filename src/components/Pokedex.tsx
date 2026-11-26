@@ -7,6 +7,7 @@ import {
   POKEMON_TYPES,
   TYPE_COLORS,
   capital,
+  simplify,
   type BasicPokemon,
   type PokemonType,
 } from "../lib/pokemon";
@@ -20,8 +21,8 @@ const PAGE_SIZE = 60;
 function pageList(current: number, total: number): (number | "…")[] {
   if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
   const pages: (number | "…")[] = [1];
-  const start = Math.max(2, current - 1);
-  const end = Math.min(total - 1, current + 1);
+  const start = Math.max(2, current - (current <= 2 ? 2 : 1));
+  const end = Math.min(total - 1, current + (current >= total - 1 ? 2 : 1));
   if (start > 2) pages.push("…");
   for (let i = start; i <= end; i++) pages.push(i);
   if (end < total - 1) pages.push("…");
@@ -56,9 +57,16 @@ export default function Pokedex({
   }, [query, type, gen, desc]);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase().replace(/^#/, "");
+    const q = simplify(query.trim().replace(/^#/, ""));
     let rows = list.filter((p) => {
-      if (q && !(p.name.includes(q) || String(p.id).includes(q) || "#" + String(p.id).padStart(4, "0").includes(q)))
+      if (
+        q &&
+        !(
+          simplify(p.name).includes(q) ||
+          String(p.id).includes(q) ||
+          ("#" + String(p.id).padStart(4, "0")).includes(q)
+        )
+      )
         return false;
       if (type !== "all" && !(p.types ?? []).includes(type)) return false;
       if (gen !== "all") {

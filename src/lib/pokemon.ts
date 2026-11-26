@@ -61,6 +61,13 @@ export const paddedId = (id: number) => "#" + String(id).padStart(4, "0");
 export const capital = (name: string) =>
   name.charAt(0).toUpperCase() + name.slice(1);
 
+export const simplify = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]/g, "");
+
 export const GEN_RANGES: Array<[number, number, string]> = [
   [1, 151, "I Kanto"],
   [152, 251, "II Johto"],

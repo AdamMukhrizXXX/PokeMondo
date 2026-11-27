@@ -69,3 +69,17 @@ Dokumen ringkas mengikut struktur URD/ADD/MDD/TDD (ID stabil) untuk empat sistem
 - **TDD-AI1** Statik: semua panggilan dilakukan dari klien selepas mount; SSR hanya memaparkan ikon.
 - **TDD-AI2** Kunci tidak pernah muncul dalam gelembung sembang atau konsol; medan kunci ialah password dan dikosong selepas simpan.
 - **TDD-AI3** Tiada key = `NO_KEY` (mesaj panduan membuka tab Tetapan); ralat HTTP memapar status + potongan badan respons.
+
+## Sidebar Live Motion (Fasa Tambahan)
+
+### URD
+- **URD-SB1** Ganti menu radial dengan sidebar bergerak hidup dan estetik — ikon radial tidak lagi menghalang ikon lain.
+- **URD-SB2** Menu di atas dibuang; **hanya ikon Muzik** kekal di atas. Selebihnya masuk sidebar.
+
+### ADD
+- **ADD-SB1** `Sidebar.tsx` menggantikan `BottomNav.tsx`: rel kaca menegak kiri (`sm:`), dok melintang di bawah pada telefon (boleh tatal, `no-scrollbar`); gerakan hidup — `rail-in` masuk meluncur, `rail-item` stagger spring 45 ms/item, `rail-pulse` denyut item aktif (scroll-spy, termasuk Kuiz), penunjuk kemajuan skrol menegak (`scaleY` rAF), tooltip label, `dice-float` ayunan butang Rawak.
+- **ADD-SB2** Kandungan sidebar: navigasi (Rumah, Galeri, Kuiz, Pokédex, Info) + Bunyi, Cerah/Gelap, Tema Laman (kitaran 4 tema), Latar Custom, UI Cadangan, AI Anal, dan Rawak — komponen sedia ada dipasang dalam `RailSlot` (tiada butang bersarang).
+
+### TDD
+- **TDD-SB1** Kelompok ikon atas tiada lagi; hanya Pemain Muzik di kanan atas (dalam ErrorBoundary sendiri).
+- **TDD-SB2** `tsc --noEmit`, `next build` (statik) dan smoke SSR lulus.

@@ -2,19 +2,14 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { artworkUrl, usePokedex, type BasicPokemon } from "../lib/pokemon";
-import BottomNav from "../components/BottomNav";
+import Sidebar from "../components/Sidebar";
 import Hero from "../components/Hero";
 import ScrubGallery from "../components/ScrubGallery";
 import Pokedex from "../components/Pokedex";
 import DetailModal from "../components/DetailModal";
-import ThemeToggle from "../components/ThemeToggle";
 import { FadeIn } from "./Reveal";
-import SoundToggle from "./SoundToggle";
 import MusicPlayer from "./MusicPlayer";
 import WorldClock from "./WorldClock";
-import WallpaperControl from "./WallpaperControl";
-import FallbackModeButton from "./FallbackModeButton";
-import AiAssist from "./AiAssist";
 import ErrorBoundary from "./ErrorBoundary";
 import SimpleHome from "./SimpleHome";
 import { useUiMode } from "../lib/ui-mode";
@@ -94,45 +89,9 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
       </div>
 
       <div className="fixed right-4 top-4 z-50 sm:right-6 sm:top-6">
-        <div className="flex items-center gap-2 rounded-full border border-outline-variant bg-surface-low/80 p-1.5 shadow-e2 backdrop-blur-md">
-          <div className="flex gap-2 [&>button]:shadow-none">
-            <SoundToggle />
-            <ThemeToggle />
-            <WallpaperControl />
-            <FallbackModeButton />
-            <ErrorBoundary label="AI Anal">
-              <AiAssist list={list} />
-            </ErrorBoundary>
-          </div>
-          <button
-            type="button"
-            onClick={random}
-            data-sfx="dice"
-            aria-label="Buka Pokémon rawak"
-            className="grid size-10 place-items-center rounded-full bg-primary text-on-primary shadow-e1 transition-transform active:scale-90"
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden
-            >
-              <rect x="3" y="3" width="18" height="18" rx="5" />
-              <path d="M8 12h8" />
-              <path d="m13 8 4 4-4 4" />
-            </svg>
-          </button>
-        </div>
-        <div className="mt-2 flex justify-end">
-          <ErrorBoundary label="Pemain Muzik">
-            <MusicPlayer expanded={playerOpen} onSetExpanded={setPlayerOpen} />
-          </ErrorBoundary>
-        </div>
+        <ErrorBoundary label="Pemain Muzik">
+          <MusicPlayer expanded={playerOpen} onSetExpanded={setPlayerOpen} />
+        </ErrorBoundary>
       </div>
 
       <ErrorBoundary label="Jam Dunia">
@@ -172,7 +131,7 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
       </ErrorBoundary>
 
       <ErrorBoundary label="Navigasi">
-        <BottomNav />
+        <Sidebar onRandom={random} list={list} />
       </ErrorBoundary>
 
       {selected && (

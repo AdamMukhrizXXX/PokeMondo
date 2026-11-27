@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cycleSiteTheme, THEME_LABELS, useSiteTheme } from "../lib/site-theme";
+import { getSession, logoutUser } from "../lib/auth";
 import ThemeToggle from "./ThemeToggle";
 import SoundToggle from "./SoundToggle";
 import WallpaperControl from "./WallpaperControl";
@@ -23,6 +24,10 @@ const TEXT_LINES = ["Menu", "Close", "Menu", "Close", "Menu", "Close"];
 export default function StaggeredMenu() {
   const siteTheme = useSiteTheme();
   const [open, setOpen] = useState(false);
+  const [sessionEmail, setSessionEmail] = useState("");
+  useEffect(() => {
+    setSessionEmail(getSession()?.email ?? "");
+  }, []);
   const openRef = useRef(false);
   const panelRef = useRef<HTMLElement | null>(null);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
@@ -160,6 +165,39 @@ export default function StaggeredMenu() {
               </span>
               <span className="sm-settings-label">SPUI</span>
             </li>
+            {sessionEmail && (
+              <li className="sm-settings-row">
+                <span className="sm-settings-icon">
+                  <button
+                    type="button"
+                    data-sfx="close"
+                    aria-label={`Log keluar daripada ${sessionEmail}`}
+                    onClick={() => {
+                      logoutUser();
+                      window.location.reload();
+                    }}
+                    className="grid size-10 place-items-center rounded-full text-on-surface-variant transition-all duration-300 hover:scale-110 hover:bg-surface-container-high hover:text-[var(--md-error)] active:scale-90"
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden
+                    >
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      <path d="m16 17 5-5-5-5" />
+                      <path d="M21 12H9" />
+                    </svg>
+                  </button>
+                </span>
+                <span className="sm-settings-label">Log Keluar</span>
+              </li>
+            )}
           </ul>
         </div>
 

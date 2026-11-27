@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { artworkUrl } from "../lib/pokemon";
 import { usePokedexData } from "../lib/pokedex-context";
+import { getSession, type SessionInfo } from "../lib/auth";
 import { initUiSfx } from "../lib/sound";
 import { applySiteTheme, getSiteTheme } from "../lib/site-theme";
 import { useUiMode } from "../lib/ui-mode";
@@ -12,14 +13,46 @@ import StaggeredMenu from "./StaggeredMenu";
 import DetailModal from "./DetailModal";
 import SimpleHome from "./SimpleHome";
 import ErrorBoundary from "./ErrorBoundary";
+import AuthScreen from "./AuthScreen";
+import BootScreen from "./BootScreen";
 
 export default function SiteShell({ children }: { children: React.ReactNode }) {
   const { list, loading, degraded, selectedId, openDetail, closeDetail } = usePokedexData();
   const [playerOpen, setPlayerOpen] = useState(false);
+  const [session, setSession] = useState<SessionInfo | null | undefined>(undefined);
+  const [booted, setBooted] = useState(true);
+
+  useEffect(() => {
+    setSession(getSession() ?? null);
+    try {
+      setBooted(localStorage.getItem("md-booted") === "1");
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   useEffect(() => initUiSfx(), []);
   useEffect(() => applySiteTheme(getSiteTheme()), []);
   const uiMode = useUiMode();
+
+  if (session === null) {
+    return (
+      <AuthScreen
+        onAuthed={(s) => {
+          try {
+            delete document.documentElement.dataset.gate;
+          } catch {
+            /* ignore */
+          }
+          setSession(s);
+        }}
+      />
+    );
+  }
+
+  if (session && !booted) {
+    return <BootScreen onDone={() => setBooted(true)} />;
+  }
 
   const selected =
     selectedId !== null ? list.find((p) => p.id === selectedId) ?? { id: selectedId, name: "", types: null } : null;

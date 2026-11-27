@@ -2,41 +2,34 @@
 
 import { GEN_RANGES, genOf, type BasicPokemon } from "./pokemon";
 
-export type AiProvider = "mistral" | "gemini" | "openai" | "openrouter";
+export type AiProvider = "openrouter" | "groq";
 
 export const PROVIDERS: Record<
   AiProvider,
   { label: string; model: string; keyHint: string; keyUrl: string }
 > = {
-  mistral: {
-    label: "Mistral AI",
-    model: "mistral-small-latest",
-    keyHint: "Kunci percuma di console.mistral.ai",
-    keyUrl: "https://console.mistral.ai",
-  },
-  gemini: {
-    label: "Google Gemini",
-    model: "gemini-2.0-flash",
-    keyHint: "Kunci percuma di aistudio.google.com",
-    keyUrl: "https://aistudio.google.com/app/apikey",
-  },
-  openai: {
-    label: "OpenAI",
-    model: "gpt-4o-mini",
-    keyHint: "Kunci sk-… di platform.openai.com",
-    keyUrl: "https://platform.openai.com/api-keys",
-  },
   openrouter: {
     label: "OpenRouter",
-    model: "meta-llama/llama-3.3-70b-instruct:free",
+    model: "baidu/ernie-5.5-flash-preview:free",
     keyHint: "Kunci di openrouter.ai (ada model percuma)",
     keyUrl: "https://openrouter.ai/keys",
   },
+  groq: {
+    label: "Groq",
+    model: "openai/gpt-oss-120b",
+    keyHint: "Kunci percuma di console.groq.com",
+    keyUrl: "https://console.groq.com/keys",
+  },
 };
 
-const K_KEY = "md-ai-key";
+const BASES: Record<AiProvider, string> = {
+  openrouter: "https://openrouter.ai/api/v1",
+  groq: "https://api.groq.com/openai/v1",
+};
+
 const K_PROVIDER = "md-ai-provider";
-const K_MODEL = "md-ai-model";
+const K_KEY_LEGACY = "md-ai-key";
+const K_MODEL_LEGACY = "md-ai-model";
 
 function get(key: string) {
   try {
@@ -55,19 +48,28 @@ function put(key: string, value: string) {
   }
 }
 
-export const getAiKey = () => get(K_KEY);
-export const setAiKey = (v: string) => put(K_KEY, v.trim());
 export const getAiProvider = (): AiProvider => {
   const p = get(K_PROVIDER) as AiProvider;
-  return p in PROVIDERS ? p : "mistral";
+  return p in PROVIDERS ? p : "openrouter";
 };
 export const setAiProvider = (p: AiProvider) => put(K_PROVIDER, p);
-export const getAiModel = () => get(K_MODEL) || PROVIDERS[getAiProvider()].model;
-export const setAiModel = (m: string) => put(K_MODEL, m.trim());
+
+export const getAiKey = (p: AiProvider = getAiProvider()): string => {
+  const stored = get(`md-ai-key-${p}`);
+  if (stored) return stored;
+  return p === "openrouter" ? get(K_KEY_LEGACY) : "";
+};
+export const setAiKey = (p: AiProvider, v: string) => put(`md-ai-key-${p}`, v.trim());
+
+export const getAiModel = (p: AiProvider = getAiProvider()): string => {
+  const stored = get(`md-ai-model-${p}`) || (p === "openrouter" ? get(K_MODEL_LEGACY) : "");
+  return stored || PROVIDERS[p].model;
+};
+export const setAiModel = (p: AiProvider, m: string) => put(`md-ai-model-${p}`, m.trim());
 
 export const SYSTEM_PROMPT =
-  "Anda ialah pembantu AI PokeMondo, laman Pokédex tidak rasmi. Jawab dalam Bahasa Melayu " +
-  "yang ringkas dan padat, gunakan pengetahuan Pokémon anda, dan rujuk statistik dataset " +
+  "Anda ialah pembantu AI PokeX, laman Pok\u00e9dex tidak rasmi PokeMondo. Jawab dalam Bahasa Melayu " +
+  "yang ringkas dan padat, gunakan pengetahuan Pok\u00e9mon anda, dan rujuk statistik dataset " +
   "yang diberikan bila relevan. Jangan mengarut fakta; jika tidak pasti, katakan begitu.";
 
 export function datasetSummary(list: BasicPokemon[]): string {
@@ -90,70 +92,84 @@ export function datasetSummary(list: BasicPokemon[]): string {
   const topPairs = [...pairs.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
   const gens = GEN_RANGES.map(([, , label]) => `${label}: ${genCount.get(label) ?? 0}`).join(", ");
   return [
-    `STATISTIK POKÉDEX (set data laman, ${total} Pokémon):`,
-    `Kiraan per generasi — ${gens}.`,
-    `Jenis paling banyak — ${topTypes.map(([t, n]) => `${t} ${n}`).join(", ")}.`,
-    `Gabungan dwi-jenis paling biasa — ${topPairs.map(([p, n]) => `${p} ${n}`).join(", ") || "tiada"}.`,
-    `Pokémon dwi-jenis: ${dual} daripada ${total}.`,
+    `STATISTIK POK\u00c9DEX (set data laman, ${total} Pok\u00e9mon):`,
+    `Kiraan per generasi \u2014 ${gens}.`,
+    `Jenis paling banyak \u2014 ${topTypes.map(([t, n]) => `${t} ${n}`).join(", ")}.`,
+    `Gabungan dwi-jenis paling biasa \u2014 ${topPairs.map(([p, n]) => `${p} ${n}`).join(", ") || "tiada"}.`,
+    `Pok\u00e9mon dwi-jenis: ${dual} daripada ${total}.`,
   ].join("\n");
 }
 
 type ChatMsg = { role: "user" | "assistant"; content: string };
 
-export async function askAi(messages: ChatMsg[], context: string): Promise<string> {
-  const provider = getAiProvider();
-  const key = getAiKey();
-  if (!key) throw new Error("NO_KEY");
-  const model = getAiModel();
-  const sys = SYSTEM_PROMPT + (context ? `\n\n${context}` : "");
+function httpHint(status: number): string {
+  if (status === 401 || status === 403) return "kunci API tidak sah / tidak aktif";
+  if (status === 402) return "kredit atau had model percuma habis";
+  if (status === 404) return "model tidak dijumpai \u2014 semak nama model dalam Tetapan";
+  if (status === 408) return "pelayan terlalu lama menjawab";
+  if (status === 429) return "had kadar (rate limit) \u2014 tunggu sebentar dan cuba lagi";
+  if (status >= 500) return "masalah pelayan penyedia";
+  return "ralat HTTP";
+}
 
-  if (provider === "gemini") {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: sys }] },
-          contents: messages.map((m) => ({
-            role: m.role === "assistant" ? "model" : "user",
-            parts: [{ text: m.content }],
-          })),
-        }),
+async function callChat(
+  p: AiProvider,
+  key: string,
+  model: string,
+  sys: string,
+  messages: ChatMsg[],
+): Promise<string> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 60000);
+  try {
+    const res = await fetch(`${BASES[p]}/chat/completions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${key}`,
+        ...(p === "openrouter" ? { "X-Title": "PokeMondo" } : {}),
       },
-    );
-    if (!res.ok) throw new Error(`HTTP ${res.status} — ${(await res.text()).slice(0, 200)}`);
+      body: JSON.stringify({
+        model,
+        messages: [{ role: "system", content: sys }, ...messages],
+        temperature: 0.4,
+        max_tokens: 900,
+      }),
+      signal: controller.signal,
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status} (${httpHint(res.status)})`);
     const data = await res.json();
-    const text = (data?.candidates?.[0]?.content?.parts ?? [])
-      .map((p: { text?: string }) => p.text ?? "")
-      .join("");
-    if (!text) throw new Error("Jawapan kosong daripada Gemini.");
+    const text = data?.choices?.[0]?.message?.content ?? "";
+    if (!text) throw new Error("jawapan kosong daripada model");
     return text;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+export async function askAi(
+  messages: ChatMsg[],
+  context: string,
+): Promise<{ text: string; via: AiProvider }> {
+  const sys = SYSTEM_PROMPT + (context ? `\n\n${context}` : "");
+  const preferred = getAiProvider();
+  const fallback: AiProvider = preferred === "openrouter" ? "groq" : "openrouter";
+  const errors: string[] = [];
+  let sawKey = false;
+
+  for (const p of [preferred, fallback]) {
+    const key = getAiKey(p);
+    if (!key) continue;
+    sawKey = true;
+    try {
+      const text = await callChat(p, key, getAiModel(p), sys, messages);
+      return { text, via: p };
+    } catch (e) {
+      const msg = (e as Error).name === "AbortError" ? "tamat masa 60 detik" : (e as Error).message;
+      errors.push(`${PROVIDERS[p].label}: ${msg}`);
+    }
   }
 
-  const base =
-    provider === "mistral"
-      ? "https://api.mistral.ai/v1"
-      : provider === "openai"
-        ? "https://api.openai.com/v1"
-        : "https://openrouter.ai/api/v1";
-  const res = await fetch(`${base}/chat/completions`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${key}`,
-      ...(provider === "openrouter" ? { "X-Title": "PokeMondo" } : {}),
-    },
-    body: JSON.stringify({
-      model,
-      messages: [{ role: "system", content: sys }, ...messages],
-      temperature: 0.4,
-      max_tokens: 900,
-    }),
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status} — ${(await res.text()).slice(0, 200)}`);
-  const data = await res.json();
-  const text = data?.choices?.[0]?.message?.content ?? "";
-  if (!text) throw new Error("Jawapan kosong daripada model.");
-  return text;
+  if (!sawKey) throw new Error("NO_KEY");
+  throw new Error(errors.join(" \u2022 "));
 }

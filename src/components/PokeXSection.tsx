@@ -15,7 +15,7 @@ import {
   type AiProvider,
 } from "../lib/ai";
 
-type Msg = { role: "user" | "assistant"; content: string; error?: boolean };
+type Msg = { role: "user" | "assistant"; content: string; error?: boolean; via?: string };
 
 const PRESETS = [
   "Ringkaskan keseluruhan Pokédex ini",
@@ -49,29 +49,35 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
-  const [provider, setProvider] = useState<AiProvider>("mistral");
+  const [provider, setProvider] = useState<AiProvider>("openrouter");
   const [model, setModel] = useState("");
   const [keyField, setKeyField] = useState("");
-  const [keySet, setKeySet] = useState(false);
+  const [keyStatus, setKeyStatus] = useState<{ openrouter: boolean; groq: boolean }>({
+    openrouter: false,
+    groq: false,
+  });
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    setProvider(getAiProvider());
-    setModel(getAiModel());
-    setKeySet(!!getAiKey());
+    const p = getAiProvider();
+    setProvider(p);
+    setModel(getAiModel(p));
+    setKeyStatus({
+      openrouter: !!getAiKey("openrouter"),
+      groq: !!getAiKey("groq"),
+    });
   }, []);
 
   const saveKey = () => {
     const v = keyField.trim();
-    setAiKey(v);
-    setKeySet(!!v);
+    setAiKey(provider, v);
+    setKeyStatus((s) => ({ ...s, [provider]: !!v }));
     setKeyField("");
-    setTab("chat");
   };
 
   const clearKey = () => {
-    setAiKey("");
-    setKeySet(false);
+    setAiKey(provider, "");
+    setKeyStatus((s) => ({ ...s, [provider]: false }));
   };
 
   const request = async (text: string) => {
@@ -81,17 +87,19 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
     setInput("");
     setBusy(true);
     try {
-      const answer = await askAi(
+      const { text: answer, via } = await askAi(
         history.map(({ role, content }) => ({ role, content })),
         datasetSummary(list),
       );
-      setMsgs((m) => [...m, { role: "assistant", content: answer }]);
+      const viaLabel =
+        via === getAiProvider() ? PROVIDERS[via].label : `${PROVIDERS[via].label} (sandaran)`;
+      setMsgs((m) => [...m, { role: "assistant", content: answer, via: viaLabel }]);
     } catch (e) {
       const msg = (e as Error).message;
       const detail =
         msg === "NO_KEY"
-          ? "Tiada kunci API. Buka tab Tetapan dan masukkan kunci anda sendiri — AI sebenar memerlukan kunci peribadi (percuma untuk Gemini, OpenRouter, atau Mistral)."
-          : `Permintaan gagal: ${msg}. Jika pelayar menyekat permintaan (CORS), cuba penyedia lain seperti Gemini atau OpenRouter.`;
+          ? "Tiada kunci API. Buka tab Tetapan dan masukkan kunci anda sendiri — AI sebenar memerlukan kunci peribadi (percuma untuk OpenRouter atau Groq). Groq menjadi sandaran automatik jika OpenRouter gagal."
+          : `Permintaan gagal — ${msg}. Sandaran telah dicuba juga; semak kunci/model dalam tab Tetapan atau cuba penyedia lain.`;
       setMsgs((m) => [...m, { role: "assistant", content: detail, error: true }]);
     }
     setBusy(false);
@@ -115,7 +123,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
             Analisis semua Pokémon dengan AI sebenar — kunci anda sendiri, tanpa pelayan perantara
           </p>
         </div>
-        {keySet && (
+        {(keyStatus.openrouter || keyStatus.groq) && (
           <span className="ml-auto hidden rounded-full bg-secondary-container px-3 py-1 font-display text-[11px] font-bold text-on-secondary-container sm:block">
             Kunci aktif
           </span>
@@ -153,7 +161,8 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
               const next = e.target.value as AiProvider;
               setProvider(next);
               setAiProvider(next);
-              setModel(PROVIDERS[next].model);
+              setModel(getAiModel(next));
+              setKeyField("");
             }}
             className="mt-1 h-11 w-full rounded-xl border border-outline-variant bg-surface-container px-3 text-sm text-on-surface outline-none"
           >
@@ -163,18 +172,23 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
               </option>
             ))}
           </select>
+          <p className="mt-2 text-[11px] leading-relaxed text-on-surface-variant">
+            Jika penyedia pilihan gagal (HTTP / had kadar), PokeX mencuba penyedia satunya secara
+            automatik.
+          </p>
 
           <label className="mt-4 block text-xs font-bold text-on-surface-variant">Model</label>
           <input
             value={model}
             onChange={(e) => setModel(e.target.value)}
-            onBlur={() => setAiModel(model)}
+            onBlur={() => setAiModel(provider, model)}
             placeholder={PROVIDERS[provider].model}
             className="mt-1 h-11 w-full rounded-xl border border-outline-variant bg-surface-container px-3 font-mono text-xs text-on-surface outline-none"
           />
 
           <label className="mt-4 block text-xs font-bold text-on-surface-variant">
-            Kunci API {keySet ? "(tersimpan)" : "(diperlukan)"}
+            Kunci API {PROVIDERS[provider].label}{" "}
+            {keyStatus[provider] ? "(tersimpan)" : "(diperlukan)"}
           </label>
           <input
             type="password"
@@ -196,13 +210,18 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
               type="button"
               data-sfx="close"
               onClick={clearKey}
-              disabled={!keySet}
+              disabled={!keyStatus[provider]}
               className="h-10 rounded-full border border-outline-variant px-5 font-display text-xs font-bold text-on-surface-variant transition-colors hover:bg-surface-container disabled:opacity-40"
             >
               Padam
             </button>
           </div>
-          <p className="mt-4 text-xs leading-relaxed text-on-surface-variant">
+
+          <p className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-[11px] font-semibold text-on-surface-variant">
+            <span>Kunci OpenRouter: {keyStatus.openrouter ? "tersimpan ✓" : "tiada"}</span>
+            <span>Kunci Groq: {keyStatus.groq ? "tersimpan ✓" : "tiada"}</span>
+          </p>
+          <p className="mt-2 text-xs leading-relaxed text-on-surface-variant">
             Kunci disimpan <b>hanya dalam pelayar anda</b> (localStorage) dan dihantar terus ke
             penyedia pilihan — tidak melalui pelayan laman. Kunci percuma:{" "}
             <a
@@ -254,17 +273,28 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
                 key={i}
                 className={`mb-3 flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
               >
-                <p
-                  role={m.error ? "alert" : undefined}
-                  className={`max-w-[92%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-[13px] leading-relaxed shadow-e1 ${
-                    m.role === "user"
-                      ? "bg-primary text-on-primary"
-                      : "border border-outline-variant bg-surface-container text-on-surface"
+                <div
+                  className={`flex max-w-[92%] flex-col ${
+                    m.role === "user" ? "items-end" : "items-start"
                   }`}
-                  style={m.error ? { borderColor: "var(--md-error)" } : undefined}
                 >
-                  {m.content}
-                </p>
+                  <p
+                    role={m.error ? "alert" : undefined}
+                    className={`whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-[13px] leading-relaxed shadow-e1 ${
+                      m.role === "user"
+                        ? "bg-primary text-on-primary"
+                        : "border border-outline-variant bg-surface-container text-on-surface"
+                    }`}
+                    style={m.error ? { borderColor: "var(--md-error)" } : undefined}
+                  >
+                    {m.content}
+                  </p>
+                  {m.role === "assistant" && m.via && (
+                    <span className="mt-1 px-1 text-[10px] font-semibold text-on-surface-variant">
+                      via {m.via}
+                    </span>
+                  )}
+                </div>
               </div>
             ))}
             {busy && (

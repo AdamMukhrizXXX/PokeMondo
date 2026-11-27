@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { setUiMode, useUiMode } from "../lib/ui-mode";
+import SpuiExitConfirm from "./SpuiExitConfirm";
 import { useDevicePerf } from "../lib/device-perf";
 
 function fpsColor(fps: number) {
@@ -14,6 +15,7 @@ function fpsColor(fps: number) {
 export default function FallbackModeButton() {
   const mode = useUiMode();
   const [open, setOpen] = useState(false);
+  const [confirmExit, setConfirmExit] = useState(false);
   const isSimple = mode === "simple";
   const { fps, info, auto, setAuto, lite } = useDevicePerf();
 
@@ -104,7 +106,7 @@ export default function FallbackModeButton() {
             </button>
             <button
               type="button"
-              onClick={() => switchMode("full")}
+              onClick={() => setConfirmExit(true)}
               disabled={!isSimple}
               className="flex h-10 items-center justify-center rounded-full border border-outline-variant font-display text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container disabled:opacity-40"
             >
@@ -201,6 +203,8 @@ export default function FallbackModeButton() {
         </div>,
         document.body
       )}
+
+      {confirmExit && <SpuiExitConfirm onClose={() => setConfirmExit(false)} />}
     </>
   );
 }

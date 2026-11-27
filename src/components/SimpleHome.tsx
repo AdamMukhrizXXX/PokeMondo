@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { simplify, pixelUrl, paddedId, type BasicPokemon, type PokemonType, TYPE_COLORS, POKEMON_TYPES, capital } from "../lib/pokemon";
 import DetailModal from "./DetailModal";
-import { setUiMode } from "../lib/ui-mode";
+import SpuiExitConfirm from "./SpuiExitConfirm";
 
 const PAGE = 60;
 
@@ -20,6 +20,7 @@ export default function SimpleHome({
   const [type, setType] = useState<string>("all");
   const [page, setPage] = useState(0);
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [confirmExit, setConfirmExit] = useState(false);
 
   const filtered = useMemo(() => {
     const q = simplify(query);
@@ -59,7 +60,7 @@ export default function SimpleHome({
             </span>
             <button
               type="button"
-              onClick={() => setUiMode("full")}
+              onClick={() => setConfirmExit(true)}
               data-sfx="toggle-off"
               className="h-8 rounded-full px-4 font-display text-xs font-bold shadow-e1 transition-transform active:scale-95"
               style={{ background: "var(--md-primary)", color: "var(--md-on-primary)" }}
@@ -179,6 +180,8 @@ export default function SimpleHome({
           onNavigate={(id) => setSelectedId(id)}
         />
       )}
+
+      {confirmExit && <SpuiExitConfirm onClose={() => setConfirmExit(false)} />}
     </main>
   );
 }

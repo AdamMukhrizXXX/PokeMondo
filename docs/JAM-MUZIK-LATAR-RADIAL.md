@@ -81,7 +81,7 @@ Dokumen ringkas mengikut struktur URD/ADD/MDD/TDD (ID stabil) untuk empat sistem
 
 ## Halaman Berasingan + Dok Kawalan (Fasa 27)
 
-- **ADD-PG1** Rumah/Galeri/Kuiz/Pokédex/Info dipisahkan kepada halaman App Router: `/`, `/galeri`, `/kuiz`, `/pokedex`, `/info` — `Home.tsx` diganti `SiteShell.tsx` (krom kongsi) + `RumahContent.tsx`.
+- **ADD-PG1** Rumah/Galeri/Kuiz/Pokédex/Info dipisahkan kepada halaman App Router: `/` (Scroll Scrub terus di halaman utama), `/kuiz`, `/pokedex`, `/info` — `Home.tsx` diganti `SiteShell.tsx` (krom kongsi) + `RumahContent.tsx`.
 - **ADD-PG2** `PokedexProvider` (`pokedex-context.tsx`) dalam `RootLayout`: senarai 1,025 dimuat sekali (prefetch statik) dan dikongsi merentas halaman — modal butiran, Rawak, dan AI Anal berfungsi di mana-mana halaman.
 - **ADD-PG3** `BottomDock.tsx` menggantikan kawalan dalam panel Staggered Menu: dok kaca tengah-bawah (`dock-in` meluncur, `dock-item` stagger spring, tooltip atas, lift hover, `dice-float`); Staggered Menu kekal sebagai navigasi halaman (`Link` + `usePathname`, auto tutup semasa navigasi).
 - **ADD-PG4** Carian Hero menavigasi ke `/pokedex?q=…`; halaman Pokédex membaca `q` daripada URL melalui `useSearchParams` (dalam `Suspense`).
@@ -93,3 +93,8 @@ Dokumen ringkas mengikut struktur URD/ADD/MDD/TDD (ID stabil) untuk empat sistem
   - **Neobrutalism**: palet jingga/kuning/hijau, sempadan 2.5px pepejal + bayang keras beroffset 4–5px pada semua butang/kad, headline uppercase dengan text-shadow berblok, gradien teks tiga warna.
   - **Claymorphism**: permukaan pastel panas, sempadan dibuang, dwi-bayang dalaman (inset terang atas + inset gelap bawah) + bayang lembut luar — rupa tanah liat kembang; varian gelap mengubah warna bayang.
   - **Glassmorphism**: container lut sinar (color-mix putih/kebiruan), latar gradien blob tetap (biru/teal/pink), sempadan kaca putih 1.5px + inset highlight, backdrop-blur 20px + saturate 1.6.
+
+## Scrub di Halaman Utama (Fasa 27d)
+
+- **ADD-HM1** Halaman `/galeri` dibuang; `ScrubGallery` (Scroll Scrub generasi) kini sebahagian halaman utama selepas Hero — seperti susunan asal.
+- **ADD-HM2** Item "Galeri" dibuang daripada Staggered Menu dan kad Terokai; navigasi tinggal Rumah/Kuiz/Pokédex/Info.

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePokedexData } from "../lib/pokedex-context";
 import Hero from "./Hero";
+import ScrubGallery from "./ScrubGallery";
 
 const QUICK_LINKS = [
   {
@@ -12,12 +13,6 @@ const QUICK_LINKS = [
     label: "Pokédex",
     note: "Semua 1025 spesies, tapis jenis & generasi",
     icon: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 7.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 3a9 9 0 0 1 8.49 6H12m0 6h8.49A9 9 0 0 1 12 21",
-  },
-  {
-    href: "/galeri",
-    label: "Galeri",
-    note: "Scrub melintasi sembilan generasi",
-    icon: "M4 8h16M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8Zm4 4 2.5 3 2-2.5L16 16",
   },
   {
     href: "/kuiz",
@@ -51,6 +46,8 @@ export default function RumahContent() {
         total={list.length}
         onExplore={onExplore}
       />
+
+      <ScrubGallery />
 
       <section aria-label="Terokai laman" className="px-5 pb-20 sm:px-8 lg:px-16">
         <div className="mx-auto grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-4">

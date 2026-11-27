@@ -117,6 +117,48 @@ export default function StaggeredMenu() {
               </span>
               <span className="sm-settings-label">Cerah / Gelap</span>
             </li>
+            <li className="sm-settings-row">
+              <span className="sm-settings-icon">
+                <button
+                  type="button"
+                  data-sfx="toggle-on"
+                  aria-label={`Tukar tema laman: ${THEME_LABELS[siteTheme]}`}
+                  onClick={() => cycleSiteTheme()}
+                  className="group grid size-10 place-items-center rounded-full text-on-surface-variant transition-all duration-300 hover:scale-110 hover:bg-surface-container-high hover:text-on-surface active:scale-90"
+                >
+                  <svg width="22" height="22" viewBox="0 0 24 24" className="transition-transform duration-500 group-hover:rotate-[25deg]" aria-hidden>
+                    <defs>
+                      <linearGradient id="pm-palette" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stopColor="var(--md-primary)" />
+                        <stop offset="0.5" stopColor="var(--md-tertiary)" />
+                        <stop offset="1" stopColor="#00a878" />
+                      </linearGradient>
+                    </defs>
+                    <path
+                      d="M12 3a9 9 0 0 0 0 18c1.3 0 2.1-.9 2.1-1.9 0-.5-.2-.9-.5-1.3-.3-.3-.5-.7-.5-1.2 0-1 .8-1.8 1.8-1.8h2.1a4 4 0 0 0 4-4C21 6.6 17 3 12 3Z"
+                      fill="url(#pm-palette)"
+                    />
+                    <circle cx="8.2" cy="9.2" r="1.5" fill="#e3350d" />
+                    <circle cx="12.6" cy="6.8" r="1.5" fill="#ffc531" />
+                    <circle cx="16.6" cy="10.4" r="1.5" fill="#2f7cf6" />
+                    <circle cx="7.4" cy="13.8" r="1.5" fill="#00a878" />
+                  </svg>
+                </button>
+              </span>
+              <span className="sm-settings-label">Tema: {THEME_LABELS[siteTheme]}</span>
+            </li>
+            <li className="sm-settings-row">
+              <span className="sm-settings-icon">
+                <WallpaperControl />
+              </span>
+              <span className="sm-settings-label">Latar Custom</span>
+            </li>
+            <li className="sm-settings-row">
+              <span className="sm-settings-icon">
+                <FallbackModeButton />
+              </span>
+              <span className="sm-settings-label">UI Cadangan</span>
+            </li>
           </ul>
         </div>
 

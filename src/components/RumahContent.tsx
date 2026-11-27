@@ -68,12 +68,12 @@ export default function RumahContent() {
                         <stop offset="1" stopColor="#e3350d" />
                       </linearGradient>
                     </defs>
-                    <path d="M12 2a10 10 0 0 1 9.95 9H12V2Z" fill="url(#pm-pokeball-red)" />
-                    <path d="M12 22a10 10 0 0 1-9.95-11H12v11Z" fill="#f7f4ef" />
-                    <path d="M2.05 11h19.9" stroke="#2b2320" strokeWidth="2.4" strokeLinecap="round" />
-                    <circle cx="12" cy="12" r="3.4" fill="#2b2320" />
-                    <circle cx="12" cy="12" r="1.9" fill="#ffffff" />
-                    <circle cx="12" cy="2" r="10" fill="none" stroke="#2b2320" strokeWidth="1.6" />
+                    <path d="M2 12a10 10 0 0 1 20 0Z" fill="url(#pm-pokeball-red)" />
+                    <path d="M22 12a10 10 0 0 1-20 0Z" fill="#f7f4ef" />
+                    <rect x="2" y="10.75" width="20" height="2.5" fill="#2b2320" />
+                    <circle cx="12" cy="12" r="10" fill="none" stroke="#2b2320" strokeWidth="1.6" />
+                    <circle cx="12" cy="12" r="3.6" fill="#2b2320" stroke="#f7f4ef" strokeWidth="1.2" />
+                    <circle cx="12" cy="12" r="1.7" fill="#ffffff" />
                   </svg>
                 ) : (
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden>

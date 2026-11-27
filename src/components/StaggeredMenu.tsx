@@ -1,38 +1,25 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { BasicPokemon } from "../lib/pokemon";
-import { useScrollSpy } from "../lib/pokemon";
-import { cycleSiteTheme, THEME_LABELS, useSiteTheme } from "../lib/site-theme";
-import ThemeToggle from "./ThemeToggle";
-import SoundToggle from "./SoundToggle";
-import WallpaperControl from "./WallpaperControl";
-import FallbackModeButton from "./FallbackModeButton";
-import AiAssist from "./AiAssist";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const NAV_ITEMS = [
-  { id: "rumah", label: "Rumah" },
-  { id: "galeri", label: "Galeri" },
-  { id: "kuiz", label: "Kuiz" },
-  { id: "dex", label: "Pokédex" },
-  { id: "info", label: "Info" },
+  { href: "/", label: "Rumah" },
+  { href: "/galeri", label: "Galeri" },
+  { href: "/kuiz", label: "Kuiz" },
+  { href: "/pokedex", label: "Pokédex" },
+  { href: "/info", label: "Info" },
 ];
 
 const TEXT_LINES = ["Menu", "Close", "Menu", "Close", "Menu", "Close"];
 
-export default function StaggeredMenu({
-  onRandom,
-  list,
-}: {
-  onRandom: () => void;
-  list: BasicPokemon[];
-}) {
+export default function StaggeredMenu() {
   const [open, setOpen] = useState(false);
   const openRef = useRef(false);
   const panelRef = useRef<HTMLElement | null>(null);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
-  const active = useScrollSpy(NAV_ITEMS.map((n) => n.id));
-  const siteTheme = useSiteTheme();
+  const pathname = usePathname();
 
   const setOpenSafe = useCallback((next: boolean) => {
     if (openRef.current === next) return;
@@ -65,32 +52,20 @@ export default function StaggeredMenu({
     };
   }, [open, close]);
 
-  const go = useCallback(
-    (id: string) => {
-      document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-      close();
-    },
-    [close],
-  );
+  useEffect(() => {
+    close();
+  }, [pathname, close]);
 
-  let slotDelay = 0;
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
     <div className="sm-scope" data-position="left" data-open={open || undefined}>
       <div className="sm-prelayers" aria-hidden="true">
+        <div className="sm-prelayer" style={{ background: "var(--md-secondary-container)" }} />
         <div
           className="sm-prelayer"
-          style={{
-            background: "var(--md-secondary-container)",
-            transitionDelay: open ? "0s" : "0s",
-          }}
-        />
-        <div
-          className="sm-prelayer"
-          style={{
-            background: "var(--md-tertiary-container)",
-            transitionDelay: open ? "0.07s" : "0s",
-          }}
+          style={{ background: "var(--md-tertiary-container)", transitionDelay: open ? "0.07s" : "0s" }}
         />
       </div>
 
@@ -101,71 +76,46 @@ export default function StaggeredMenu({
         aria-hidden={!open}
         inert={!open || undefined}
       >
-        <nav aria-label="Navigasi utama">
+        <nav aria-label="Navigasi halaman">
           <ul className="sm-panel-list" data-numbering="true">
             {NAV_ITEMS.map((item, i) => (
-              <li className="sm-panel-itemWrap" key={item.id}>
-                <button
-                  type="button"
+              <li className="sm-panel-itemWrap" key={item.href}>
+                <Link
+                  href={item.href}
                   className="sm-panel-item"
                   data-sfx="click"
-                  aria-current={active === item.id ? "true" : undefined}
+                  aria-current={isActive(item.href) ? "page" : undefined}
                   style={{ ["--sm-delay" as string]: open ? `${0.32 + i * 0.1}s` : "0s" }}
-                  onClick={() => go(item.id)}
+                  onClick={close}
                 >
                   <span className="sm-panel-itemLabel">{item.label}</span>
-                </button>
+                </Link>
               </li>
             ))}
           </ul>
         </nav>
 
-        <div className="sm-controls">
-          <p className="sm-controls-title">Kawalan</p>
-          <div className="sm-controls-row">
-            <Slot delay={(slotDelay += 0.08)} open={open} label="Bunyi">
-              <SoundToggle />
-            </Slot>
-            <Slot delay={(slotDelay += 0.08)} open={open} label="Cerah/Gelap">
-              <ThemeToggle compact />
-            </Slot>
-            <Slot delay={(slotDelay += 0.08)} open={open} label={`Tema: ${THEME_LABELS[siteTheme]}`}>
-              <button
-                type="button"
-                data-sfx="toggle-on"
-                aria-label={`Tukar tema laman: ${THEME_LABELS[siteTheme]}`}
-                onClick={() => cycleSiteTheme()}
-                className="sm-ctl-btn grid size-10 place-items-center rounded-full border border-outline-variant/60 bg-surface-low text-on-surface-variant transition-transform hover:scale-110 active:scale-90"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 0c2.5 2.5 2.5 15.5 0 18M3 12h18" />
-                </svg>
-              </button>
-            </Slot>
-            <Slot delay={(slotDelay += 0.08)} open={open} label="Latar Custom">
-              <WallpaperControl />
-            </Slot>
-            <Slot delay={(slotDelay += 0.08)} open={open} label="UI Cadangan">
-              <FallbackModeButton />
-            </Slot>
-            <Slot delay={(slotDelay += 0.08)} open={open} label="AI Anal">
-              <AiAssist list={list} />
-            </Slot>
-            <Slot delay={(slotDelay += 0.08)} open={open} label="Rawak">
-              <button
-                type="button"
-                onClick={onRandom}
-                data-sfx="dice"
-                aria-label="Buka Pokémon rawak"
-                className="dice-float grid size-10 place-items-center rounded-full bg-primary text-on-primary shadow-e2 transition-transform hover:scale-110 active:scale-90"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <rect x="3" y="3" width="18" height="18" rx="5" />
-                  <path d="M8 12h8" />
-                  <path d="m13 8 4 4-4 4" />
-                </svg>
-              </button>
-            </Slot>
+        <div className="sm-socials">
+          <p className="sm-socials-title">Terokai</p>
+          <div className="sm-socials-row">
+            <a
+              href="https://pokeapi.co"
+              target="_blank"
+              rel="noreferrer"
+              data-sfx="click"
+              className="sm-socials-link"
+            >
+              PokéAPI
+            </a>
+            <a
+              href="https://reactbits.dev"
+              target="_blank"
+              rel="noreferrer"
+              data-sfx="click"
+              className="sm-socials-link"
+            >
+              React Bits
+            </a>
           </div>
         </div>
       </aside>
@@ -200,27 +150,5 @@ export default function StaggeredMenu({
         </span>
       </button>
     </div>
-  );
-}
-
-function Slot({
-  delay,
-  open,
-  label,
-  children,
-}: {
-  delay: number;
-  open: boolean;
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <span
-      className="sm-slot"
-      style={{ ["--sm-delay" as string]: open ? `${delay}s` : "0s" }}
-    >
-      {children}
-      <span className="sm-slot-label">{label}</span>
-    </span>
   );
 }

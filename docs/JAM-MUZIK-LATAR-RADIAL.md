@@ -78,3 +78,10 @@ Dokumen ringkas mengikut struktur URD/ADD/MDD/TDD (ID stabil) untuk empat sistem
 - Kawalan penuh di bawah panel (Bunyi, Cerah/Gelap, Tema Laman, Latar Custom, UI Cadangan, AI Anal, Rawak) dengan stagger 0.08 s — corak slot tanpa butang bersarang.
 - Toggle kiri atas: teks `Menu↔Close` bergilir (lajur 6 baris translateY) + ikon plus dua garisan berputar 45°/−45° menjadi X; tutup melalui klik-luar atau Escape; SFX open/close automatik melalui `aria-expanded`.
 - ≤1024 px panel penuh skrin; `inert` + `aria-hidden` semasa tertutup; `will-change: transform` dan `prefers-reduced-motion` dihormati.
+
+## Halaman Berasingan + Dok Kawalan (Fasa 27)
+
+- **ADD-PG1** Rumah/Galeri/Kuiz/Pokédex/Info dipisahkan kepada halaman App Router: `/`, `/galeri`, `/kuiz`, `/pokedex`, `/info` — `Home.tsx` diganti `SiteShell.tsx` (krom kongsi) + `RumahContent.tsx`.
+- **ADD-PG2** `PokedexProvider` (`pokedex-context.tsx`) dalam `RootLayout`: senarai 1,025 dimuat sekali (prefetch statik) dan dikongsi merentas halaman — modal butiran, Rawak, dan AI Anal berfungsi di mana-mana halaman.
+- **ADD-PG3** `BottomDock.tsx` menggantikan kawalan dalam panel Staggered Menu: dok kaca tengah-bawah (`dock-in` meluncur, `dock-item` stagger spring, tooltip atas, lift hover, `dice-float`); Staggered Menu kekal sebagai navigasi halaman (`Link` + `usePathname`, auto tutup semasa navigasi).
+- **ADD-PG4** Carian Hero menavigasi ke `/pokedex?q=…`; halaman Pokédex membaca `q` daripada URL melalui `useSearchParams` (dalam `Suspense`).

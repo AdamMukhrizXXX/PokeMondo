@@ -1,6 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Baloo_2, Caveat, DM_Sans } from "next/font/google";
 import "./globals.css";
+import { fetchPokedexPrefetch } from "../lib/pokemon-server";
+import type { BasicPokemon } from "../lib/pokemon";
+import { PokedexProvider } from "../lib/pokedex-context";
+import SiteShell from "../components/SiteShell";
 
 const baloo = Baloo_2({
   subsets: ["latin"],
@@ -53,13 +57,23 @@ export const viewport: Viewport = {
 
 const themeInit = `(function(){try{var s=localStorage.getItem("md-theme");var d=s?s==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.dataset.theme=d?"dark":"light";var t=localStorage.getItem("md-site-theme");if(t)document.documentElement.dataset.siteTheme=t;}catch(e){document.documentElement.dataset.theme="light";}})();`;
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  let initialList: BasicPokemon[] = [];
+  try {
+    initialList = await fetchPokedexPrefetch(AbortSignal.timeout(15000));
+  } catch {
+    initialList = [];
+  }
   return (
     <html lang="ms" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
-      <body className={`${baloo.variable} ${dmSans.variable} ${caveat.variable}`}>{children}</body>
+      <body className={`${baloo.variable} ${dmSans.variable} ${caveat.variable}`}>
+        <PokedexProvider initialList={initialList}>
+          <SiteShell>{children}</SiteShell>
+        </PokedexProvider>
+      </body>
     </html>
   );
 }

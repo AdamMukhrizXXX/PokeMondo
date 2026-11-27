@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { artworkUrl, usePokedex, type BasicPokemon } from "../lib/pokemon";
-import Sidebar from "../components/Sidebar";
+import StaggeredMenu from "../components/StaggeredMenu";
 import Hero from "../components/Hero";
 import ScrubGallery from "../components/ScrubGallery";
 import Pokedex from "../components/Pokedex";
@@ -130,8 +130,8 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
         <InfoSection />
       </ErrorBoundary>
 
-      <ErrorBoundary label="Navigasi">
-        <Sidebar onRandom={random} list={list} />
+      <ErrorBoundary label="Menu Staggered">
+        <StaggeredMenu onRandom={random} list={list} />
       </ErrorBoundary>
 
       {selected && (

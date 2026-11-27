@@ -70,16 +70,11 @@ Dokumen ringkas mengikut struktur URD/ADD/MDD/TDD (ID stabil) untuk empat sistem
 - **TDD-AI2** Kunci tidak pernah muncul dalam gelembung sembang atau konsol; medan kunci ialah password dan dikosong selepas simpan.
 - **TDD-AI3** Tiada key = `NO_KEY` (mesaj panduan membuka tab Tetapan); ralat HTTP memapar status + potongan badan respons.
 
-## Sidebar Live Motion (Fasa Tambahan)
+## Staggered Menu (Fasa 26)
 
-### URD
-- **URD-SB1** Ganti menu radial dengan sidebar bergerak hidup dan estetik — ikon radial tidak lagi menghalang ikon lain.
-- **URD-SB2** Menu di atas dibuang; **hanya ikon Muzik** kekal di atas. Selebihnya masuk sidebar.
-
-### ADD
-- **ADD-SB1** `Sidebar.tsx` menggantikan `BottomNav.tsx`: rel kaca menegak kiri (`sm:`), dok melintang di bawah pada telefon (boleh tatal, `no-scrollbar`); gerakan hidup — `rail-in` masuk meluncur, `rail-item` stagger spring 45 ms/item, `rail-pulse` denyut item aktif (scroll-spy, termasuk Kuiz), penunjuk kemajuan skrol menegak (`scaleY` rAF), tooltip label, `dice-float` ayunan butang Rawak.
-- **ADD-SB2** Kandungan sidebar: navigasi (Rumah, Galeri, Kuiz, Pokédex, Info) + Bunyi, Cerah/Gelap, Tema Laman (kitaran 4 tema), Latar Custom, UI Cadangan, AI Anal, dan Rawak — komponen sedia ada dipasang dalam `RailSlot` (tiada butang bersarang).
-
-### TDD
-- **TDD-SB1** Kelompok ikon atas tiada lagi; hanya Pemain Muzik di kanan atas (dalam ErrorBoundary sendiri).
-- **TDD-SB2** `tsc --noEmit`, `next build` (statik) dan smoke SSR lulus.
+- **ADD-SM1** `StaggeredMenu.tsx` menggantikan `Sidebar.tsx`: adaptasi komponen **Staggered Menu** reactbits.dev tanpa GSAP (CSS transition + `data-open`).
+- Dua prelayer warna token M3 (`--md-secondary-container`, `--md-tertiary-container`) meluncur dari kiri (delay 0 s / 0.07 s, durasi 0.5 s), panel kaca `clamp(260px, 38vw, 420px)` masuk pada 0.22 s (durasi 0.65 s).
+- Item navigasi besar (Rumah/Galeri/Kuiz/Pokédex/Info) uppercase dengan label `translateY(140%) rotate(10°) → 0` stagger 0.1 s, penomboran `01–05` (counter CSS, opacity berperingkat).
+- Kawalan penuh di bawah panel (Bunyi, Cerah/Gelap, Tema Laman, Latar Custom, UI Cadangan, AI Anal, Rawak) dengan stagger 0.08 s — corak slot tanpa butang bersarang.
+- Toggle kiri atas: teks `Menu↔Close` bergilir (lajur 6 baris translateY) + ikon plus dua garisan berputar 45°/−45° menjadi X; tutup melalui klik-luar atau Escape; SFX open/close automatik melalui `aria-expanded`.
+- ≤1024 px panel penuh skrin; `inert` + `aria-hidden` semasa tertutup; `will-change: transform` dan `prefers-reduced-motion` dihormati.

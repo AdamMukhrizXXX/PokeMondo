@@ -1017,6 +1017,80 @@ body {
   }
 }
 
+/* ====== PokeX: Thinking Live Motion (adaptasi ShinyText reactbits.dev) ====== */
+.pokex-shiny {
+  background: linear-gradient(
+    110deg,
+    var(--md-on-surface-variant) 42%,
+    #0ea5e9 50%,
+    var(--md-on-surface-variant) 58%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: pokex-shine 2.6s linear infinite;
+}
+@keyframes pokex-shine {
+  0% { background-position: 120% 0; }
+  100% { background-position: -120% 0; }
+}
+.pokex-think-dots {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+}
+.pokex-think-dots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--md-primary);
+  animation: pokex-think-dot 1.15s ease-in-out infinite;
+}
+.pokex-think-dots i:nth-child(2) { animation-delay: 0.15s; }
+.pokex-think-dots i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes pokex-think-dot {
+  0%, 100% { transform: translateY(0); opacity: 0.45; }
+  40% { transform: translateY(-5px); opacity: 1; }
+}
+.pokex-think-words {
+  display: inline-grid;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.pokex-think-words em {
+  grid-area: 1 / 1;
+  font-style: normal;
+  opacity: 0;
+  transform: translateY(60%);
+  animation: pokex-think-word 5.4s ease-in-out infinite;
+}
+.pokex-think-words em:nth-child(2) { animation-delay: 1.8s; }
+.pokex-think-words em:nth-child(3) { animation-delay: 3.6s; }
+@keyframes pokex-think-word {
+  0%, 30% { opacity: 0; transform: translateY(60%); }
+  9%, 21% { opacity: 1; transform: translateY(0); }
+  32% { opacity: 0; transform: translateY(-60%); }
+  100% { opacity: 0; transform: translateY(60%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pokex-shiny {
+    animation: none;
+    background: none;
+    color: var(--md-on-surface-variant);
+    -webkit-text-fill-color: currentColor;
+  }
+  .pokex-think-dots i,
+  .pokex-think-words em {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .pokex-think-words em:nth-child(1) {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dock-in,
   .dock-item {

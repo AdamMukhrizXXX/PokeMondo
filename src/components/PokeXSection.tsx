@@ -402,9 +402,26 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
               </div>
             ))}
             {busy && (
-              <p className="mb-3 animate-pulse text-xs font-semibold text-on-surface-variant">
-                PokeX sedang berfikir…
-              </p>
+              <div className="mb-3 flex justify-start" role="status" aria-live="polite">
+                <div className="flex items-center gap-3 rounded-2xl border border-outline-variant bg-surface-container px-4 py-3 shadow-e1">
+                  <span className="pokex-think-dots" aria-hidden>
+                    <i />
+                    <i />
+                    <i />
+                  </span>
+                  <span className="pokex-shiny font-display text-[13px] font-bold">
+                    PokeX sedang berfikir
+                  </span>
+                  <span
+                    className="pokex-think-words text-[11px] font-semibold text-on-surface-variant"
+                    aria-hidden
+                  >
+                    <em>menganalisis data…</em>
+                    <em>merumus jawapan…</em>
+                    <em>menyusun poin…</em>
+                  </span>
+                </div>
+              </div>
             )}
           </div>
 

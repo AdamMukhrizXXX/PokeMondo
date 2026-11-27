@@ -10,7 +10,6 @@ type PokedexCtxValue = {
   selectedId: number | null;
   openDetail: (id: number) => void;
   closeDetail: () => void;
-  random: () => void;
 };
 
 const PokedexCtx = createContext<PokedexCtxValue | null>(null);
@@ -27,15 +26,10 @@ export function PokedexProvider({
 
   const openDetail = useCallback((id: number) => setSelectedId(id), []);
   const closeDetail = useCallback(() => setSelectedId(null), []);
-  const random = useCallback(() => {
-    if (list.length === 0) return;
-    const pick = list[Math.floor(list.length * Math.random())];
-    setSelectedId(pick.id);
-  }, [list]);
 
   const value = useMemo(
-    () => ({ list, loading, degraded, selectedId, openDetail, closeDetail, random }),
-    [list, loading, degraded, selectedId, openDetail, closeDetail, random],
+    () => ({ list, loading, degraded, selectedId, openDetail, closeDetail }),
+    [list, loading, degraded, selectedId, openDetail, closeDetail],
   );
 
   return <PokedexCtx.Provider value={value}>{children}</PokedexCtx.Provider>;

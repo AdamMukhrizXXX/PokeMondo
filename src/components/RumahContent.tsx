@@ -26,6 +26,12 @@ const QUICK_LINKS = [
     note: "Tentang laman, data terbuka & kredit",
     icon: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 4.5v.01M12 11v5.5",
   },
+  {
+    href: "/pokex",
+    label: "PokeX",
+    note: "Analisis semua Pokémon dengan AI sebenar",
+    icon: "M12 4c1 3 2.5 4.5 5.5 5.5C14.5 10.5 13 12 12 15c-1-3-2.5-4.5-5.5-5.5C9.5 8.5 11 7 12 4Z",
+  },
 ];
 
 export default function RumahContent() {
@@ -87,6 +93,19 @@ export default function RumahContent() {
                     <circle cx="12" cy="12" r="9.2" fill="none" stroke="#8a4b00" strokeOpacity="0.35" strokeWidth="1.4" />
                     <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" fill="none" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
                     <path d="M12 16.9h.01" fill="none" stroke="#ffffff" strokeWidth="2.6" strokeLinecap="round" />
+                  </svg>
+                ) : item.href === "/pokex" ? (
+                  <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>
+                    <defs>
+                      <linearGradient id="pm-pokex-teal" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stopColor="#2dd4bf" />
+                        <stop offset="1" stopColor="#0d9488" />
+                      </linearGradient>
+                    </defs>
+                    <circle cx="12" cy="12" r="9.2" fill="url(#pm-pokex-teal)" />
+                    <circle cx="12" cy="12" r="9.2" fill="none" stroke="#065f56" strokeOpacity="0.35" strokeWidth="1.4" />
+                    <path d="M12 5.8c.8 2.4 2 3.6 4.4 4.4-2.4.8-3.6 2-4.4 4.4-.8-2.4-2-3.6-4.4-4.4 2.4-.8 3.6-2 4.4-4.4Z" fill="#ffffff" />
+                    <circle cx="17.3" cy="16.4" r="1.35" fill="#ffffff" />
                   </svg>
                 ) : item.href === "/info" ? (
                   <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>

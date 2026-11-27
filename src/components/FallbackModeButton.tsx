@@ -49,6 +49,7 @@ export default function FallbackModeButton() {
       {open &&
         createPortal(
         <div
+          data-portal-panel
           className="anim-rise fixed inset-x-4 top-[4.75rem] z-50 rounded-[1.75rem] border border-outline-variant p-5 shadow-e3 sm:inset-x-auto sm:right-6 sm:top-[4.75rem] sm:w-72"
           style={{ background: "var(--md-surface-container-low)" }}
         >

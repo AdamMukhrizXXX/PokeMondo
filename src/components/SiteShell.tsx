@@ -9,7 +9,6 @@ import { useUiMode } from "../lib/ui-mode";
 import MusicPlayer from "./MusicPlayer";
 import WorldClock from "./WorldClock";
 import StaggeredMenu from "./StaggeredMenu";
-import BottomDock from "./BottomDock";
 import DetailModal from "./DetailModal";
 import SimpleHome from "./SimpleHome";
 import ErrorBoundary from "./ErrorBoundary";
@@ -77,10 +76,6 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
 
       <ErrorBoundary label="Menu Staggered">
         <StaggeredMenu />
-      </ErrorBoundary>
-
-      <ErrorBoundary label="Dok Kawalan">
-        <BottomDock />
       </ErrorBoundary>
 
       <main className="relative">{children}</main>

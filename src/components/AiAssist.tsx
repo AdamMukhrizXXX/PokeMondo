@@ -118,6 +118,7 @@ export default function AiAssist({ list }: { list: BasicPokemon[] }) {
       {open &&
         createPortal(
         <div
+          data-portal-panel
           className="anim-rise fixed inset-x-3 top-[4.5rem] z-50 flex max-h-[82svh] flex-col overflow-hidden rounded-[1.75rem] border border-outline-variant shadow-e3 sm:inset-x-auto sm:right-6 sm:w-[25rem]"
           style={{ background: "var(--md-surface-container-low)" }}
         >

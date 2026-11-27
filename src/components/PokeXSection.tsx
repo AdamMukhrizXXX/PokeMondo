@@ -17,6 +17,8 @@ import {
 
 type Msg = { role: "user" | "assistant"; content: string; error?: boolean; via?: string };
 
+type TestState = { status: "idle" | "testing" | "ok" | "fail"; note: string };
+
 const PRESETS = [
   "Ringkaskan keseluruhan Pokédex ini",
   "Analisis jenis paling dominan dan mengapa",
@@ -24,24 +26,59 @@ const PRESETS = [
   "Cadangkan 6 Pokémon untuk pasukan seimbang",
 ] as const;
 
-function Sparkle({ size = 28, className = "" }: { size?: number; className?: string }) {
+function XMark({ size = 28, className = "" }: { size?: number; className?: string }) {
   return (
     <svg
       width={size}
       height={size}
       viewBox="0 0 24 24"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="1.9"
-      strokeLinecap="round"
-      strokeLinejoin="round"
       className={className}
       aria-hidden
     >
-      <path d="M12 4c1 3 2.5 4.5 5.5 5.5C14.5 10.5 13 12 12 15c-1-3-2.5-4.5-5.5-5.5C9.5 8.5 11 7 12 4Z" />
-      <path d="M18.5 14.5c.5 1.5 1.3 2.3 2.8 2.8-1.5.5-2.3 1.3-2.8 2.8-.5-1.5-1.3-2.3-2.8-2.8 1.5-.5 2.3-1.3 2.8-2.8Z" />
+      <defs>
+        <linearGradient id="pm-x-a" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#2dd4bf" />
+          <stop offset="1" stopColor="#0ea5e9" />
+        </linearGradient>
+        <linearGradient id="pm-x-b" x1="1" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#ffc531" />
+          <stop offset="1" stopColor="#ff9800" />
+        </linearGradient>
+      </defs>
+      <path d="M18.5 5.5 5.5 18.5" stroke="url(#pm-x-b)" strokeWidth="3.4" strokeLinecap="round" />
+      <path d="M5.5 5.5 18.5 18.5" stroke="url(#pm-x-a)" strokeWidth="3.4" strokeLinecap="round" />
+      <circle cx="12" cy="12" r="2.1" fill="#ffffff" />
+      <circle cx="12" cy="12" r="3.4" fill="none" stroke="#0ea5e9" strokeOpacity="0.35" strokeWidth="1.1" />
     </svg>
   );
+}
+
+function renderRich(text: string): React.ReactNode[] {
+  return text.split(/(\*\*\*[^*\n]+\*\*\*|\*\*[^*\n]+\*\*|\*[^*\n]+\*)/g).map((tok, i) => {
+    if (tok.startsWith("***") && tok.endsWith("***") && tok.length > 6) {
+      return (
+        <strong key={i} className="font-display text-[1.08em] font-extrabold italic text-on-surface">
+          {tok.slice(3, -3)}
+        </strong>
+      );
+    }
+    if (tok.startsWith("**") && tok.endsWith("**") && tok.length > 4) {
+      return (
+        <strong key={i} className="font-display text-[1.06em] font-extrabold text-on-surface">
+          {tok.slice(2, -2)}
+        </strong>
+      );
+    }
+    if (tok.startsWith("*") && tok.endsWith("*") && tok.length > 2) {
+      return (
+        <em key={i} className="font-semibold italic text-on-surface">
+          {tok.slice(1, -1)}
+        </em>
+      );
+    }
+    return tok;
+  });
 }
 
 export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
@@ -56,6 +93,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
     openrouter: false,
     groq: false,
   });
+  const [test, setTest] = useState<TestState>({ status: "idle", note: "" });
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -78,6 +116,31 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
   const clearKey = () => {
     setAiKey(provider, "");
     setKeyStatus((s) => ({ ...s, [provider]: false }));
+  };
+
+  const runApiTest = async () => {
+    if (test.status === "testing") return;
+    setTest({ status: "testing", note: `Menguji ${PROVIDERS[provider].label}…` });
+    const start = performance.now();
+    try {
+      const { via } = await askAi(
+        [{ role: "user", content: "Balas dengan satu perkataan sahaja: OK" }],
+        "",
+      );
+      const ms = Math.round(performance.now() - start);
+      const label =
+        via === provider ? PROVIDERS[via].label : `${PROVIDERS[via].label} (sandaran)`;
+      setTest({ status: "ok", note: `Berjaya — ${label}, ${ms} ms` });
+    } catch (e) {
+      const msg = (e as Error).message;
+      setTest({
+        status: "fail",
+        note:
+          msg === "NO_KEY"
+            ? "Gagal — tiada kunci API disimpan"
+            : `Gagal — ${msg}`,
+      });
+    }
   };
 
   const request = async (text: string) => {
@@ -112,8 +175,8 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
   return (
     <section aria-label="PokeX — analisis Pokémon dengan AI" className="mx-auto w-full max-w-3xl px-5 pb-24 pt-24 sm:px-8">
       <div className="anim-rise flex items-center gap-4" style={{ animationDelay: "0.05s" }}>
-        <span className="grid size-14 shrink-0 place-items-center rounded-[1.4rem] bg-primary-container text-on-primary-container shadow-e2 transition-transform duration-300 hover:scale-105 hover:rotate-3">
-          <Sparkle size={30} />
+        <span className="grid size-14 shrink-0 place-items-center rounded-[1.4rem] bg-primary-container shadow-e2 transition-transform duration-300 hover:scale-105 hover:rotate-3">
+          <XMark size={32} />
         </span>
         <div>
           <h1 className="font-display text-4xl font-extrabold tracking-tight text-on-surface sm:text-5xl">
@@ -217,6 +280,41 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
             </button>
           </div>
 
+          <div className="mt-5 rounded-2xl border border-outline-variant/70 bg-surface-container/60 p-4">
+            <p className="font-display text-xs font-bold uppercase tracking-widest text-on-surface-variant">
+              Uji API masa-nyata
+            </p>
+            <p className="mt-1 text-[11px] leading-relaxed text-on-surface-variant">
+              Hantar satu permintaan kecil ke {PROVIDERS[provider].label} — jika gagal, sandaran
+              automatik mencuba penyedia satunya.
+            </p>
+            <div className="mt-3 flex items-center gap-3">
+              <button
+                type="button"
+                data-sfx="click"
+                onClick={() => void runApiTest()}
+                disabled={test.status === "testing"}
+                className="h-10 shrink-0 rounded-full bg-secondary-container px-5 font-display text-xs font-bold text-on-secondary-container transition-transform active:scale-95 disabled:opacity-50"
+              >
+                {test.status === "testing" ? "Menguji…" : "Uji API"}
+              </button>
+              {test.status !== "idle" && (
+                <p
+                  role={test.status === "fail" ? "alert" : "status"}
+                  className={`text-xs font-semibold ${
+                    test.status === "testing"
+                      ? "animate-pulse text-on-surface-variant"
+                      : test.status === "ok"
+                        ? "text-[#00a878]"
+                        : "text-[var(--md-error)]"
+                  }`}
+                >
+                  {test.note}
+                </p>
+              )}
+            </div>
+          </div>
+
           <p className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-[11px] font-semibold text-on-surface-variant">
             <span>Kunci OpenRouter: {keyStatus.openrouter ? "tersimpan ✓" : "tiada"}</span>
             <span>Kunci Groq: {keyStatus.groq ? "tersimpan ✓" : "tiada"}</span>
@@ -259,8 +357,8 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
           >
             {msgs.length === 0 && !busy && (
               <div className="flex h-full flex-col items-center justify-center gap-2 py-8 text-center">
-                <span className="grid size-12 place-items-center rounded-full bg-surface-container text-primary">
-                  <Sparkle size={24} />
+                <span className="grid size-12 place-items-center rounded-full bg-surface-container">
+                  <XMark size={26} />
                 </span>
                 <p className="max-w-sm text-xs leading-relaxed text-on-surface-variant">
                   Tanya apa sahaja tentang Pokémon — statistik Pokédex (jenis, generasi, dwi-jenis)
@@ -287,7 +385,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
                     }`}
                     style={m.error ? { borderColor: "var(--md-error)" } : undefined}
                   >
-                    {m.content}
+                    {renderRich(m.content)}
                   </p>
                   {m.role === "assistant" && m.via && (
                     <span className="mt-1 px-1 text-[10px] font-semibold text-on-surface-variant">

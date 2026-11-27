@@ -104,8 +104,9 @@ export default function RumahContent() {
                     </defs>
                     <circle cx="12" cy="12" r="9.2" fill="url(#pm-pokex-teal)" />
                     <circle cx="12" cy="12" r="9.2" fill="none" stroke="#065f56" strokeOpacity="0.35" strokeWidth="1.4" />
-                    <path d="M12 5.8c.8 2.4 2 3.6 4.4 4.4-2.4.8-3.6 2-4.4 4.4-.8-2.4-2-3.6-4.4-4.4 2.4-.8 3.6-2 4.4-4.4Z" fill="#ffffff" />
-                    <circle cx="17.3" cy="16.4" r="1.35" fill="#ffffff" />
+                    <path d="m15.2 8.8-6.4 6.4" stroke="#ffc531" strokeWidth="2.4" strokeLinecap="round" />
+                    <path d="m8.8 8.8 6.4 6.4" stroke="#ffffff" strokeWidth="2.4" strokeLinecap="round" />
+                    <circle cx="12" cy="12" r="1.4" fill="#ffffff" />
                   </svg>
                 ) : item.href === "/info" ? (
                   <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>

@@ -178,8 +178,15 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
   return (
     <section
       aria-label="PokeX — analisis Pokémon dengan AI"
-      className="mx-auto flex min-h-svh w-full max-w-5xl flex-col px-5 pb-10 pt-24 sm:px-8"
+      className="relative mx-auto flex min-h-svh w-full max-w-5xl flex-col px-5 pb-10 pt-24 sm:px-8"
     >
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -right-10 top-14 hidden opacity-[0.055] select-none sm:block"
+      >
+        <XMark size={280} />
+      </span>
+
       <div className="anim-rise flex shrink-0 items-center gap-4" style={{ animationDelay: "0.05s" }}>
         <span className="grid size-14 shrink-0 place-items-center rounded-[1.4rem] bg-primary-container shadow-e2 transition-transform duration-300 hover:scale-105 hover:rotate-3">
           <XMark size={32} />
@@ -197,6 +204,24 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
             Kunci aktif
           </span>
         )}
+      </div>
+
+      <div
+        className="anim-rise mt-3 flex flex-wrap items-center gap-2"
+        style={{ animationDelay: "0.09s" }}
+      >
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-outline-variant/70 bg-surface-container/70 px-3 py-1 text-[11px] font-semibold text-on-surface-variant">
+          <i aria-hidden className="size-1.5 rounded-full bg-[#00a878]" />
+          AI sebenar
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-outline-variant/70 bg-surface-container/70 px-3 py-1 text-[11px] font-semibold text-on-surface-variant">
+          <i aria-hidden className="size-1.5 rounded-full bg-[#ffc531]" />
+          Kunci anda sendiri
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-outline-variant/70 bg-surface-container/70 px-3 py-1 text-[11px] font-semibold text-on-surface-variant">
+          <i aria-hidden className="size-1.5 rounded-full bg-[#0ea5e9]" />
+          2 penyedia • sandaran automatik
+        </span>
       </div>
 
       <div className="anim-rise mt-6 flex shrink-0 gap-1.5 rounded-full border border-outline-variant/70 bg-surface-low/85 p-1 shadow-e1 backdrop-blur-md sm:w-fit" style={{ animationDelay: "0.12s" }}>
@@ -344,7 +369,15 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
           className="anim-rise mt-4 flex min-h-[26rem] flex-1 flex-col overflow-hidden rounded-[1.75rem] border border-outline-variant shadow-e3"
           style={{ background: "var(--md-surface-container-low)", animationDelay: "0.18s" }}
         >
-          <div className="px-5 pt-5">
+          <div className="flex shrink-0 items-center gap-2.5 border-b border-outline-variant/60 px-5 py-3">
+            <XMark size={18} />
+            <p className="font-display text-sm font-extrabold text-on-surface">Sembang PokeX</p>
+            <span className="ml-auto rounded-full bg-secondary-container px-2.5 py-1 text-[10px] font-bold text-on-secondary-container">
+              {PROVIDERS[getAiProvider()].label}
+            </span>
+          </div>
+
+          <div className="px-5 pt-4">
             <button
               type="button"
               data-sfx="click"
@@ -375,10 +408,20 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
             {msgs.map((m, i) => (
               <div
                 key={i}
-                className={`mb-3 flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
+                className={`mb-3 flex items-end gap-2 ${
+                  m.role === "user" ? "justify-end" : "justify-start"
+                }`}
               >
+                {m.role === "assistant" && (
+                  <span
+                    aria-hidden
+                    className="grid size-7 shrink-0 place-items-center rounded-full bg-surface-container-high shadow-e1"
+                  >
+                    <XMark size={15} />
+                  </span>
+                )}
                 <div
-                  className={`flex max-w-[92%] flex-col ${
+                  className={`flex max-w-[88%] flex-col ${
                     m.role === "user" ? "items-end" : "items-start"
                   }`}
                 >
@@ -386,10 +429,16 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
                     role={m.error ? "alert" : undefined}
                     className={`whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-[13px] leading-relaxed shadow-e1 ${
                       m.role === "user"
-                        ? "bg-primary text-on-primary"
+                        ? "text-on-primary"
                         : "border border-outline-variant bg-surface-container text-on-surface"
                     }`}
-                    style={m.error ? { borderColor: "var(--md-error)" } : undefined}
+                    style={
+                      m.error
+                        ? { borderColor: "var(--md-error)" }
+                        : m.role === "user"
+                          ? { background: "linear-gradient(135deg, var(--md-primary), var(--md-tertiary))" }
+                          : undefined
+                    }
                   >
                     {renderRich(m.content)}
                   </p>
@@ -433,7 +482,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
                 data-sfx="click"
                 onClick={() => void request(p)}
                 disabled={busy || list.length === 0}
-                className="shrink-0 rounded-full border border-outline-variant px-3.5 py-1.5 text-[11px] font-semibold text-on-surface-variant transition-colors hover:bg-surface-container disabled:opacity-40"
+                className="shrink-0 rounded-full border border-outline-variant px-3.5 py-1.5 text-[11px] font-semibold text-on-surface-variant transition-all hover:border-primary/50 hover:bg-surface-container hover:text-on-surface disabled:opacity-40"
               >
                 {p}
               </button>
@@ -453,7 +502,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
               placeholder="Tanya… cth. jenis terkuat Gen 5?"
               rows={1}
               aria-label="Soalan untuk PokeX"
-              className="max-h-24 min-h-11 flex-1 resize-y rounded-2xl border border-outline-variant bg-surface-container px-4 py-2.5 text-sm text-on-surface outline-none"
+              className="max-h-24 min-h-11 flex-1 resize-y rounded-2xl border border-outline-variant bg-surface-container px-4 py-2.5 text-sm text-on-surface outline-none transition-colors focus:border-primary"
             />
             <button
               type="button"

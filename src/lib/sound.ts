@@ -224,11 +224,41 @@ export function playUiSfx(kind: UiSfx) {
       tone(c, t, { from: 880, dur: 0.03, vol: 0.012 });
       break;
     case "pokex": {
-      [523.25, 659.25, 783.99, 1046.5].forEach((f, i) =>
-        tone(c, t + i * 0.085, { type: "triangle", from: f, dur: 0.16, vol: 0.05 }),
+      const dest = master;
+      const wdur = 0.4;
+      const nBuf = c.createBuffer(1, Math.ceil(c.sampleRate * wdur), c.sampleRate);
+      const ch = nBuf.getChannelData(0);
+      for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
+      const noise = c.createBufferSource();
+      noise.buffer = nBuf;
+      const bp = c.createBiquadFilter();
+      bp.type = "bandpass";
+      bp.Q.value = 1.1;
+      bp.frequency.setValueAtTime(240, t);
+      bp.frequency.exponentialRampToValueAtTime(2600, t + wdur);
+      const nGain = c.createGain();
+      nGain.gain.setValueAtTime(0.0001, t);
+      nGain.gain.exponentialRampToValueAtTime(0.028, t + wdur * 0.6);
+      nGain.gain.exponentialRampToValueAtTime(0.0001, t + wdur);
+      noise.connect(bp);
+      bp.connect(nGain);
+      nGain.connect(dest);
+      noise.start(t);
+      noise.stop(t + wdur + 0.02);
+
+      tone(c, t + 0.05, { type: "sine", from: 130.81, to: 196, dur: 0.55, vol: 0.05 });
+
+      [523.25, 659.25, 783.99, 1046.5, 1318.5].forEach((f, i) =>
+        tone(c, t + 0.3 + i * 0.085, { type: "triangle", from: f, dur: 0.18, vol: 0.05 }),
       );
-      tone(c, t + 0.36, { from: 1567.98, dur: 0.32, vol: 0.038 });
-      tone(c, t + 0.36, { type: "triangle", from: 2093, dur: 0.26, vol: 0.022 });
+
+      [523.25, 783.99, 1318.5].forEach((f) =>
+        tone(c, t + 0.62, { type: "sine", from: f, dur: 0.7, vol: 0.02 }),
+      );
+
+      tone(c, t + 0.78, { from: 1567.98, dur: 0.4, vol: 0.032 });
+      tone(c, t + 0.86, { type: "triangle", from: 2093, dur: 0.35, vol: 0.02 });
+      tone(c, t + 0.98, { from: 2637, dur: 0.3, vol: 0.016 });
       break;
     }
   }

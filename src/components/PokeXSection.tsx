@@ -54,10 +54,21 @@ function XMark({ size = 28, className = "" }: { size?: number; className?: strin
           <stop offset="1" stopColor="#ff9800" />
         </linearGradient>
       </defs>
-      <path d="M18.5 5.5 5.5 18.5" stroke="url(#pm-x-b)" strokeWidth="3.4" strokeLinecap="round" />
-      <path d="M5.5 5.5 18.5 18.5" stroke="url(#pm-x-a)" strokeWidth="3.4" strokeLinecap="round" />
-      <circle cx="12" cy="12" r="2.1" fill="#ffffff" />
-      <circle cx="12" cy="12" r="3.4" fill="none" stroke="#0ea5e9" strokeWidth="1.1" className="pokex-x-gem" />
+      <path
+        d="M19 4.5C14.5 9 8 15 4.8 19.2c2.6 1.8 5.6 1.6 7.7.4"
+        stroke="url(#pm-x-b)"
+        strokeWidth="3"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <path
+        d="M5 4.5C8.5 10.5 13.5 16.5 19 19.5"
+        stroke="url(#pm-x-a)"
+        strokeWidth="3"
+        strokeLinecap="round"
+        fill="none"
+      />
+      <path d="M12 9.6 14.4 12 12 14.4 9.6 12Z" fill="#ffffff" className="pokex-x-gem" />
     </svg>
   );
 }
@@ -104,6 +115,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
   const [test, setTest] = useState<TestState>({ status: "idle", note: "" });
   const [pro, setPro] = useState(false);
   const [thinkSec, setThinkSec] = useState(0);
+  const [live, setLive] = useState<{ content: string; reasoning: string } | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -134,15 +146,22 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
     if (test.status === "testing") return;
     setTest({ status: "testing", note: `Menguji ${PROVIDERS[provider].label}…` });
     const start = performance.now();
+    let chars = 0;
     try {
       const { via } = await askAi(
         [{ role: "user", content: "Balas dengan satu perkataan sahaja: OK" }],
         "",
+        {
+          onDelta: (c) => {
+            chars += c.length;
+            setTest({ status: "testing", note: `Menerima data langsung… ${chars} aksara` });
+          },
+        },
       );
       const ms = Math.round(performance.now() - start);
       const label =
         via === provider ? PROVIDERS[via].label : `${PROVIDERS[via].label} (sandaran)`;
-      setTest({ status: "ok", note: `Berjaya — ${label}, ${ms} ms` });
+      setTest({ status: "ok", note: `Berjaya — ${label}, ${ms} ms, ${chars} aksara langsung` });
     } catch (e) {
       const msg = (e as Error).message;
       setTest({
@@ -162,11 +181,16 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
     setInput("");
     setBusy(true);
     setThinkSec(0);
+    setLive({ content: "", reasoning: "" });
     try {
       const { text: answer, via, reasoning } = await askAi(
         history.map(({ role, content }) => ({ role, content })),
         datasetSummary(list),
-        { pro: pro && provider === "groq" },
+        {
+          pro: pro && provider === "openrouter",
+          onDelta: (c) => setLive((l) => (l ? { ...l, content: l.content + c } : l)),
+          onReason: (r) => setLive((l) => (l ? { ...l, reasoning: l.reasoning + r } : l)),
+        },
       );
       const viaLabel =
         via === provider ? PROVIDERS[via].label : `${PROVIDERS[via].label} (sandaran)`;
@@ -187,6 +211,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
           : `Permintaan gagal — ${msg}. Sandaran telah dicuba juga; semak kunci/model dalam tab Tetapan atau cuba penyedia lain.`;
       setMsgs((m) => [...m, { role: "assistant", content: detail, error: true }]);
     }
+    setLive(null);
     setBusy(false);
     requestAnimationFrame(() => {
       const el = scrollRef.current;
@@ -208,6 +233,11 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
     return () => window.clearInterval(id);
   }, [busy]);
 
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [live]);
+
   const togglePro = () => {
     const next = !pro;
     setPro(next);
@@ -218,7 +248,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
     }
   };
 
-  const proActive = pro && provider === "groq";
+  const proActive = pro && provider === "openrouter";
 
   return (
     <section
@@ -448,9 +478,9 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
                 type="button"
                 data-sfx="toggle-on"
                 onClick={togglePro}
-                disabled={provider !== "groq"}
+                disabled={provider !== "openrouter"}
                 aria-pressed={proActive}
-                aria-label="Pro Thinking (khusus Groq)"
+                aria-label="Pro Thinking (khusus OpenRouter)"
                 className={`relative h-7 w-12 shrink-0 rounded-full transition-colors disabled:opacity-40 ${
                   proActive ? "bg-primary" : "bg-surface-container-highest"
                 }`}
@@ -466,13 +496,13 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
                 <p className="font-display text-xs font-extrabold text-on-surface">
                   Pro Thinking
                   <span className="ml-1.5 rounded-full bg-tertiary-container px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-on-tertiary-container">
-                    Groq sahaja
+                    OpenRouter sahaja
                   </span>
                 </p>
                 <p className="text-[10px] leading-snug text-on-surface-variant">
-                  {provider !== "groq"
-                    ? "Tukar penyedia ke Groq dalam Tetapan untuk aktifkan."
-                    : `Fikir mendalam ${PRO_THINK_SECONDS} saat dengan reasoning_effort tinggi.`}
+                  {provider !== "openrouter"
+                    ? "Tukar penyedia ke OpenRouter dalam Tetapan untuk aktifkan."
+                    : `Fikir mendalam ${PRO_THINK_SECONDS} saat dengan reasoning effort tinggi.`}
                 </p>
               </div>
             </div>
@@ -549,7 +579,33 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
                 </div>
               </div>
             ))}
-            {busy && (
+            {live && (live.content || live.reasoning) && (
+              <div className="mb-3 flex items-end justify-start gap-2" role="status" aria-live="polite">
+                <span
+                  aria-hidden
+                  className="grid size-7 shrink-0 place-items-center rounded-full bg-surface-container-high shadow-e1"
+                >
+                  <XMark size={15} />
+                </span>
+                <div className="flex max-w-[88%] flex-col items-start">
+                  {live.content && (
+                    <p className="pokex-caret whitespace-pre-wrap rounded-2xl border border-outline-variant bg-surface-container px-4 py-2.5 text-[13px] leading-relaxed text-on-surface shadow-e1">
+                      {renderRich(live.content)}
+                    </p>
+                  )}
+                  {live.reasoning && (
+                    <p
+                      className={`whitespace-pre-wrap px-1 text-[11px] italic leading-relaxed text-on-surface-variant/80 ${
+                        live.content ? "mt-1 max-h-24 overflow-hidden" : "max-h-32 overflow-hidden"
+                      }`}
+                    >
+                      {live.reasoning}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+            {busy && !live?.content && (
               <div className="mb-3 flex justify-start" role="status" aria-live="polite">
                 <div
                   className={`rounded-2xl border px-4 py-3 shadow-e1 ${

@@ -121,6 +121,8 @@ async function callChat(
   sys: string,
   messages: ChatMsg[],
   pro: boolean,
+  onDelta?: (chunk: string) => void,
+  onReason?: (chunk: string) => void,
 ): Promise<{ text: string; reasoning: string }> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), pro ? 120000 : 60000);
@@ -137,17 +139,61 @@ async function callChat(
         messages: [{ role: "system", content: sys }, ...messages],
         temperature: 0.4,
         max_tokens: 900,
-        ...(pro && p === "groq"
-          ? { reasoning_effort: "high", reasoning_format: "parsed" }
-          : {}),
+        stream: true,
+        ...(pro && p === "openrouter" ? { reasoning: { effort: "high" } } : {}),
       }),
       signal: controller.signal,
     });
     if (!res.ok) throw new Error(`HTTP ${res.status} (${httpHint(res.status)})`);
-    const data = await res.json();
-    const text = data?.choices?.[0]?.message?.content ?? "";
+
+    const contentType = res.headers.get("content-type") ?? "";
+    if (!res.body || contentType.includes("application/json")) {
+      const data = await res.json();
+      const text = String(data?.choices?.[0]?.message?.content ?? "");
+      if (!text) throw new Error("jawapan kosong daripada model");
+      const reasoning = String(data?.choices?.[0]?.message?.reasoning ?? "");
+      onDelta?.(text);
+      if (reasoning) onReason?.(reasoning);
+      return { text, reasoning };
+    }
+
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = "";
+    let text = "";
+    let reasoning = "";
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const lines = buf.split("\n");
+      buf = lines.pop() ?? "";
+      for (const line of lines) {
+        const s = line.trim();
+        if (!s.startsWith("data:")) continue;
+        const payload = s.slice(5).trim();
+        if (payload === "[DONE]") continue;
+        try {
+          const json = JSON.parse(payload) as {
+            choices?: { delta?: { content?: string; reasoning?: string } }[];
+          };
+          const delta = json.choices?.[0]?.delta;
+          const r = String(delta?.reasoning ?? "");
+          const c = String(delta?.content ?? "");
+          if (r) {
+            reasoning += r;
+            onReason?.(r);
+          }
+          if (c) {
+            text += c;
+            onDelta?.(c);
+          }
+        } catch {
+          /* baris separa */
+        }
+      }
+    }
     if (!text) throw new Error("jawapan kosong daripada model");
-    const reasoning = String(data?.choices?.[0]?.message?.reasoning ?? "");
     return { text, reasoning };
   } finally {
     clearTimeout(timer);
@@ -157,7 +203,11 @@ async function callChat(
 export async function askAi(
   messages: ChatMsg[],
   context: string,
-  opts: { pro?: boolean } = {},
+  opts: {
+    pro?: boolean;
+    onDelta?: (chunk: string) => void;
+    onReason?: (chunk: string) => void;
+  } = {},
 ): Promise<{ text: string; via: AiProvider; reasoning?: string }> {
   const sys = SYSTEM_PROMPT + (context ? `\n\n${context}` : "");
   const preferred = getAiProvider();
@@ -177,6 +227,8 @@ export async function askAi(
         sys,
         messages,
         !!opts.pro,
+        opts.onDelta,
+        opts.onReason,
       );
       return { text, via: p, reasoning: reasoning || undefined };
     } catch (e) {

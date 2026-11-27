@@ -1091,6 +1091,30 @@ body {
   }
 }
 
+/* ====== PokeX: Caret streaming langsung ====== */
+.pokex-caret::after {
+  content: "";
+  display: inline-block;
+  width: 0.5em;
+  height: 1em;
+  margin-left: 3px;
+  vertical-align: text-bottom;
+  border-radius: 1px;
+  background: var(--md-primary);
+  animation: pokex-caret 1s steps(2) infinite;
+}
+@keyframes pokex-caret {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pokex-caret::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dock-in,
   .dock-item {

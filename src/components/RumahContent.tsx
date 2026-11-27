@@ -75,6 +75,32 @@ export default function RumahContent() {
                     <circle cx="12" cy="12" r="3.6" fill="#2b2320" stroke="#f7f4ef" strokeWidth="1.2" />
                     <circle cx="12" cy="12" r="1.7" fill="#ffffff" />
                   </svg>
+                ) : item.href === "/kuiz" ? (
+                  <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>
+                    <defs>
+                      <linearGradient id="pm-quiz-amber" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stopColor="#ffd54d" />
+                        <stop offset="1" stopColor="#ff9800" />
+                      </linearGradient>
+                    </defs>
+                    <circle cx="12" cy="12" r="9.2" fill="url(#pm-quiz-amber)" />
+                    <circle cx="12" cy="12" r="9.2" fill="none" stroke="#8a4b00" strokeOpacity="0.35" strokeWidth="1.4" />
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" fill="none" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M12 16.9h.01" fill="none" stroke="#ffffff" strokeWidth="2.6" strokeLinecap="round" />
+                  </svg>
+                ) : item.href === "/info" ? (
+                  <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>
+                    <defs>
+                      <linearGradient id="pm-info-blue" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stopColor="#4facfe" />
+                        <stop offset="1" stopColor="#2f7cf6" />
+                      </linearGradient>
+                    </defs>
+                    <circle cx="12" cy="12" r="9.2" fill="url(#pm-info-blue)" />
+                    <circle cx="12" cy="12" r="9.2" fill="none" stroke="#0b4a8f" strokeOpacity="0.35" strokeWidth="1.4" />
+                    <path d="M12 7.4h.01" fill="none" stroke="#ffffff" strokeWidth="2.6" strokeLinecap="round" />
+                    <path d="M12 11.1v5.4" fill="none" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" />
+                  </svg>
                 ) : (
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <path d={item.icon} />

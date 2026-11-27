@@ -141,7 +141,8 @@ export type UiSfx =
   | "dice"
   | "success"
   | "error"
-  | "hover";
+  | "hover"
+  | "pokex";
 
 const SFX_KINDS = new Set<string>([
   "click",
@@ -154,6 +155,7 @@ const SFX_KINDS = new Set<string>([
   "success",
   "error",
   "hover",
+  "pokex",
 ]);
 
 function tone(
@@ -221,6 +223,14 @@ export function playUiSfx(kind: UiSfx) {
     case "hover":
       tone(c, t, { from: 880, dur: 0.03, vol: 0.012 });
       break;
+    case "pokex": {
+      [523.25, 659.25, 783.99, 1046.5].forEach((f, i) =>
+        tone(c, t + i * 0.085, { type: "triangle", from: f, dur: 0.16, vol: 0.05 }),
+      );
+      tone(c, t + 0.36, { from: 1567.98, dur: 0.32, vol: 0.038 });
+      tone(c, t + 0.36, { type: "triangle", from: 2093, dur: 0.26, vol: 0.022 });
+      break;
+    }
   }
 }
 

@@ -14,6 +14,7 @@ import {
   setAiProvider,
   type AiProvider,
 } from "../lib/ai";
+import { playUiSfx } from "../lib/sound";
 
 type Msg = { role: "user" | "assistant"; content: string; error?: boolean; via?: string };
 
@@ -33,7 +34,7 @@ function XMark({ size = 28, className = "" }: { size?: number; className?: strin
       height={size}
       viewBox="0 0 24 24"
       fill="none"
-      className={className}
+      className={`pokex-x-live ${className}`}
       aria-hidden
     >
       <defs>
@@ -49,7 +50,7 @@ function XMark({ size = 28, className = "" }: { size?: number; className?: strin
       <path d="M18.5 5.5 5.5 18.5" stroke="url(#pm-x-b)" strokeWidth="3.4" strokeLinecap="round" />
       <path d="M5.5 5.5 18.5 18.5" stroke="url(#pm-x-a)" strokeWidth="3.4" strokeLinecap="round" />
       <circle cx="12" cy="12" r="2.1" fill="#ffffff" />
-      <circle cx="12" cy="12" r="3.4" fill="none" stroke="#0ea5e9" strokeOpacity="0.35" strokeWidth="1.1" />
+      <circle cx="12" cy="12" r="3.4" fill="none" stroke="#0ea5e9" strokeWidth="1.1" className="pokex-x-gem" />
     </svg>
   );
 }
@@ -104,6 +105,8 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
       openrouter: !!getAiKey("openrouter"),
       groq: !!getAiKey("groq"),
     });
+    const id = window.setTimeout(() => playUiSfx("pokex"), 260);
+    return () => window.clearTimeout(id);
   }, []);
 
   const saveKey = () => {
@@ -173,8 +176,11 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
   };
 
   return (
-    <section aria-label="PokeX — analisis Pokémon dengan AI" className="mx-auto w-full max-w-3xl px-5 pb-24 pt-24 sm:px-8">
-      <div className="anim-rise flex items-center gap-4" style={{ animationDelay: "0.05s" }}>
+    <section
+      aria-label="PokeX — analisis Pokémon dengan AI"
+      className="mx-auto flex min-h-svh w-full max-w-5xl flex-col px-5 pb-10 pt-24 sm:px-8"
+    >
+      <div className="anim-rise flex shrink-0 items-center gap-4" style={{ animationDelay: "0.05s" }}>
         <span className="grid size-14 shrink-0 place-items-center rounded-[1.4rem] bg-primary-container shadow-e2 transition-transform duration-300 hover:scale-105 hover:rotate-3">
           <XMark size={32} />
         </span>
@@ -193,7 +199,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
         )}
       </div>
 
-      <div className="anim-rise mt-6 flex gap-1.5 rounded-full border border-outline-variant/70 bg-surface-low/85 p-1 shadow-e1 backdrop-blur-md sm:w-fit" style={{ animationDelay: "0.12s" }}>
+      <div className="anim-rise mt-6 flex shrink-0 gap-1.5 rounded-full border border-outline-variant/70 bg-surface-low/85 p-1 shadow-e1 backdrop-blur-md sm:w-fit" style={{ animationDelay: "0.12s" }}>
         {(["Sembang", "Tetapan"] as const).map((t) => (
           <button
             key={t}
@@ -214,7 +220,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
 
       {tab === "tetapan" ? (
         <div
-          className="anim-rise mt-4 rounded-[1.75rem] border border-outline-variant p-6 shadow-e3"
+          className="anim-rise mt-4 flex flex-col rounded-[1.75rem] border border-outline-variant p-6 shadow-e3 sm:flex-1"
           style={{ background: "var(--md-surface-container-low)", animationDelay: "0.18s" }}
         >
           <label className="text-xs font-bold text-on-surface-variant">Penyedia AI</label>
@@ -335,7 +341,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
         </div>
       ) : (
         <div
-          className="anim-rise mt-4 flex h-[min(74svh,42rem)] flex-col overflow-hidden rounded-[1.75rem] border border-outline-variant shadow-e3"
+          className="anim-rise mt-4 flex min-h-[26rem] flex-1 flex-col overflow-hidden rounded-[1.75rem] border border-outline-variant shadow-e3"
           style={{ background: "var(--md-surface-container-low)", animationDelay: "0.18s" }}
         >
           <div className="px-5 pt-5">

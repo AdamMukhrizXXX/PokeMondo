@@ -10,8 +10,8 @@
     "lint": "next lint"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "AdamMukhrizXXX (Adam) & Mistral AI",
+  "license": "MIT",
   "dependencies": {
     "next": "^15.5.29",
     "react": "^19.3.1",

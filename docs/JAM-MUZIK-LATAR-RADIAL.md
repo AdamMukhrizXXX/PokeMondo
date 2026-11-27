@@ -85,3 +85,11 @@ Dokumen ringkas mengikut struktur URD/ADD/MDD/TDD (ID stabil) untuk empat sistem
 - **ADD-PG2** `PokedexProvider` (`pokedex-context.tsx`) dalam `RootLayout`: senarai 1,025 dimuat sekali (prefetch statik) dan dikongsi merentas halaman — modal butiran, Rawak, dan AI Anal berfungsi di mana-mana halaman.
 - **ADD-PG3** `BottomDock.tsx` menggantikan kawalan dalam panel Staggered Menu: dok kaca tengah-bawah (`dock-in` meluncur, `dock-item` stagger spring, tooltip atas, lift hover, `dice-float`); Staggered Menu kekal sebagai navigasi halaman (`Link` + `usePathname`, auto tutup semasa navigasi).
 - **ADD-PG4** Carian Hero menavigasi ke `/pokedex?q=…`; halaman Pokédex membaca `q` daripada URL melalui `useSearchParams` (dalam `Suspense`).
+
+## Tema Laman Baharu: Neobrutalism / Claymorphism / Glassmorphism (Fasa 27c)
+
+- `site-theme.ts`: senarai tema diganti — `dasar`, `neobrutalism`, `claymorphism`, `glassmorphism`; nilai tersimpan lama (hand-drawn/liquid-glass/bauhaus) jatuh kembali ke `dasar` secara selamat.
+- `globals.css`: tiga blok `[data-site-theme]` baharu menggantikan blok lama, semuanya token M3 + varian gelap:
+  - **Neobrutalism**: palet jingga/kuning/hijau, sempadan 2.5px pepejal + bayang keras beroffset 4–5px pada semua butang/kad, headline uppercase dengan text-shadow berblok, gradien teks tiga warna.
+  - **Claymorphism**: permukaan pastel panas, sempadan dibuang, dwi-bayang dalaman (inset terang atas + inset gelap bawah) + bayang lembut luar — rupa tanah liat kembang; varian gelap mengubah warna bayang.
+  - **Glassmorphism**: container lut sinar (color-mix putih/kebiruan), latar gradien blob tetap (biru/teal/pink), sempadan kaca putih 1.5px + inset highlight, backdrop-blur 20px + saturate 1.6.

@@ -500,120 +500,158 @@ body {
   100% { opacity: 1; transform: translateY(0) rotateX(0); filter: blur(0); }
 }
 
-/* ====== Tema Laman: Hand-Drawn ====== */
-[data-site-theme="hand-drawn"] {
-  --md-primary: #8a4b2f;
-  --md-primary-container: #f3e0c8;
-  --md-surface: #faf3e3;
-  --md-surface-container-low: #f3ead6;
-  --md-surface-container: #ede3cc;
-  --md-surface-container-high: #e7dbbf;
-  --md-surface-container-highest: #e0d2b2;
-  --md-outline: #6b5636;
-  --md-outline-variant: #c9b58e;
-  --font-display: var(--font-hand), "Comic Sans MS", cursive;
-}
-[data-theme="dark"][data-site-theme="hand-drawn"] {
-  --md-primary: #e8b48a;
-  --md-primary-container: #4f3220;
-  --md-surface: #171310;
-  --md-surface-container-low: #211a14;
-  --md-surface-container: #261e17;
-  --md-surface-container-high: #2d241b;
-  --md-surface-container-highest: #352a1f;
-  --md-outline: #a98f68;
-  --md-outline-variant: #4a3c28;
-}
-[data-site-theme="hand-drawn"] button,
-[data-site-theme="hand-drawn"] input,
-[data-site-theme="hand-drawn"] select {
-  border-style: dashed;
-}
-[data-site-theme="hand-drawn"] h1,
-[data-site-theme="hand-drawn"] h2 {
-  text-decoration: underline wavy color-mix(in srgb, var(--md-primary) 45%, transparent);
-  text-underline-offset: 8px;
-  text-decoration-thickness: 2px;
-}
-
-/* ====== Tema Laman: Liquid Glass ====== */
-[data-site-theme="liquid-glass"] {
-  --md-surface: color-mix(in srgb, #8ec5ff 12%, var(--md-surface) 88%);
-  --md-surface-container-low: color-mix(in srgb, #8ec5ff 16%, transparent 0%);
-  --md-surface-container: color-mix(in srgb, #ffffff 26%, transparent);
-  --md-surface-container-high: color-mix(in srgb, #ffffff 34%, transparent);
-  --md-surface-container-highest: color-mix(in srgb, #ffffff 42%, transparent);
-}
-[data-site-theme="liquid-glass"] body {
-  background:
-    radial-gradient(60rem 40rem at 15% 10%, color-mix(in srgb, #7aa7ff 26%, transparent), transparent 60%),
-    radial-gradient(50rem 36rem at 85% 85%, color-mix(in srgb, #ff9ecb 22%, transparent), transparent 60%),
-    var(--md-surface);
-  background-attachment: fixed;
-}
-[data-site-theme="liquid-glass"] .backdrop-blur-md,
-[data-site-theme="liquid-glass"] .backdrop-blur-sm {
-  backdrop-filter: blur(18px) saturate(1.5);
-  -webkit-backdrop-filter: blur(18px) saturate(1.5);
-}
-
-/* ====== Tema Laman: Bauhaus ====== */
-[data-site-theme="bauhaus"] {
-  --md-primary: #d62828;
+/* ====== Tema Laman: Neobrutalism ====== */
+[data-site-theme="neobrutalism"] {
+  --md-primary: #ff5c38;
   --md-on-primary: #ffffff;
-  --md-primary-container: #f4c20d;
-  --md-on-primary-container: #141414;
-  --md-secondary-container: #2667ff;
-  --md-on-secondary-container: #ffffff;
-  --md-tertiary: #2667ff;
-  --md-tertiary-container: #2667ff;
-  --md-on-tertiary-container: #ffffff;
-  --md-surface: #f5f1e8;
-  --md-surface-container-low: #efe9da;
-  --md-surface-container: #e9e2cf;
-  --md-surface-container-high: #e2dac0;
-  --md-surface-container-highest: #dbd2b2;
-  --md-on-surface: #141414;
-  --md-outline: #141414;
-  --md-outline-variant: #14141440;
-  --md-shadow: rgba(20, 20, 20, 0.35);
+  --md-primary-container: #ffd9cf;
+  --md-on-primary-container: #1a1a1a;
+  --md-secondary-container: #ffc531;
+  --md-on-secondary-container: #1a1a1a;
+  --md-tertiary: #00a878;
+  --md-tertiary-container: #b8f2dd;
+  --md-on-tertiary-container: #1a1a1a;
+  --md-surface: #fdf7ef;
+  --md-surface-container-low: #f7f0e3;
+  --md-surface-container: #f1e8d8;
+  --md-surface-container-high: #ebe0cb;
+  --md-surface-container-highest: #e4d6bd;
+  --md-on-surface: #1a1a1a;
+  --md-outline: #1a1a1a;
+  --md-outline-variant: #1a1a1a;
+  --md-shadow: rgba(26, 26, 26, 0.85);
 }
-[data-theme="dark"][data-site-theme="bauhaus"] {
-  --md-primary: #ff5a4e;
-  --md-primary-container: #f4c20d;
-  --md-on-primary-container: #141414;
-  --md-secondary-container: #2667ff;
-  --md-on-secondary-container: #ffffff;
-  --md-tertiary: #7aa7ff;
-  --md-tertiary-container: #2667ff;
-  --md-on-tertiary-container: #ffffff;
-  --md-surface: #121212;
-  --md-surface-container-low: #1a1a1a;
-  --md-surface-container: #202020;
-  --md-surface-container-high: #272727;
-  --md-surface-container-highest: #2f2f2f;
-  --md-on-surface: #f2ede2;
-  --md-outline: #f2ede2;
-  --md-outline-variant: #f2ede255;
+[data-theme="dark"][data-site-theme="neobrutalism"] {
+  --md-primary: #ff7a5c;
+  --md-primary-container: #a83317;
+  --md-on-primary-container: #ffffff;
+  --md-surface: #16120e;
+  --md-surface-container-low: #201a14;
+  --md-surface-container: #271f17;
+  --md-surface-container-high: #2e251b;
+  --md-surface-container-highest: #362b1e;
+  --md-on-surface: #f5efe4;
+  --md-outline: #f5efe4;
+  --md-outline-variant: #f5efe4;
+  --md-shadow: rgba(245, 239, 228, 0.55);
 }
-[data-site-theme="bauhaus"] h1,
-[data-site-theme="bauhaus"] h2,
-[data-site-theme="bauhaus"] h3 {
+[data-site-theme="neobrutalism"] button,
+[data-site-theme="neobrutalism"] input,
+[data-site-theme="neobrutalism"] select {
+  border: 2.5px solid var(--md-outline) !important;
+  border-radius: 0.625rem !important;
+  box-shadow: 4px 4px 0 0 var(--md-shadow) !important;
+}
+[data-site-theme="neobrutalism"] [class*="rounded-"] {
+  border: 2.5px solid var(--md-outline) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 5px 5px 0 0 var(--md-shadow);
+}
+[data-site-theme="neobrutalism"] h1,
+[data-site-theme="neobrutalism"] h2,
+[data-site-theme="neobrutalism"] h3 {
   text-transform: uppercase;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
+  text-shadow: 3px 3px 0 color-mix(in srgb, var(--md-primary) 55%, transparent);
 }
-[data-site-theme="bauhaus"] button {
-  border-radius: 0.375rem;
-}
-[data-site-theme="bauhaus"] .rounded-\[2rem\],
-[data-site-theme="bauhaus"] .rounded-\[28px\] {
-  border-radius: 0.5rem;
-}
-[data-site-theme="bauhaus"] .text-gradient {
-  background: linear-gradient(90deg, #d62828, #f4c20d, #2667ff);
+[data-site-theme="neobrutalism"] .text-gradient {
+  background: linear-gradient(90deg, #ff5c38, #ffc531, #00a878);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+/* ====== Tema Laman: Claymorphism ====== */
+[data-site-theme="claymorphism"] {
+  --md-primary: #d96a4f;
+  --md-primary-container: #ffe3d8;
+  --md-on-primary-container: #4a1d10;
+  --md-tertiary: #4e8d7c;
+  --md-tertiary-container: #d3ece4;
+  --md-on-tertiary-container: #0f2e26;
+  --md-surface: #fbf3ee;
+  --md-surface-container-low: #f5e9e2;
+  --md-surface-container: #efe0d7;
+  --md-surface-container-high: #e8d6cb;
+  --md-surface-container-highest: #e0cbbc;
+  --md-outline: #b98a76;
+  --md-outline-variant: #ddc4b6;
+  --md-shadow: rgba(185, 138, 118, 0.5);
+}
+[data-theme="dark"][data-site-theme="claymorphism"] {
+  --md-primary: #f0a288;
+  --md-primary-container: #7c3a26;
+  --md-on-primary-container: #ffe3d8;
+  --md-surface: #171110;
+  --md-surface-container-low: #221a17;
+  --md-surface-container: #291f1b;
+  --md-surface-container-high: #312421;
+  --md-surface-container-highest: #3a2b26;
+  --md-on-surface: #f3e6df;
+  --md-outline: #a07a68;
+  --md-outline-variant: #4a382f;
+  --md-shadow: rgba(0, 0, 0, 0.65);
+}
+[data-site-theme="claymorphism"] button,
+[data-site-theme="claymorphism"] input,
+[data-site-theme="claymorphism"] select {
+  border: none !important;
+  border-radius: 1.25rem !important;
+  box-shadow:
+    7px 7px 16px var(--md-shadow),
+    -5px -5px 12px color-mix(in srgb, #ffffff 70%, transparent),
+    inset 3px 3px 6px color-mix(in srgb, #ffffff 55%, transparent),
+    inset -4px -4px 8px color-mix(in srgb, var(--md-shadow) 45%, transparent) !important;
+}
+[data-site-theme="claymorphism"] [class*="rounded-"] {
+  border: none !important;
+  border-radius: 1.5rem !important;
+  box-shadow:
+    9px 9px 20px var(--md-shadow),
+    -6px -6px 14px color-mix(in srgb, #ffffff 75%, transparent),
+    inset 3px 3px 7px color-mix(in srgb, #ffffff 50%, transparent),
+    inset -5px -5px 10px color-mix(in srgb, var(--md-shadow) 40%, transparent);
+}
+
+/* ====== Tema Laman: Glassmorphism ====== */
+[data-site-theme="glassmorphism"] {
+  --md-surface: color-mix(in srgb, #6fc3ff 14%, var(--md-surface) 86%);
+  --md-surface-container-low: color-mix(in srgb, #ffffff 20%, transparent);
+  --md-surface-container: color-mix(in srgb, #ffffff 28%, transparent);
+  --md-surface-container-high: color-mix(in srgb, #ffffff 36%, transparent);
+  --md-surface-container-highest: color-mix(in srgb, #ffffff 44%, transparent);
+  --md-outline-variant: color-mix(in srgb, #ffffff 55%, transparent);
+  --md-shadow: rgba(31, 56, 88, 0.22);
+}
+[data-site-theme="glassmorphism"] body {
+  background:
+    radial-gradient(55rem 38rem at 12% 12%, color-mix(in srgb, #4facfe 30%, transparent), transparent 60%),
+    radial-gradient(48rem 34rem at 88% 20%, color-mix(in srgb, #43e5b0 24%, transparent), transparent 60%),
+    radial-gradient(52rem 40rem at 80% 88%, color-mix(in srgb, #ff8fab 26%, transparent), transparent 60%),
+    var(--md-surface);
+  background-attachment: fixed;
+}
+[data-theme="dark"][data-site-theme="glassmorphism"] {
+  --md-surface-container-low: color-mix(in srgb, #9fd0ff 12%, transparent);
+  --md-surface-container: color-mix(in srgb, #9fd0ff 18%, transparent);
+  --md-surface-container-high: color-mix(in srgb, #9fd0ff 24%, transparent);
+  --md-surface-container-highest: color-mix(in srgb, #9fd0ff 30%, transparent);
+  --md-outline-variant: color-mix(in srgb, #9fd0ff 40%, transparent);
+  --md-shadow: rgba(0, 0, 0, 0.5);
+}
+[data-site-theme="glassmorphism"] [class*="rounded-"],
+[data-site-theme="glassmorphism"] button,
+[data-site-theme="glassmorphism"] input,
+[data-site-theme="glassmorphism"] select {
+  border: 1.5px solid color-mix(in srgb, #ffffff 50%, transparent) !important;
+  box-shadow:
+    0 8px 32px var(--md-shadow),
+    inset 0 1px 0 color-mix(in srgb, #ffffff 45%, transparent) !important;
+}
+[data-site-theme="glassmorphism"] .backdrop-blur-md,
+[data-site-theme="glassmorphism"] .backdrop-blur-sm {
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
 }
 
 /* ====== Prestasi: hormati prefers-reduced-motion ====== */

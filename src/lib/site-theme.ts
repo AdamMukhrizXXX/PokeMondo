@@ -5,14 +5,14 @@ import { useEffect, useState } from "react";
 const KEY = "md-site-theme";
 const EV = "md-site-theme";
 
-export const SITE_THEMES = ["dasar", "hand-drawn", "liquid-glass", "bauhaus"] as const;
+export const SITE_THEMES = ["dasar", "neobrutalism", "claymorphism", "glassmorphism"] as const;
 export type SiteTheme = (typeof SITE_THEMES)[number];
 
 export const THEME_LABELS: Record<SiteTheme, string> = {
   dasar: "Dasar M3",
-  "hand-drawn": "Hand-Drawn",
-  "liquid-glass": "Liquid Glass",
-  bauhaus: "Bauhaus",
+  neobrutalism: "Neobrutalism",
+  claymorphism: "Claymorphism",
+  glassmorphism: "Glassmorphism",
 };
 
 export function applySiteTheme(t: SiteTheme) {

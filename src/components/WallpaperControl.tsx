@@ -85,13 +85,6 @@ export default function WallpaperControl() {
     document.documentElement.style.removeProperty("--wp-blur");
   };
 
-  useEffect(() => {
-    if (!open) return;
-    const onScroll = () => setOpen(false);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [open]);
-
   return (
     <>
       <button

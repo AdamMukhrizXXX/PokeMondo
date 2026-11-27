@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
 import { setUiMode, useUiMode } from "../lib/ui-mode";
 
@@ -13,13 +13,6 @@ export default function FallbackModeButton() {
     setOpen(false);
     setUiMode(next);
   };
-
-  useEffect(() => {
-    if (!open) return;
-    const onScroll = () => setOpen(false);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [open]);
 
   return (
     <>

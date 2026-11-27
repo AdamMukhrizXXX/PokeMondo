@@ -60,9 +60,26 @@ export default function RumahContent() {
               style={{ animationDelay: `${0.15 + i * 0.08}s` }}
             >
               <span className="grid size-11 place-items-center rounded-2xl bg-primary-container text-on-primary-container transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d={item.icon} />
-                </svg>
+                {item.href === "/pokedex" ? (
+                  <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>
+                    <defs>
+                      <linearGradient id="pm-pokeball-red" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stopColor="#ff6a48" />
+                        <stop offset="1" stopColor="#e3350d" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M12 2a10 10 0 0 1 9.95 9H12V2Z" fill="url(#pm-pokeball-red)" />
+                    <path d="M12 22a10 10 0 0 1-9.95-11H12v11Z" fill="#f7f4ef" />
+                    <path d="M2.05 11h19.9" stroke="#2b2320" strokeWidth="2.4" strokeLinecap="round" />
+                    <circle cx="12" cy="12" r="3.4" fill="#2b2320" />
+                    <circle cx="12" cy="12" r="1.9" fill="#ffffff" />
+                    <circle cx="12" cy="2" r="10" fill="none" stroke="#2b2320" strokeWidth="1.6" />
+                  </svg>
+                ) : (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <path d={item.icon} />
+                  </svg>
+                )}
               </span>
               <span className="font-display text-lg font-extrabold text-on-surface">{item.label}</span>
               <span className="text-sm leading-snug text-on-surface-variant">{item.note}</span>

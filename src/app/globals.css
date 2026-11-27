@@ -535,30 +535,114 @@ body {
   --md-outline-variant: #f5efe4;
   --md-shadow: rgba(245, 239, 228, 0.55);
 }
+/* Tekstur kertas titik halftone (statis — murah untuk GPU) */
+[data-site-theme="neobrutalism"] body {
+  background:
+    radial-gradient(rgba(26, 26, 26, 0.075) 1.3px, transparent 1.4px) 0 0 / 20px 20px,
+    var(--md-surface);
+}
+[data-theme="dark"][data-site-theme="neobrutalism"] body {
+  background-image: radial-gradient(rgba(245, 239, 228, 0.06) 1.3px, transparent 1.4px);
+}
+
+/* Lag: matikan kabur kaca, sorotan lembut & hanyutan imej — neobrutalism rata dan tegar */
+[data-site-theme="neobrutalism"] [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+[data-site-theme="neobrutalism"] .sm-panel {
+  background: var(--md-surface-container-low);
+}
+[data-site-theme="neobrutalism"] .pokex-spotlight::before {
+  display: none;
+}
+[data-site-theme="neobrutalism"] .deco-img {
+  mix-blend-mode: normal;
+  opacity: 0.16;
+}
+[data-site-theme="neobrutalism"] .deco-float {
+  animation: none;
+}
+
+/* Panel & kad: bingkai hitam tegar + bayang tegas */
+[data-site-theme="neobrutalism"] [class*="rounded-"] {
+  border: 2.5px solid var(--md-outline) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 4px 4px 0 0 var(--md-shadow);
+}
 [data-site-theme="neobrutalism"] button,
 [data-site-theme="neobrutalism"] input,
-[data-site-theme="neobrutalism"] select {
+[data-site-theme="neobrutalism"] select,
+[data-site-theme="neobrutalism"] textarea {
   border: 2.5px solid var(--md-outline) !important;
   border-radius: 0.625rem !important;
   box-shadow: 4px 4px 0 0 var(--md-shadow) !important;
 }
-[data-site-theme="neobrutalism"] [class*="rounded-"] {
-  border: 2.5px solid var(--md-outline) !important;
-  border-radius: 0.75rem !important;
-  box-shadow: 5px 5px 0 0 var(--md-shadow);
+
+/* Interaksi "ditekan": angkat semasa hover, tekan masuk semasa aktif */
+[data-site-theme="neobrutalism"] button {
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
 }
+[data-site-theme="neobrutalism"] button:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 var(--md-shadow) !important;
+}
+[data-site-theme="neobrutalism"] button:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 0 var(--md-shadow) !important;
+}
+
+/* Tajuk: uppercase dengan bayang amber tegar (bukan glow) */
 [data-site-theme="neobrutalism"] h1,
 [data-site-theme="neobrutalism"] h2,
 [data-site-theme="neobrutalism"] h3 {
   text-transform: uppercase;
-  letter-spacing: 0.02em;
-  text-shadow: 3px 3px 0 color-mix(in srgb, var(--md-primary) 55%, transparent);
+  letter-spacing: 0.015em;
+  text-shadow: 3px 3px 0 var(--md-secondary-container);
+  overflow-wrap: break-word;
+}
+[data-theme="dark"][data-site-theme="neobrutalism"] h1,
+[data-theme="dark"][data-site-theme="neobrutalism"] h2,
+[data-theme="dark"][data-site-theme="neobrutalism"] h3 {
+  text-shadow: 3px 3px 0 rgba(255, 197, 49, 0.5);
 }
 [data-site-theme="neobrutalism"] .text-gradient {
   background: linear-gradient(90deg, #ff5c38, #ffc531, #00a878);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  text-shadow: none;
+}
+
+/* Butiran tema: pemilihan & scrollbar tegar */
+[data-site-theme="neobrutalism"] ::selection {
+  background: #ffc531;
+  color: #1a1a1a;
+}
+[data-site-theme="neobrutalism"] ::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+[data-site-theme="neobrutalism"] ::-webkit-scrollbar-track {
+  background: var(--md-surface-container);
+  border-left: 2px solid var(--md-outline);
+}
+[data-site-theme="neobrutalism"] ::-webkit-scrollbar-thumb {
+  background: var(--md-primary);
+  border: 2.5px solid var(--md-outline);
+  border-radius: 0;
+}
+[data-site-theme="neobrutalism"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--md-tertiary);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-site-theme="neobrutalism"] button {
+    transition: none;
+  }
+  [data-site-theme="neobrutalism"] button:hover:not(:disabled),
+  [data-site-theme="neobrutalism"] button:active:not(:disabled) {
+    transform: none;
+  }
 }
 
 /* ====== Tema Laman: Claymorphism ====== */

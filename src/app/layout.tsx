@@ -1,27 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { Baloo_2, Caveat, DM_Sans } from "next/font/google";
+import { Fredoka, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { fetchPokedexPrefetch } from "../lib/pokemon-server";
 import type { BasicPokemon } from "../lib/pokemon";
 import { PokedexProvider } from "../lib/pokedex-context";
 import SiteShell from "../components/SiteShell";
 
-const baloo = Baloo_2({
+const fredoka = Fredoka({
   subsets: ["latin"],
-  variable: "--font-baloo",
-  weight: ["500", "600", "700", "800"],
+  variable: "--font-fredoka",
+  weight: ["400", "500", "600", "700"],
 });
 
-const dmSans = DM_Sans({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-dm",
-  weight: ["400", "500", "700"],
-});
-
-const caveat = Caveat({
-  subsets: ["latin"],
-  variable: "--font-hand",
-  weight: ["500", "700"],
+  variable: "--font-jakarta",
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pokemondo.vercel.app";
@@ -69,7 +63,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
-      <body className={`${baloo.variable} ${dmSans.variable} ${caveat.variable}`}>
+      <body className={`${fredoka.variable} ${jakarta.variable}`}>
         <PokedexProvider initialList={initialList}>
           <SiteShell>{children}</SiteShell>
         </PokedexProvider>

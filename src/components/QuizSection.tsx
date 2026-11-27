@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { capital, pixelUrl, type BasicPokemon } from "../lib/pokemon";
 import { RevealWords } from "./Reveal";
 import { playUiSfx } from "../lib/sound";
@@ -18,6 +18,9 @@ function pretty(name: string) {
   return capital(name.replace(/-/g, " "));
 }
 
+const NEXT_CORRECT_MS = 1200;
+const NEXT_WRONG_MS = 1800;
+
 export default function QuizSection({ list }: { list: BasicPokemon[] }) {
   const pool = useMemo(() => (list.length > 0 ? list : []), [list]);
 
@@ -34,27 +37,40 @@ export default function QuizSection({ list }: { list: BasicPokemon[] }) {
   const [asked, setAsked] = useState(0);
   const [streak, setStreak] = useState(0);
   const [best, setBest] = useState(0);
+  const timerRef = useRef<number | null>(null);
 
-  const next = useCallback(() => {
+  const clearTimer = useCallback(() => {
+    if (timerRef.current !== null) {
+      window.clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => clearTimer, [clearTimer]);
+
+  const advance = useCallback(() => {
+    clearTimer();
     setRound(makeRound());
     setPicked(null);
-  }, [makeRound]);
+  }, [clearTimer, makeRound]);
 
   const start = useCallback(() => {
     setScore(0);
     setAsked(0);
     setStreak(0);
-    next();
-  }, [next]);
+    advance();
+  }, [advance]);
 
   const answered = picked !== null;
   const correct = answered && round !== null && picked === round.answer.id;
+  const nextDelay = correct ? NEXT_CORRECT_MS : NEXT_WRONG_MS;
 
   const pick = (id: number) => {
     if (answered || round === null) return;
+    const isCorrect = id === round.answer.id;
     setPicked(id);
     setAsked((a) => a + 1);
-    if (id === round.answer.id) {
+    if (isCorrect) {
       playUiSfx("success");
       setScore((s) => s + 1);
       setStreak((st) => {
@@ -62,20 +78,22 @@ export default function QuizSection({ list }: { list: BasicPokemon[] }) {
         setBest((b) => Math.max(b, ns));
         return ns;
       });
-      window.setTimeout(() => {
-        setRound(makeRound());
-        setPicked(null);
-      }, 1200);
     } else {
       playUiSfx("error");
       setStreak(0);
     }
+    clearTimer();
+    timerRef.current = window.setTimeout(() => {
+      timerRef.current = null;
+      setRound(makeRound());
+      setPicked(null);
+    }, isCorrect ? NEXT_CORRECT_MS : NEXT_WRONG_MS);
   };
 
   return (
     <section id="kuiz" className="px-5 py-14 sm:px-8 lg:px-16">
       <div
-        className="mx-auto max-w-3xl overflow-hidden rounded-[2rem] border border-outline-variant bg-surface-container-low shadow-e2"
+        className="mx-auto max-w-3xl overflow-hidden rounded-[2rem] border border-outline-variant bg-surface-container-low shadow-e3"
         style={{ contentVisibility: "auto", containIntrinsicSize: "560px" }}
       >
         <div className="px-8 pt-8 text-center sm:px-10">
@@ -86,7 +104,7 @@ export default function QuizSection({ list }: { list: BasicPokemon[] }) {
             <RevealWords text="Kuiz Rawak" />
           </h2>
           <p className="mt-2 text-sm text-on-surface-variant">
-            Teka siluet Pokémon — soalan baharu terjana tanpa had, setiap jawapan betul memberi poin & rentetan.
+            Teka siluet Pokémon — jawapan betul mahupun salah akan terus ke soalan seterusnya secara automatik.
           </p>
         </div>
 
@@ -96,7 +114,7 @@ export default function QuizSection({ list }: { list: BasicPokemon[] }) {
               type="button"
               onClick={start}
               data-sfx="dice"
-              className="inline-flex h-12 items-center rounded-full bg-primary px-8 font-display text-base font-bold text-on-primary shadow-e2 transition-transform active:scale-95"
+              className="quiz-pop inline-flex h-12 items-center rounded-full bg-primary px-8 font-display text-base font-bold text-on-primary shadow-e2 transition-transform active:scale-95"
             >
               Mula Kuiz
             </button>
@@ -115,15 +133,16 @@ export default function QuizSection({ list }: { list: BasicPokemon[] }) {
               </span>
             </div>
 
-            <div className="mx-auto mt-4 grid w-40 place-items-center rounded-3xl border border-outline-variant bg-surface-container p-4">
+            <div className="quiz-pop mx-auto mt-4 grid w-40 place-items-center rounded-3xl border border-outline-variant bg-surface-container p-4 shadow-e2">
               <img
+                key={round.answer.id}
                 src={pixelUrl(round.answer.id)}
                 alt={answered ? pretty(round.answer.name) : "Siluet Pokémon"}
                 width={112}
                 height={112}
                 loading="lazy"
                 decoding="async"
-                className="size-28 object-contain"
+                className={`size-28 object-contain ${!answered ? "quiz-float" : correct ? "quiz-bounce" : ""}`}
                 style={{
                   filter: answered ? "none" : "brightness(0) opacity(0.92)",
                   transition: "filter .4s ease",
@@ -131,8 +150,17 @@ export default function QuizSection({ list }: { list: BasicPokemon[] }) {
               />
             </div>
 
+            {answered && (
+              <div
+                key={`${round.answer.id}-${picked}`}
+                className="quiz-countdown mt-4"
+                role="presentation"
+                style={{ animationDuration: `${nextDelay}ms` }}
+              />
+            )}
+
             <p
-              className="mt-3 text-center font-display text-sm font-bold"
+              className={`mt-3 text-center font-display text-sm font-bold ${answered ? "quiz-pop" : ""}`}
               style={{ color: answered ? (correct ? "var(--md-tertiary)" : "var(--md-error)") : undefined }}
               role="status"
             >
@@ -140,9 +168,10 @@ export default function QuizSection({ list }: { list: BasicPokemon[] }) {
             </p>
 
             <div className="mx-auto mt-5 grid max-w-md grid-cols-1 gap-2.5 sm:grid-cols-2">
-              {round.options.map((o) => {
+              {round.options.map((o, i) => {
                 const isAnswer = o.id === round.answer.id;
                 const isPicked = picked === o.id;
+                const fx = answered && isAnswer ? " quiz-bounce" : isPicked && !correct ? " quiz-shake" : "";
                 return (
                   <button
                     key={o.id}
@@ -150,20 +179,21 @@ export default function QuizSection({ list }: { list: BasicPokemon[] }) {
                     onClick={() => pick(o.id)}
                     disabled={answered}
                     data-no-hover-sfx
-                    className={`h-11 rounded-full border px-4 font-display text-sm font-bold transition-colors disabled:cursor-default ${
+                    className={`quiz-pop quiz-opt h-11 rounded-full border px-4 font-display text-sm font-bold disabled:cursor-default ${fx} ${
                       answered && isAnswer
                         ? "border-transparent text-on-primary"
                         : isPicked
                           ? "border-transparent text-on-primary"
                           : "border-outline-variant bg-surface-container text-on-surface hover:bg-surface-container-high"
                     }`}
-                    style={
-                      answered && isAnswer
+                    style={{
+                      animationDelay: `${i * 70}ms`,
+                      ...(answered && isAnswer
                         ? { background: "var(--md-tertiary)" }
                         : isPicked
                           ? { background: "var(--md-error)" }
-                          : undefined
-                    }
+                          : {}),
+                    }}
                   >
                     {pretty(o.name)}
                   </button>
@@ -174,9 +204,9 @@ export default function QuizSection({ list }: { list: BasicPokemon[] }) {
             <div className="mt-5 flex justify-center">
               <button
                 type="button"
-                onClick={next}
+                onClick={advance}
                 data-sfx="dice"
-                className="h-10 rounded-full border border-outline-variant px-6 font-display text-sm font-bold text-on-surface-variant transition-transform active:scale-95"
+                className="h-10 rounded-full border border-outline-variant px-6 font-display text-sm font-bold text-on-surface-variant shadow-e1 transition-transform hover:-translate-y-0.5 active:scale-95"
               >
                 Soalan Seterusnya
               </button>

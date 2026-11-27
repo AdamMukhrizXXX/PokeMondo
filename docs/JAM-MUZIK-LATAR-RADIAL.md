@@ -98,3 +98,10 @@ Dokumen ringkas mengikut struktur URD/ADD/MDD/TDD (ID stabil) untuk empat sistem
 
 - **ADD-HM1** Halaman `/galeri` dibuang; `ScrubGallery` (Scroll Scrub generasi) kini sebahagian halaman utama selepas Hero — seperti susunan asal.
 - **ADD-HM2** Item "Galeri" dibuang daripada Staggered Menu dan kad Terokai; navigasi tinggal Rumah/Kuiz/Pokédex/Info.
+
+## Fon Estetik + Kuiz Live Motion (Fasa 27e)
+
+- **ADD-FN1** Pasangan fon baharu: **Fredoka** (display, bulat mesra) + **Plus Jakarta Sans** (badan, moden bersih); fon Caveat dibuang (tidak lagi digunakan selepas tema lama ditukar).
+- **ADD-QZ1** Auto-seterusnya untuk kedua-dua jawapan: betul 1.2 s, salah 1.8 s — dengan bar kiraan detik hidup (`quiz-countdown`, scaleX) yang menunjukkan bila soalan seterusnya muncul.
+- **ADD-QZ2** Pembaikan bug: pemasa auto-next kini dirujuk (`timerRef`) dan dibersihkan — tekan "Soalan Seterusnya" secara manual tidak lagi menyebabkan lompatan berganda.
+- **ADD-QZ3** Live motion: pilihan pop-in stagger 70 ms, siluet terapung (`quiz-float`), betul = lantun (`quiz-bounce`), salah = goang (`quiz-shake`); bayang sederhana (`shadow-e2`) pada kad & pilihan + angkat hover; `prefers-reduced-motion` dihormati.

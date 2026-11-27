@@ -11,12 +11,10 @@ export default function SimpleHome({
   list,
   loading,
   degraded,
-  serverClosed,
 }: {
   list: BasicPokemon[];
   loading: boolean;
   degraded: boolean;
-  serverClosed: boolean;
 }) {
   const [query, setQuery] = useState("");
   const [type, setType] = useState<string>("all");
@@ -114,18 +112,7 @@ export default function SimpleHome({
               : `Memaparkan ${pageSafe * PAGE + 1}–${Math.min((pageSafe + 1) * PAGE, filtered.length)} daripada ${filtered.length}${degraded ? " · mod ringan" : ""}`}
         </p>
 
-        {serverClosed && (
-          <div
-            className="mt-4 rounded-2xl border border-outline-variant p-4 text-sm font-semibold"
-            style={{ background: "color-mix(in srgb, var(--md-error) 12%, transparent)" }}
-            role="status"
-          >
-            Server Pokédex ditutup sehingga 31 Disember 2027 — senarai akan terbuka semula secara automatik selepas tarikh itu.
-          </div>
-        )}
-
-        {serverClosed ? null : (
-          !loading && (
+        {!loading && (
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-5">
             {shown.map((p) => (
               <button
@@ -158,10 +145,9 @@ export default function SimpleHome({
               </button>
             ))}
           </div>
-          )
         )}
 
-        {!serverClosed && pages > 1 && (
+        {pages > 1 && (
           <nav className="mt-6 flex items-center justify-center gap-3" aria-label="Halaman Pokédex">
             <button
               type="button"

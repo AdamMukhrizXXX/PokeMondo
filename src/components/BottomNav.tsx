@@ -2,12 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useScrollSpy } from "../lib/pokemon";
+import { cycleSiteTheme, THEME_LABELS, useSiteTheme } from "../lib/site-theme";
 
 const NAV_ITEMS = [
   { id: "rumah", label: "Rumah", icon: "M4 11.5 12 4l8 7.5M6 10v9a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-9" },
   { id: "galeri", label: "Galeri", icon: "M4 8h16M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8Zm4 4 2.5 3 2-2.5L16 16" },
   { id: "dex", label: "Pokédex", icon: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 7.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 3a9 9 0 0 1 8.49 6H12m0 6h8.49A9 9 0 0 1 12 21" },
   { id: "info", label: "Info", icon: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 4.5v.01M12 11v5.5" },
+];
+
+const SETTINGS_ITEMS = [
+  { id: "wp", label: "Latar Custom", icon: "M4 5h16v14H4zM4 15l5-5 4 4 3-3 4 4" },
+  { id: "mode", label: "Cerah/Gelap", icon: "M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" },
+  { id: "tema", label: "Tukar Tema", icon: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 0c2.5 2.5 2.5 15.5 0 18M3 12h18" },
 ];
 
 const ARC_START = 150;
@@ -26,6 +33,7 @@ const DIAM_REM = RING_R_REM * 2;
 
 export default function BottomNav() {
   const active = useScrollSpy(NAV_ITEMS.map((nItem) => nItem.id));
+  const siteTheme = useSiteTheme();
   const [open, setOpen] = useState(false);
   const barRef = useRef<HTMLDivElement | null>(null);
 
@@ -65,7 +73,14 @@ export default function BottomNav() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const n = NAV_ITEMS.length;
+  const runSetting = (id: string) => {
+    setOpen(false);
+    if (id === "wp") window.dispatchEvent(new CustomEvent("md-wp-open"));
+    else if (id === "mode") window.dispatchEvent(new CustomEvent("md-theme-toggle"));
+    else cycleSiteTheme();
+  };
+
+  const n = NAV_ITEMS.length + SETTINGS_ITEMS.length;
 
   return (
     <>
@@ -188,6 +203,56 @@ export default function BottomNav() {
                     }`}
                   >
                     {item.label}
+                  </span>
+                </button>
+              </span>
+            );
+          })}
+          {SETTINGS_ITEMS.map((item, k) => {
+            const i = NAV_ITEMS.length + k;
+            const { x, y } = arcPos(i, n);
+            const label = item.id === "tema" ? `Tema: ${THEME_LABELS[siteTheme]}` : item.label;
+            return (
+              <span
+                key={item.id}
+                className="absolute left-0 top-0 block will-change-transform"
+                style={{
+                  transform: open
+                    ? `translate3d(calc(${x.toFixed(1)}px - 50%), calc(-${y.toFixed(1)}px + 50%), 0) scale(1)`
+                    : "translate3d(-50%, 50%, 0) scale(0.1)",
+                  opacity: open ? 1 : 0,
+                  transformOrigin: "center",
+                  transition: `transform .6s cubic-bezier(0.34, 1.56, 0.45, 1) ${(open ? i : n - 1 - i) * 50}ms, opacity .32s ease ${(open ? i : n - 1 - i) * 50}ms`,
+                  pointerEvents: open ? "auto" : "none",
+                }}
+              >
+                <button
+                  type="button"
+                  tabIndex={open ? 0 : -1}
+                  aria-label={label}
+                  onClick={() => runSetting(item.id)}
+                  className="group relative grid size-12 place-items-center rounded-full border border-outline-variant bg-surface-container-low/95 text-on-surface-variant shadow-e2 transition-colors hover:bg-surface-container-high hover:text-on-surface"
+                >
+                  <svg
+                    width="21"
+                    height="21"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.85"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                  >
+                    <path d={item.icon} />
+                  </svg>
+                  <span
+                    role="presentation"
+                    className={`pointer-events-none absolute left-1/2 top-full mt-1.5 -translate-x-1/2 rounded-full bg-inverse-surface px-2.5 py-0.5 font-display text-[10px] font-bold whitespace-nowrap text-inverse-on-surface shadow-e2 transition-opacity duration-300 ${
+                      open ? "opacity-100" : "opacity-0"
+                    }`}
+                  >
+                    {label}
                   </span>
                 </button>
               </span>

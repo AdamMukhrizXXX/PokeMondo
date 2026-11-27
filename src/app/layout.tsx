@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Baloo_2, DM_Sans } from "next/font/google";
+import { Baloo_2, Caveat, DM_Sans } from "next/font/google";
 import "./globals.css";
 
 const baloo = Baloo_2({
@@ -12,6 +12,12 @@ const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-dm",
   weight: ["400", "500", "700"],
+});
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-hand",
+  weight: ["500", "700"],
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pokemondo.vercel.app";
@@ -45,7 +51,7 @@ export const viewport: Viewport = {
   ],
 };
 
-const themeInit = `(function(){try{var s=localStorage.getItem("md-theme");var d=s?s==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.dataset.theme=d?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}})();`;
+const themeInit = `(function(){try{var s=localStorage.getItem("md-theme");var d=s?s==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.dataset.theme=d?"dark":"light";var t=localStorage.getItem("md-site-theme");if(t)document.documentElement.dataset.siteTheme=t;}catch(e){document.documentElement.dataset.theme="light";}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -53,7 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
       </head>
-      <body className={`${baloo.variable} ${dmSans.variable}`}>{children}</body>
+      <body className={`${baloo.variable} ${dmSans.variable} ${caveat.variable}`}>{children}</body>
     </html>
   );
 }

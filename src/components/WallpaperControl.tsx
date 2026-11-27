@@ -31,6 +31,9 @@ export default function WallpaperControl() {
         applyWallpaper(url, prefs.dim, prefs.blur);
       }
     });
+    const onOpen = () => setOpen(true);
+    window.addEventListener("md-wp-open", onOpen);
+    return () => window.removeEventListener("md-wp-open", onOpen);
   }, []);
 
   const updateDim = (v: number) => {

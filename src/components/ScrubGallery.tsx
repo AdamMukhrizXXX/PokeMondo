@@ -66,6 +66,12 @@ function VelocityRow({ items, reverse = false }: { items: string[]; reverse?: bo
 
     const frame = () => {
       if (!running) return;
+      if (document.hidden) {
+        lastY = window.scrollY;
+        lastT = performance.now();
+        raf = requestAnimationFrame(frame);
+        return;
+      }
       const t = performance.now();
       const dt = Math.min(64, t - lastT);
       lastT = t;

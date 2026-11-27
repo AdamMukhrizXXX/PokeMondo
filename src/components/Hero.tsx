@@ -22,6 +22,24 @@ function BlurWords({ text, delay = 0 }: { text: string; delay?: number }) {
   );
 }
 
+const LIVE_WORDS = ["Legenda.", "Cerita.", "Petualangan.", "Misteri.", "Keajaiban."];
+
+function LiveWord() {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setI((v) => (v + 1) % LIVE_WORDS.length), 2600);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <span className="relative inline-grid" aria-hidden>
+      <span className="invisible">Petualangan.</span>
+      <span key={i} className="live-word absolute inset-0 text-gradient">
+        {LIVE_WORDS[i]}
+      </span>
+    </span>
+  );
+}
+
 function MarqueeRow() {
   const ids = [1, 4, 7, 25, 133, 143, 150, 94, 131, 6, 9, 3, 149, 39, 68, 65, 130, 59];
   return (
@@ -57,9 +75,33 @@ export default function Hero({
   const ripple = useRipple();
   const [visible, setVisible] = useState(false);
   const ctaRef = useMagnet<HTMLDivElement>(0.18);
+  const tiltRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setVisible(true);
+  }, []);
+
+  useEffect(() => {
+    let raf = 0;
+    let tx = 0;
+    let ty = 0;
+    const flush = () => {
+      raf = 0;
+      if (tiltRef.current) {
+        tiltRef.current.style.setProperty("--tx", tx.toFixed(3));
+        tiltRef.current.style.setProperty("--ty", ty.toFixed(3));
+      }
+    };
+    const onMove = (e: PointerEvent) => {
+      tx = (e.clientX / window.innerWidth) * 2 - 1;
+      ty = (e.clientY / window.innerHeight) * 2 - 1;
+      if (!raf) raf = requestAnimationFrame(flush);
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   const countSpecies = useCountUp(total || 1025, visible);
@@ -87,12 +129,20 @@ export default function Hero({
           Data langsung dari PokéAPI
         </p>
 
-        <h1 className="font-display text-5xl font-extrabold leading-[1.05] tracking-tight text-on-surface sm:text-6xl lg:text-7xl">
-          <BlurWords text="Semua Pokémon." delay={0.1} />
-          <br />
-          <span className="text-gradient anim-rise" style={{ animationDelay: "0.45s" }}>
-            Satu Pokédex.
-          </span>
+        <h1
+          className="font-display text-5xl font-extrabold leading-[1.05] tracking-tight text-on-surface sm:text-6xl lg:text-7xl"
+        >
+          <span className="sr-only">Seribu wajah, satu legenda.</span>
+          <div ref={tiltRef} className="tilt-3d" aria-hidden>
+            <span className="text-3d">
+              <BlurWords text="Seribu Wajah." delay={0.1} />
+            </span>
+            <br />
+            <span className="anim-rise" style={{ animationDelay: "0.45s" }}>
+              Satu&nbsp;
+              <LiveWord />
+            </span>
+          </div>
         </h1>
 
         <p

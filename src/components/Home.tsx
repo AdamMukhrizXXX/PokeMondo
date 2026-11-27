@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { artworkUrl, usePokedex, type BasicPokemon } from "../lib/pokemon";
 import BottomNav from "../components/BottomNav";
 import Hero from "../components/Hero";
@@ -18,10 +18,8 @@ import AiAssist from "./AiAssist";
 import ErrorBoundary from "./ErrorBoundary";
 import SimpleHome from "./SimpleHome";
 import { useUiMode } from "../lib/ui-mode";
-import { useServerStatus } from "../lib/pokedex-server";
-import PokedexClosed from "./PokedexClosed";
-import { useAdminAccess } from "../lib/admin-access";
-import { AdminBanner } from "./AdminAccess";
+import { applySiteTheme, getSiteTheme } from "../lib/site-theme";
+import QuizSection from "./QuizSection";
 import { initUiSfx } from "../lib/sound";
 
 export default function Home({ initialList = [] }: { initialList?: BasicPokemon[] }) {
@@ -31,10 +29,8 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
   const [playerOpen, setPlayerOpen] = useState(false);
 
   useEffect(() => initUiSfx(), []);
+  useEffect(() => applySiteTheme(getSiteTheme()), []);
   const uiMode = useUiMode();
-  const server = useServerStatus();
-  const allIds = useMemo(() => list.map((p) => p.id), [list]);
-  const admin = useAdminAccess(allIds);
 
   const byId = useCallback(
     (id: number) => list.find((p) => p.id === id) ?? { id, name: "", types: null },
@@ -45,17 +41,11 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
 
   const closeModal = useCallback(() => setSelectedId(null), []);
 
-  const dexList = useMemo(
-    () => (admin.access ? list.filter((p) => admin.access!.ids.includes(p.id)) : list),
-    [admin.access, list],
-  );
-
   const random = useCallback(() => {
-    const pool = admin.access && server.closed && dexList.length > 0 ? dexList : list;
-    if (pool.length === 0) return;
-    const pick = pool[Math.floor(pool.length * Math.random())];
+    if (list.length === 0) return;
+    const pick = list[Math.floor(list.length * Math.random())];
     openDetail(pick.id);
-  }, [admin.access, server.closed, dexList, list, openDetail]);
+  }, [list, openDetail]);
 
   const scrollToDex = useCallback(() => {
     document.getElementById("dex")?.scrollIntoView({ behavior: "smooth" });
@@ -64,14 +54,7 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
   const selected = selectedId !== null ? byId(selectedId) : null;
 
   if (uiMode === "simple") {
-    return (
-      <SimpleHome
-        list={admin.access && server.closed ? dexList : list}
-        loading={loading}
-        degraded={degraded}
-        serverClosed={server.closed && !admin.access}
-      />
-    );
+    return <SimpleHome list={list} loading={loading} degraded={degraded} />;
   }
 
   return (
@@ -82,6 +65,8 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
           src={artworkUrl(384)}
           alt=""
           draggable={false}
+          loading="lazy"
+          fetchPriority="low"
           width={1024}
           height={1024}
           className="deco-img -top-[6%] right-[-8%] w-[42vw] max-w-[36rem] rotate-12"
@@ -90,6 +75,8 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
           src={artworkUrl(6)}
           alt=""
           draggable={false}
+          loading="lazy"
+          fetchPriority="low"
           width={1024}
           height={1024}
           className="deco-img bottom-[2%] left-[-9%] w-[38vw] max-w-[32rem] -rotate-6"
@@ -98,6 +85,8 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
           src={artworkUrl(448)}
           alt=""
           draggable={false}
+          loading="lazy"
+          fetchPriority="low"
           width={1024}
           height={1024}
           className="deco-img deco-float top-[42%] left-[34%] hidden w-[24vw] max-w-[22rem] lg:block"
@@ -163,29 +152,19 @@ export default function Home({ initialList = [] }: { initialList?: BasicPokemon[
         <ScrubGallery />
       </ErrorBoundary>
 
+      <ErrorBoundary label="Kuiz">
+        <QuizSection list={list} />
+      </ErrorBoundary>
+
       <ErrorBoundary label="Pokédex">
-        {server.closed && !admin.access ? (
-          <PokedexClosed until={server.until} onRedeem={admin.redeem} />
-        ) : (
-          <>
-            {admin.access && server.closed && (
-              <AdminBanner
-                access={admin.access}
-                count={dexList.length}
-                onReroll={admin.reroll}
-                onUnredeem={admin.unredeem}
-              />
-            )}
-            <Pokedex
-              list={dexList}
-              loading={loading}
-              degraded={degraded}
-              query={query}
-              onQueryChange={setQuery}
-              onOpen={(p) => openDetail(p.id)}
-            />
-          </>
-        )}
+        <Pokedex
+          list={list}
+          loading={loading}
+          degraded={degraded}
+          query={query}
+          onQueryChange={setQuery}
+          onOpen={(p) => openDetail(p.id)}
+        />
       </ErrorBoundary>
 
       <ErrorBoundary label="Info">

@@ -7,6 +7,9 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
 
   useEffect(() => {
     setTheme(document.documentElement.dataset.theme === "dark" ? "dark" : "light");
+    const on = () => toggle();
+    window.addEventListener("md-theme-toggle", on);
+    return () => window.removeEventListener("md-theme-toggle", on);
   }, []);
 
   const toggle = () => {

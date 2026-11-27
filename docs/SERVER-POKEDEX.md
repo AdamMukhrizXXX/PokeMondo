@@ -101,3 +101,8 @@
 
 ### TDD
 - **TDD-FX1** `tsc --noEmit`, `next build` (statik) dan smoke SSR lulus.
+
+## Penarikan Balik (Status Semasa)
+
+- **STATUS**: Pelayan kini **TERBUKA SELAMANYA** — sistem penutupan (URD-SP) dan sistem redeem (URD-AR/LM/RD) **ditarik balik** atas permintaan pemilik; bahagian di atas kekal sebagai rekod reka bentuk sejarah.
+- `pokedex-server.ts` kini sentiasa memulangkan `{ closed: false }`; fail `PokedexClosed.tsx`, `AdminAccess.tsx` dan `admin-access.ts` telah dipadam; Home memapar Pokédex penuh 1,025 terus.

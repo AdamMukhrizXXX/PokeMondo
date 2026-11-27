@@ -8,6 +8,7 @@
   --md-on-primary-container: #410001;
   --md-secondary-container: #f5ded6;
   --md-on-secondary-container: #38201b;
+  --md-tertiary: #6f5b0e;
   --md-tertiary-container: #f8e287;
   --md-on-tertiary-container: #2c2300;
   --md-surface: #fdf5f2;
@@ -36,6 +37,7 @@
   --md-on-primary-container: #ffd9d0;
   --md-secondary-container: #56423c;
   --md-on-secondary-container: #ffd9d0;
+  --md-tertiary: #f1e17e;
   --md-tertiary-container: #675b1e;
   --md-on-tertiary-container: #f5e287;
   --md-surface: #1a0e0b;
@@ -460,5 +462,168 @@ body {
   }
   html {
     scroll-behavior: auto;
+  }
+}
+
+/* ====== Teks 3D + Live Text (Hero) ====== */
+.tilt-3d {
+  perspective: 900px;
+  transform-style: preserve-3d;
+  transform: rotateY(calc(var(--tx, 0) * 5deg)) rotateX(calc(var(--ty, 0) * -5deg));
+  transition: transform 0.12s linear;
+  will-change: transform;
+}
+.text-3d {
+  transform-style: preserve-3d;
+  text-shadow:
+    1px 1px 0 color-mix(in srgb, var(--md-primary) 22%, transparent),
+    2px 2px 0 color-mix(in srgb, var(--md-primary) 16%, transparent),
+    3px 3px 0 color-mix(in srgb, var(--md-primary) 11%, transparent),
+    4px 4px 0 color-mix(in srgb, var(--md-primary) 7%, transparent),
+    6px 8px 16px var(--md-shadow);
+  animation: float-3d 7s ease-in-out infinite;
+  display: inline-block;
+}
+@keyframes float-3d {
+  0%, 100% { transform: rotateX(3deg) rotateY(-2deg) translateZ(0); }
+  25% { transform: rotateX(-2deg) rotateY(2.5deg) translateZ(6px); }
+  50% { transform: rotateX(2deg) rotateY(3deg) translateZ(2px); }
+  75% { transform: rotateX(-3deg) rotateY(-2.5deg) translateZ(8px); }
+}
+.live-word {
+  display: inline-block;
+  animation: live-roll 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform-origin: 50% 100%;
+}
+@keyframes live-roll {
+  0% { opacity: 0; transform: translateY(0.55em) rotateX(-70deg); filter: blur(3px); }
+  100% { opacity: 1; transform: translateY(0) rotateX(0); filter: blur(0); }
+}
+
+/* ====== Tema Laman: Hand-Drawn ====== */
+[data-site-theme="hand-drawn"] {
+  --md-primary: #8a4b2f;
+  --md-primary-container: #f3e0c8;
+  --md-surface: #faf3e3;
+  --md-surface-container-low: #f3ead6;
+  --md-surface-container: #ede3cc;
+  --md-surface-container-high: #e7dbbf;
+  --md-surface-container-highest: #e0d2b2;
+  --md-outline: #6b5636;
+  --md-outline-variant: #c9b58e;
+  --font-display: var(--font-hand), "Comic Sans MS", cursive;
+}
+[data-theme="dark"][data-site-theme="hand-drawn"] {
+  --md-primary: #e8b48a;
+  --md-primary-container: #4f3220;
+  --md-surface: #171310;
+  --md-surface-container-low: #211a14;
+  --md-surface-container: #261e17;
+  --md-surface-container-high: #2d241b;
+  --md-surface-container-highest: #352a1f;
+  --md-outline: #a98f68;
+  --md-outline-variant: #4a3c28;
+}
+[data-site-theme="hand-drawn"] button,
+[data-site-theme="hand-drawn"] input,
+[data-site-theme="hand-drawn"] select {
+  border-style: dashed;
+}
+[data-site-theme="hand-drawn"] h1,
+[data-site-theme="hand-drawn"] h2 {
+  text-decoration: underline wavy color-mix(in srgb, var(--md-primary) 45%, transparent);
+  text-underline-offset: 8px;
+  text-decoration-thickness: 2px;
+}
+
+/* ====== Tema Laman: Liquid Glass ====== */
+[data-site-theme="liquid-glass"] {
+  --md-surface: color-mix(in srgb, #8ec5ff 12%, var(--md-surface) 88%);
+  --md-surface-container-low: color-mix(in srgb, #8ec5ff 16%, transparent 0%);
+  --md-surface-container: color-mix(in srgb, #ffffff 26%, transparent);
+  --md-surface-container-high: color-mix(in srgb, #ffffff 34%, transparent);
+  --md-surface-container-highest: color-mix(in srgb, #ffffff 42%, transparent);
+}
+[data-site-theme="liquid-glass"] body {
+  background:
+    radial-gradient(60rem 40rem at 15% 10%, color-mix(in srgb, #7aa7ff 26%, transparent), transparent 60%),
+    radial-gradient(50rem 36rem at 85% 85%, color-mix(in srgb, #ff9ecb 22%, transparent), transparent 60%),
+    var(--md-surface);
+  background-attachment: fixed;
+}
+[data-site-theme="liquid-glass"] .backdrop-blur-md,
+[data-site-theme="liquid-glass"] .backdrop-blur-sm {
+  backdrop-filter: blur(18px) saturate(1.5);
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+}
+
+/* ====== Tema Laman: Bauhaus ====== */
+[data-site-theme="bauhaus"] {
+  --md-primary: #d62828;
+  --md-on-primary: #ffffff;
+  --md-primary-container: #f4c20d;
+  --md-on-primary-container: #141414;
+  --md-secondary-container: #2667ff;
+  --md-on-secondary-container: #ffffff;
+  --md-tertiary: #2667ff;
+  --md-tertiary-container: #2667ff;
+  --md-on-tertiary-container: #ffffff;
+  --md-surface: #f5f1e8;
+  --md-surface-container-low: #efe9da;
+  --md-surface-container: #e9e2cf;
+  --md-surface-container-high: #e2dac0;
+  --md-surface-container-highest: #dbd2b2;
+  --md-on-surface: #141414;
+  --md-outline: #141414;
+  --md-outline-variant: #14141440;
+  --md-shadow: rgba(20, 20, 20, 0.35);
+}
+[data-theme="dark"][data-site-theme="bauhaus"] {
+  --md-primary: #ff5a4e;
+  --md-primary-container: #f4c20d;
+  --md-on-primary-container: #141414;
+  --md-secondary-container: #2667ff;
+  --md-on-secondary-container: #ffffff;
+  --md-tertiary: #7aa7ff;
+  --md-tertiary-container: #2667ff;
+  --md-on-tertiary-container: #ffffff;
+  --md-surface: #121212;
+  --md-surface-container-low: #1a1a1a;
+  --md-surface-container: #202020;
+  --md-surface-container-high: #272727;
+  --md-surface-container-highest: #2f2f2f;
+  --md-on-surface: #f2ede2;
+  --md-outline: #f2ede2;
+  --md-outline-variant: #f2ede255;
+}
+[data-site-theme="bauhaus"] h1,
+[data-site-theme="bauhaus"] h2,
+[data-site-theme="bauhaus"] h3 {
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+[data-site-theme="bauhaus"] button {
+  border-radius: 0.375rem;
+}
+[data-site-theme="bauhaus"] .rounded-\[2rem\],
+[data-site-theme="bauhaus"] .rounded-\[28px\] {
+  border-radius: 0.5rem;
+}
+[data-site-theme="bauhaus"] .text-gradient {
+  background: linear-gradient(90deg, #d62828, #f4c20d, #2667ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ====== Prestasi: hormati prefers-reduced-motion ====== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

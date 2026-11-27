@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { BasicPokemon } from "../lib/pokemon";
 import {
@@ -86,13 +86,6 @@ export default function AiAssist({ list }: { list: BasicPokemon[] }) {
       if (el) el.scrollTop = el.scrollHeight;
     });
   };
-
-  useEffect(() => {
-    if (!open) return;
-    const onScroll = () => setOpen(false);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [open]);
 
   return (
     <>

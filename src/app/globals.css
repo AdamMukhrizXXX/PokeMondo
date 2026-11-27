@@ -1163,3 +1163,19 @@ body {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* ====== SPUI: Mod GPU Lite (auto prestasi) ====== */
+[data-gpu-lite="on"] .deco-img {
+  display: none;
+}
+[data-gpu-lite="on"] *,
+[data-gpu-lite="on"] *::before,
+[data-gpu-lite="on"] *::after {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+[data-gpu-lite="on"] .sm-prelayers,
+[data-gpu-lite="on"] .anim-rise {
+  transition-duration: 0.01ms !important;
+  animation-duration: 0.01ms !important;
+}

@@ -45,7 +45,7 @@ export default function SimpleHome({
       <header className="mx-auto max-w-5xl">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="font-display text-2xl font-extrabold text-on-surface">
-            PokéMondo — UI Cadangan
+            PokéMondo — SPUI (Simple Pokedex UI)
           </h1>
           <div className="flex items-center gap-2">
             <span
@@ -64,7 +64,7 @@ export default function SimpleHome({
               className="h-8 rounded-full px-4 font-display text-xs font-bold shadow-e1 transition-transform active:scale-95"
               style={{ background: "var(--md-primary)", color: "var(--md-on-primary)" }}
             >
-              Keluar UI Cadangan
+              Keluar SPUI
             </button>
           </div>
         </div>

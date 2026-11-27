@@ -38,16 +38,16 @@ Dokumen ringkas mengikut struktur URD/ADD/MDD/TDD (ID stabil) untuk empat sistem
 - **TDD-LB1** Muat naik imej >12MB / bukan imej ditolak dengan mesej `--md-error`; padam memulihkan hiasan Pokémon.
 - **TDD-RN1** Menu tertutup: item `opacity:0` + `pointer-events:none`; terbuka: arc + label; item aktif `bg-primary` + `aria-current`.
 
-## Sistem UI Cadangan (Fasa Tambahan)
+## Sistem SPUI (Fasa Tambahan)
 
 ### URD
-- **URD-UC1** Jika UI utama bug/ralat, pengunjung masih boleh memakai UI Cadangan.
+- **URD-UC1** Jika UI utama bug/ralat, pengunjung masih boleh memakai SPUI.
 
 ### ADD
 - **ADD-UC1** `ErrorBoundary` (class React, tiada dependencies) melindungi setiap seksyen: Hero, Galeri, Pokédex, Info, Jam Dunia, Pemain Muzik, Navigasi, Modal Butiran, dan kawalan penjuru atas.
-- **ADD-UC2** Fallback lalai: kad M3 dengan ikon amaran, mesaj ringkas, butang **Cuba semula** (reset state) dan **Guna UI Cadangan** (`setUiMode("simple")`), plus butiran ralat tersembunyi (`<details>`).
-- **ADD-UC3** Ikon amaran kekal di penjuru atas kanan membuka panel status mod: tukar penuh↔ringkas; titik oren bila UI Cadangan aktif; diingati melalui `localStorage "md-ui-mode"` + CustomEvent `md-ui-mode`.
-- **ADD-UC4** `SimpleHome` ialah UI Cadangan: input carian (sila `simplify()`), penapis jenis `<select> asli`, pagination asas (60/halaman), grid sprite 1,025 Pokémon, dan `DetailModal` yang sama — sifar rAF/IO/animasi berat.
+- **ADD-UC2** Fallback lalai: kad M3 dengan ikon amaran, mesaj ringkas, butang **Cuba semula** (reset state) dan **Guna SPUI** (`setUiMode("simple")`), plus butiran ralat tersembunyi (`<details>`).
+- **ADD-UC3** Ikon amaran kekal di penjuru atas kanan membuka panel status mod: tukar penuh↔ringkas; titik oren bila SPUI aktif; diingati melalui `localStorage "md-ui-mode"` + CustomEvent `md-ui-mode`.
+- **ADD-UC4** `SimpleHome` ialah SPUI: input carian (sila `simplify()`), penapis jenis `<select> asli`, pagination asas (60/halaman), grid sprite 1,025 Pokémon, dan `DetailModal` yang sama — sifar rAF/IO/animasi berat.
 - **ADD-UC5** Ralat dicetak ke konsol (`componentDidCatch`) untuk debug tanpa meranapkan halaman.
 
 ### TDD
@@ -75,7 +75,7 @@ Dokumen ringkas mengikut struktur URD/ADD/MDD/TDD (ID stabil) untuk empat sistem
 - **ADD-SM1** `StaggeredMenu.tsx` menggantikan `Sidebar.tsx`: adaptasi komponen **Staggered Menu** reactbits.dev tanpa GSAP (CSS transition + `data-open`).
 - Dua prelayer warna token M3 (`--md-secondary-container`, `--md-tertiary-container`) meluncur dari kiri (delay 0 s / 0.07 s, durasi 0.5 s), panel kaca `clamp(260px, 38vw, 420px)` masuk pada 0.22 s (durasi 0.65 s).
 - Item navigasi besar (Rumah/Galeri/Kuiz/Pokédex/Info) uppercase dengan label `translateY(140%) rotate(10°) → 0` stagger 0.1 s, penomboran `01–05` (counter CSS, opacity berperingkat).
-- Kawalan penuh di bawah panel (Bunyi, Cerah/Gelap, Tema Laman, Latar Custom, UI Cadangan, AI Anal, Rawak) dengan stagger 0.08 s — corak slot tanpa butang bersarang.
+- Kawalan penuh di bawah panel (Bunyi, Cerah/Gelap, Tema Laman, Latar Custom, SPUI, AI Anal, Rawak) dengan stagger 0.08 s — corak slot tanpa butang bersarang.
 - Toggle kiri atas: teks `Menu↔Close` bergilir (lajur 6 baris translateY) + ikon plus dua garisan berputar 45°/−45° menjadi X; tutup melalui klik-luar atau Escape; SFX open/close automatik melalui `aria-expanded`.
 - ≤1024 px panel penuh skrin; `inert` + `aria-hidden` semasa tertutup; `will-change: transform` dan `prefers-reduced-motion` dihormati.
 

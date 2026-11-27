@@ -21,7 +21,7 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error(`[UI Cadangan] ${this.props.label}:`, error, info.componentStack);
+    console.error(`[SPUI] ${this.props.label}:`, error, info.componentStack);
   }
 
   private retry = () => {
@@ -77,7 +77,7 @@ export default class ErrorBoundary extends Component<Props, State> {
             onClick={this.toSimple}
             className="flex h-10 items-center rounded-full border border-outline-variant px-5 font-display text-sm font-bold text-on-surface-variant transition-colors hover:bg-surface-container"
           >
-            Guna UI Cadangan
+            Guna SPUI
           </button>
         </div>
         <details className="mt-3">

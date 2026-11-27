@@ -157,7 +157,7 @@ export default function StaggeredMenu() {
               <span className="sm-settings-icon">
                 <FallbackModeButton />
               </span>
-              <span className="sm-settings-label">UI Cadangan</span>
+              <span className="sm-settings-label">SPUI</span>
             </li>
           </ul>
         </div>

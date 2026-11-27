@@ -39,7 +39,7 @@ export default function BottomDock() {
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-[max(env(safe-area-inset-bottom),0.9rem)] z-50 flex justify-center px-3">
-      <div className="dock-in no-scrollbar pointer-events-auto flex max-w-[96vw] items-start gap-1 overflow-x-auto rounded-[1.75rem] border border-outline-variant/70 bg-surface-low/85 px-2 py-2 shadow-e3 backdrop-blur-md sm:items-center sm:rounded-full">
+      <div className="dock-in no-scrollbar pointer-events-auto flex max-w-[96vw] items-start gap-1 overflow-x-auto sm:overflow-visible rounded-[1.75rem] border border-outline-variant/70 bg-surface-low/85 px-2 py-2 shadow-e3 backdrop-blur-md sm:items-center sm:rounded-full">
         <DockBtn label="Bunyi" delay={60}>
           <SoundToggle />
         </DockBtn>

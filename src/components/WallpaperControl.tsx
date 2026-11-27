@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   applyWallpaper,
   deleteWallpaper,
@@ -84,6 +85,13 @@ export default function WallpaperControl() {
     document.documentElement.style.removeProperty("--wp-blur");
   };
 
+  useEffect(() => {
+    if (!open) return;
+    const onScroll = () => setOpen(false);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [open]);
+
   return (
     <>
       <button
@@ -117,7 +125,8 @@ export default function WallpaperControl() {
         )}
       </button>
 
-      {open && (
+      {open &&
+        createPortal(
         <div
           className="anim-rise fixed inset-x-4 top-[4.75rem] z-50 rounded-[1.75rem] border border-outline-variant p-5 shadow-e3 sm:inset-x-auto sm:right-6 sm:top-[4.75rem] sm:w-80"
           style={{ background: "var(--md-surface-container-low)" }}
@@ -220,7 +229,8 @@ export default function WallpaperControl() {
               Padam latar custom
             </button>
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

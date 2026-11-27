@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import type { BasicPokemon } from "../lib/pokemon";
 import {
   askAi,
@@ -86,6 +87,13 @@ export default function AiAssist({ list }: { list: BasicPokemon[] }) {
     });
   };
 
+  useEffect(() => {
+    if (!open) return;
+    const onScroll = () => setOpen(false);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [open]);
+
   return (
     <>
       <button
@@ -114,7 +122,8 @@ export default function AiAssist({ list }: { list: BasicPokemon[] }) {
         {keySet && <span aria-hidden className="absolute right-1 top-1 size-2 rounded-full bg-[#f0a92e]" />}
       </button>
 
-      {open && (
+      {open &&
+        createPortal(
         <div
           className="anim-rise fixed inset-x-3 top-[4.5rem] z-50 flex max-h-[82svh] flex-col overflow-hidden rounded-[1.75rem] border border-outline-variant shadow-e3 sm:inset-x-auto sm:right-6 sm:w-[25rem]"
           style={{ background: "var(--md-surface-container-low)" }}
@@ -330,7 +339,8 @@ export default function AiAssist({ list }: { list: BasicPokemon[] }) {
               </div>
             </>
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

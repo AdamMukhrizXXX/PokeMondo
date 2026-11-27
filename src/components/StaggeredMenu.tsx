@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { href: "/pokedex", label: "Pokédex" },
   { href: "/pokex", label: "PokeX" },
   { href: "/info", label: "Info" },
+  { href: "/changelog", label: "Changelog" },
 ];
 
 const TEXT_LINES = ["Menu", "Close", "Menu", "Close", "Menu", "Close"];

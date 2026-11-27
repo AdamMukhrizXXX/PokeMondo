@@ -112,15 +112,18 @@ function httpHint(status: number): string {
   return "ralat HTTP";
 }
 
+export const PRO_THINK_SECONDS = 50;
+
 async function callChat(
   p: AiProvider,
   key: string,
   model: string,
   sys: string,
   messages: ChatMsg[],
-): Promise<string> {
+  pro: boolean,
+): Promise<{ text: string; reasoning: string }> {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 60000);
+  const timer = setTimeout(() => controller.abort(), pro ? 120000 : 60000);
   try {
     const res = await fetch(`${BASES[p]}/chat/completions`, {
       method: "POST",
@@ -134,6 +137,9 @@ async function callChat(
         messages: [{ role: "system", content: sys }, ...messages],
         temperature: 0.4,
         max_tokens: 900,
+        ...(pro && p === "groq"
+          ? { reasoning_effort: "high", reasoning_format: "parsed" }
+          : {}),
       }),
       signal: controller.signal,
     });
@@ -141,7 +147,8 @@ async function callChat(
     const data = await res.json();
     const text = data?.choices?.[0]?.message?.content ?? "";
     if (!text) throw new Error("jawapan kosong daripada model");
-    return text;
+    const reasoning = String(data?.choices?.[0]?.message?.reasoning ?? "");
+    return { text, reasoning };
   } finally {
     clearTimeout(timer);
   }
@@ -150,7 +157,8 @@ async function callChat(
 export async function askAi(
   messages: ChatMsg[],
   context: string,
-): Promise<{ text: string; via: AiProvider }> {
+  opts: { pro?: boolean } = {},
+): Promise<{ text: string; via: AiProvider; reasoning?: string }> {
   const sys = SYSTEM_PROMPT + (context ? `\n\n${context}` : "");
   const preferred = getAiProvider();
   const fallback: AiProvider = preferred === "openrouter" ? "groq" : "openrouter";
@@ -162,10 +170,20 @@ export async function askAi(
     if (!key) continue;
     sawKey = true;
     try {
-      const text = await callChat(p, key, getAiModel(p), sys, messages);
-      return { text, via: p };
+      const { text, reasoning } = await callChat(
+        p,
+        key,
+        getAiModel(p),
+        sys,
+        messages,
+        !!opts.pro,
+      );
+      return { text, via: p, reasoning: reasoning || undefined };
     } catch (e) {
-      const msg = (e as Error).name === "AbortError" ? "tamat masa 60 detik" : (e as Error).message;
+      const msg =
+        (e as Error).name === "AbortError"
+          ? `tamat masa ${opts.pro ? 120 : 60} detik`
+          : (e as Error).message;
       errors.push(`${PROVIDERS[p].label}: ${msg}`);
     }
   }

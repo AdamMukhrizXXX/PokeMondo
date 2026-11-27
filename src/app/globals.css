@@ -1179,3 +1179,46 @@ body {
   transition-duration: 0.01ms !important;
   animation-duration: 0.01ms !important;
 }
+
+/* ====== PokeX: GradientText + SpotlightCard (adaptasi reactbits.dev, CSS sahaja) ====== */
+.pokex-gradient-text {
+  background-image: linear-gradient(90deg, #2dd4bf, #0ea5e9, #ffc531, #2dd4bf);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: pokex-gradient-slide 6s linear infinite;
+}
+@keyframes pokex-gradient-slide {
+  0% { background-position: 0% 0; }
+  100% { background-position: 300% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pokex-gradient-text {
+    animation: none;
+    background-image: linear-gradient(90deg, #0ea5e9, #2dd4bf);
+  }
+}
+
+.pokex-spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.pokex-spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    240px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    color-mix(in srgb, var(--md-primary) 13%, transparent),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.pokex-spotlight:hover::before {
+  opacity: 1;
+}

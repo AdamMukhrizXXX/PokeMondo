@@ -12,11 +12,18 @@ import {
   setAiKey,
   setAiModel,
   setAiProvider,
+  PRO_THINK_SECONDS,
   type AiProvider,
 } from "../lib/ai";
 import { playUiSfx } from "../lib/sound";
 
-type Msg = { role: "user" | "assistant"; content: string; error?: boolean; via?: string };
+type Msg = {
+  role: "user" | "assistant";
+  content: string;
+  error?: boolean;
+  via?: string;
+  reasoning?: string;
+};
 
 type TestState = { status: "idle" | "testing" | "ok" | "fail"; note: string };
 
@@ -95,6 +102,8 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
     groq: false,
   });
   const [test, setTest] = useState<TestState>({ status: "idle", note: "" });
+  const [pro, setPro] = useState(false);
+  const [thinkSec, setThinkSec] = useState(0);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -152,14 +161,24 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
     setMsgs(history);
     setInput("");
     setBusy(true);
+    setThinkSec(0);
     try {
-      const { text: answer, via } = await askAi(
+      const { text: answer, via, reasoning } = await askAi(
         history.map(({ role, content }) => ({ role, content })),
         datasetSummary(list),
+        { pro: pro && provider === "groq" },
       );
       const viaLabel =
-        via === getAiProvider() ? PROVIDERS[via].label : `${PROVIDERS[via].label} (sandaran)`;
-      setMsgs((m) => [...m, { role: "assistant", content: answer, via: viaLabel }]);
+        via === provider ? PROVIDERS[via].label : `${PROVIDERS[via].label} (sandaran)`;
+      setMsgs((m) => [
+        ...m,
+        {
+          role: "assistant",
+          content: answer,
+          via: viaLabel,
+          reasoning: reasoning || undefined,
+        },
+      ]);
     } catch (e) {
       const msg = (e as Error).message;
       const detail =
@@ -174,6 +193,32 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
       if (el) el.scrollTop = el.scrollHeight;
     });
   };
+
+  useEffect(() => {
+    try {
+      setPro(localStorage.getItem("md-ai-pro") === "on");
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!busy) return;
+    const id = window.setInterval(() => setThinkSec((s) => s + 1), 1000);
+    return () => window.clearInterval(id);
+  }, [busy]);
+
+  const togglePro = () => {
+    const next = !pro;
+    setPro(next);
+    try {
+      localStorage.setItem("md-ai-pro", next ? "on" : "off");
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const proActive = pro && provider === "groq";
 
   return (
     <section
@@ -192,8 +237,8 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
           <XMark size={32} />
         </span>
         <div>
-          <h1 className="font-display text-4xl font-extrabold tracking-tight text-on-surface sm:text-5xl">
-            Poke<span className="text-primary">X</span>
+          <h1 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
+            <span className="pokex-gradient-text">PokeX</span>
           </h1>
           <p className="mt-0.5 text-sm leading-snug text-on-surface-variant">
             Analisis semua Pokémon dengan AI sebenar — kunci anda sendiri, tanpa pelayan perantara
@@ -245,8 +290,13 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
 
       {tab === "tetapan" ? (
         <div
-          className="anim-rise mt-4 flex flex-col rounded-[1.75rem] border border-outline-variant p-6 shadow-e3 sm:flex-1"
+          className="pokex-spotlight anim-rise mt-4 flex flex-col rounded-[1.75rem] border border-outline-variant p-6 shadow-e3 sm:flex-1"
           style={{ background: "var(--md-surface-container-low)", animationDelay: "0.18s" }}
+          onPointerMove={(e) => {
+            const r = e.currentTarget.getBoundingClientRect();
+            e.currentTarget.style.setProperty("--spot-x", `${((e.clientX - r.left) / r.width) * 100}%`);
+            e.currentTarget.style.setProperty("--spot-y", `${((e.clientY - r.top) / r.height) * 100}%`);
+          }}
         >
           <label className="text-xs font-bold text-on-surface-variant">Penyedia AI</label>
           <select
@@ -366,8 +416,13 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
         </div>
       ) : (
         <div
-          className="anim-rise mt-4 flex min-h-[26rem] flex-1 flex-col overflow-hidden rounded-[1.75rem] border border-outline-variant shadow-e3"
+          className="pokex-spotlight anim-rise mt-4 flex min-h-[26rem] flex-1 flex-col overflow-hidden rounded-[1.75rem] border border-outline-variant shadow-e3"
           style={{ background: "var(--md-surface-container-low)", animationDelay: "0.18s" }}
+          onPointerMove={(e) => {
+            const r = e.currentTarget.getBoundingClientRect();
+            e.currentTarget.style.setProperty("--spot-x", `${((e.clientX - r.left) / r.width) * 100}%`);
+            e.currentTarget.style.setProperty("--spot-y", `${((e.clientY - r.top) / r.height) * 100}%`);
+          }}
         >
           <div className="flex shrink-0 items-center gap-2.5 border-b border-outline-variant/60 px-5 py-3">
             <XMark size={18} />
@@ -387,6 +442,40 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
             >
               Analisis Semua Pokémon (1,025)
             </button>
+
+            <div className="mt-3 flex items-center gap-2.5 rounded-2xl border border-outline-variant/70 bg-surface-container/60 px-3.5 py-2.5">
+              <button
+                type="button"
+                data-sfx="toggle-on"
+                onClick={togglePro}
+                disabled={provider !== "groq"}
+                aria-pressed={proActive}
+                aria-label="Pro Thinking (khusus Groq)"
+                className={`relative h-7 w-12 shrink-0 rounded-full transition-colors disabled:opacity-40 ${
+                  proActive ? "bg-primary" : "bg-surface-container-highest"
+                }`}
+              >
+                <span
+                  aria-hidden
+                  className={`absolute top-0.5 size-6 rounded-full bg-white shadow-e1 transition-all ${
+                    proActive ? "left-[1.375rem]" : "left-0.5"
+                  }`}
+                />
+              </button>
+              <div className="min-w-0">
+                <p className="font-display text-xs font-extrabold text-on-surface">
+                  Pro Thinking
+                  <span className="ml-1.5 rounded-full bg-tertiary-container px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-on-tertiary-container">
+                    Groq sahaja
+                  </span>
+                </p>
+                <p className="text-[10px] leading-snug text-on-surface-variant">
+                  {provider !== "groq"
+                    ? "Tukar penyedia ke Groq dalam Tetapan untuk aktifkan."
+                    : `Fikir mendalam ${PRO_THINK_SECONDS} saat dengan reasoning_effort tinggi.`}
+                </p>
+              </div>
+            </div>
           </div>
 
           <div
@@ -447,28 +536,63 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
                       via {m.via}
                     </span>
                   )}
+                  {m.role === "assistant" && m.reasoning && (
+                    <details className="mt-1 w-full rounded-xl border border-outline-variant/70 bg-surface-container/60 px-3 py-2">
+                      <summary className="cursor-pointer font-display text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
+                        Proses pemikiran Pro
+                      </summary>
+                      <p className="mt-1.5 whitespace-pre-wrap text-[11px] leading-relaxed text-on-surface-variant">
+                        {m.reasoning}
+                      </p>
+                    </details>
+                  )}
                 </div>
               </div>
             ))}
             {busy && (
               <div className="mb-3 flex justify-start" role="status" aria-live="polite">
-                <div className="flex items-center gap-3 rounded-2xl border border-outline-variant bg-surface-container px-4 py-3 shadow-e1">
-                  <span className="pokex-think-dots" aria-hidden>
-                    <i />
-                    <i />
-                    <i />
-                  </span>
-                  <span className="pokex-shiny font-display text-[13px] font-bold">
-                    PokeX sedang berfikir
-                  </span>
-                  <span
-                    className="pokex-think-words text-[11px] font-semibold text-on-surface-variant"
-                    aria-hidden
-                  >
-                    <em>menganalisis data…</em>
-                    <em>merumus jawapan…</em>
-                    <em>menyusun poin…</em>
-                  </span>
+                <div
+                  className={`rounded-2xl border px-4 py-3 shadow-e1 ${
+                    proActive
+                      ? "w-full border-primary/40 bg-surface-container"
+                      : "border-outline-variant bg-surface-container"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="pokex-think-dots" aria-hidden>
+                      <i />
+                      <i />
+                      <i />
+                    </span>
+                    <span className="pokex-shiny font-display text-[13px] font-bold">
+                      {proActive ? "PokeX Pro Thinking" : "PokeX sedang berfikir"}
+                    </span>
+                    <span
+                      className="pokex-think-words text-[11px] font-semibold text-on-surface-variant"
+                      aria-hidden
+                    >
+                      <em>menganalisis data…</em>
+                      <em>merumus jawapan…</em>
+                      <em>menyusun poin…</em>
+                    </span>
+                  </div>
+                  {proActive && (
+                    <div className="mt-2.5 flex items-center gap-2.5">
+                      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-container-high">
+                        <div
+                          className="h-full rounded-full"
+                          style={{
+                            width: `${Math.min(100, (thinkSec / PRO_THINK_SECONDS) * 100)}%`,
+                            background: "linear-gradient(90deg, #2dd4bf, #0ea5e9)",
+                            transition: "width 1s linear",
+                          }}
+                        />
+                      </div>
+                      <span className="shrink-0 font-display text-[10px] font-bold tabular-nums text-on-surface-variant">
+                        {Math.min(thinkSec, PRO_THINK_SECONDS)}s / {PRO_THINK_SECONDS}s
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

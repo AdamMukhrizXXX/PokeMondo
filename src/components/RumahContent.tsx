@@ -7,6 +7,7 @@ import { usePokedexData } from "../lib/pokedex-context";
 import { useT } from "../lib/i18n";
 import Hero from "./Hero";
 import ScrubGallery from "./ScrubGallery";
+import RandomDuo from "./RandomDuo";
 
 const QUICK_LINKS = [
   {
@@ -208,6 +209,8 @@ export default function RumahContent() {
           ))}
         </div>
       </section>
+
+      <RandomDuo list={list} />
     </>
   );
 }

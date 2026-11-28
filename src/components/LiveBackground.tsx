@@ -10,6 +10,7 @@ export default function LiveBackground() {
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    if (document.documentElement.dataset.gpuLite === "on") return;
 
     let raf = 0;
     let tx = 0;

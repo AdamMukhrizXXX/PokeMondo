@@ -142,22 +142,35 @@ export default function StaggeredMenu() {
                   onClick={() => cycleSiteTheme()}
                   className="group grid size-10 place-items-center rounded-full text-on-surface-variant transition-all duration-300 hover:scale-110 hover:bg-surface-container-high hover:text-on-surface active:scale-90"
                 >
-                  <svg width="22" height="22" viewBox="0 0 24 24" className="transition-transform duration-500 group-hover:rotate-[25deg]" aria-hidden>
+                  <svg width="24" height="24" viewBox="0 0 24 24" className="th-palette transition-transform duration-500 group-hover:rotate-[25deg]" aria-hidden>
                     <defs>
                       <linearGradient id="pm-palette" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0" stopColor="var(--md-primary)" />
-                        <stop offset="0.5" stopColor="var(--md-tertiary)" />
+                        <stop offset="0" stopColor="#e3350d" />
+                        <stop offset="0.28" stopColor="#ffc531" />
+                        <stop offset="0.52" stopColor="var(--md-tertiary)" />
+                        <stop offset="0.76" stopColor="#2f7cf6" />
                         <stop offset="1" stopColor="#00a878" />
+                      </linearGradient>
+                      <linearGradient id="pm-palette-shine" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stopColor="#ffffff" stopOpacity="0.55" />
+                        <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
                       </linearGradient>
                     </defs>
                     <path
                       d="M12 3a9 9 0 0 0 0 18c1.3 0 2.1-.9 2.1-1.9 0-.5-.2-.9-.5-1.3-.3-.3-.5-.7-.5-1.2 0-1 .8-1.8 1.8-1.8h2.1a4 4 0 0 0 4-4C21 6.6 17 3 12 3Z"
                       fill="url(#pm-palette)"
                     />
-                    <circle cx="8.2" cy="9.2" r="1.5" fill="#e3350d" />
-                    <circle cx="12.6" cy="6.8" r="1.5" fill="#ffc531" />
-                    <circle cx="16.6" cy="10.4" r="1.5" fill="#2f7cf6" />
-                    <circle cx="7.4" cy="13.8" r="1.5" fill="#00a878" />
+                    <path
+                      d="M12 4.6a7.4 7.4 0 0 0 0 14.8c.7 0 1.2-.5 1.2-1.1 0-.3-.1-.6-.3-.8-.3-.3-.5-.7-.5-1.2 0-.9.7-1.6 1.6-1.6h1.9a3.2 3.2 0 0 0 3.2-3.2C19.1 7.7 15.9 4.6 12 4.6Z"
+                      fill="url(#pm-palette-shine)"
+                      className="th-shine"
+                    />
+                    <circle cx="8.2" cy="9.2" r="1.5" fill="#e3350d" className="th-dot th-dot-1" />
+                    <circle cx="12.6" cy="6.8" r="1.5" fill="#ffc531" className="th-dot th-dot-2" />
+                    <circle cx="16.6" cy="10.4" r="1.5" fill="#2f7cf6" className="th-dot th-dot-3" />
+                    <circle cx="7.4" cy="13.8" r="1.5" fill="#00a878" className="th-dot th-dot-4" />
+                    <path d="M19.4 3.4l.5 1.3 1.3.5-1.3.5-.5 1.3-.5-1.3-1.3-.5 1.3-.5Z" fill="#ffe082" className="th-spark th-spark-1" />
+                    <path d="M4.2 17.6l.4 1 1 .4-1 .4-.4 1-.4-1-1-.4 1-.4Z" fill="#ffc531" className="th-spark th-spark-2" />
                   </svg>
                 </button>
               </span>

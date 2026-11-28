@@ -15,6 +15,7 @@ import SimpleHome from "./SimpleHome";
 import ErrorBoundary from "./ErrorBoundary";
 import AuthScreen from "./AuthScreen";
 import BootScreen from "./BootScreen";
+import LiveBackground from "./LiveBackground";
 
 export default function SiteShell({ children }: { children: React.ReactNode }) {
   const { list, loading, degraded, selectedId, openDetail, closeDetail } = usePokedexData();
@@ -65,6 +66,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
     <div>
       <div aria-hidden className="bg-wallpaper" />
       <div aria-hidden className="bg-deco pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <LiveBackground />
         <img
           src={artworkUrl(384)}
           alt=""

@@ -22,6 +22,8 @@ const ENTRIES: Entry[] = [
       "Model lalai xKiro: qwen/qwen3.8-max:free — konteks 1M token, menyokong reasoning, harga percuma (RM0/USD0 setiap 1M token)",
       "Sandaran automatik kini tiga hala: jika penyedia pilihan gagal, PokeX mencuba penyedia lain mengikut giliran (OpenRouter → Groq → xKiro)",
       "Kunci xKiro disimpan per penyedia hanya dalam pelayar; status tersimpan ✓ ditunjuk dalam Tetapan PokeX",
+      "Latar belakang web utama kini Live Motion 3D — aurora besar bergerak berputar perlahan + tiga orbs 3D realistik (sorotan kilau & bayang dalam) melayang + parallax tetikus mengikut kedalaman (adaptasi reactbits Aurora, CSS tulen, reduced-motion & GPU Lite dihormati)",
+      "UI OTP lebih hidup — tajuk gradien bergerak, kotak digit bercahaya denyut, fokus terangkat 3D, peti mel berhalo denyut, kira detik berkilau (Shiny Text), butang Sahkan berbingkai bintang berputar (Star Border) & aurora mini dalam kad peti mel",
     ],
   },
   {

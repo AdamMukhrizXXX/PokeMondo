@@ -114,15 +114,18 @@ export function getBgmIndex() {
   return currentIndex;
 }
 
+export function getBgmPlaylist(): BgmTrack[] {
+  return [...playlist];
+}
+
 export function removeImportedBgm(key: string) {
   const wasCurrent = playlist[currentIndex]?.id === key;
   imported = imported.filter((t) => t.id !== key);
   rebuild();
   currentIndex = Math.min(currentIndex, playlist.length - 1);
+  emit();
   if (wasCurrent && audio && !audio.paused) {
     void playIndex(currentIndex);
-  } else {
-    emit();
   }
 }
 

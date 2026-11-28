@@ -15,6 +15,8 @@ const NAV_ITEMS = [
   { href: "/kuiz", label: "Kuiz" },
   { href: "/pokedex", label: "Pokédex" },
   { href: "/pokex", label: "PokeX" },
+  { href: "/muzik", label: "Muzik" },
+  { href: "/api-key", label: "Kunci API" },
   { href: "/info", label: "Info" },
   { href: "/changelog", label: "Changelog" },
 ];

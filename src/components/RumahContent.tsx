@@ -27,6 +27,18 @@ const QUICK_LINKS = [
     icon: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 4.5v.01M12 11v5.5",
   },
   {
+    href: "/muzik",
+    label: "Muzik",
+    note: "Pustaka penuh OST + import anda",
+    icon: "M9 18V5l11-2v13M6.5 18a2.8 2.8 0 1 1-2.8-2.8 2.8 2.8 0 0 1 2.8 2.8ZM17.5 16a2.8 2.8 0 1 1-2.8-2.8 2.8 2.8 0 0 1 2.8 2.8Z",
+  },
+  {
+    href: "/api-key",
+    label: "Kunci API",
+    note: "Jana kunci API peribadi PokéAPI",
+    icon: "M8 14a4.2 4.2 0 1 1 4.2-4.2L21 18.5V21h-2.5M8 9.8v.01",
+  },
+  {
     href: "/pokex",
     label: "PokeX",
     note: "Analisis semua Pokémon dengan AI sebenar",

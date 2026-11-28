@@ -31,7 +31,7 @@ const ENTRIES: Entry[] = [
       "Perbaikan Multi-lingual — semua halaman kini diterjemah penuh: Pokédex, Kuiz, Info, PokeX, Pustaka Muzik, Kunci API, Modal Butiran & Changelog (55+ kunci baharu × 20 bahasa)",
       "Ikon Bahasa baharu lebih berwarna & hidup — globe gradien bercahaya denyut, garis bujur merah-amber bernafas, dan 3 titik orbit berwarna (merah, amber, biru) berputar mengelilingi glob; hover mempercepat semua animasi",
       "Ikon Theme (palet) lebih berwarna & hidup — badan palet gradien pelangi 5 warna (merah, amber, teal, biru, hijau) dengan kilauan cahaya bernafas, 4 titik cat berdenyut berperingkat, dan 2 bintang berkelip; hover mempercepat semua animasi",
-      "Ikon Navigasi baharu berwarna & hidup — Rumah (rumah amber melayang), Kuiz (soal tanda berdenyut), Pokédex (Poké Ball berkilau), PokeX (permata teal + bintang berkelip), Muzik (nota merah jambu-ungu melantun bergilir), API Key (kunci emas bercahaya), Info (biru berdenyut) & Changelog (jam berputar) — setiap ikon melayang lembut, condong 3D (perspektif) semasa hover, dan animasi dipercepat",
+      "Ikon kad Terokai di halaman Rumah lebih berwarna & hidup — Rumah (rumah amber melayang + pintu berdenyut), Kuiz (soal tanda berdenyut), Pokédex (Poké Ball berkilau), PokeX (permata teal + bintang berkelip), Muzik (nota merah jambu-ungu melantun bergilir), API Key (kunci emas bercahaya) & Info (biru berdenyut) — setiap ikon melayang lembut, condong 3D (perspektif) semasa hover, dan animasi dipercepat",
     ],
   },
   {

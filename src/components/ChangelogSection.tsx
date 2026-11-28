@@ -26,6 +26,7 @@ const ENTRIES: Entry[] = [
       "UI OTP lebih hidup — tajuk gradien bergerak, kotak digit bercahaya denyut, fokus terangkat 3D, peti mel berhalo denyut, kira detik berkilau (Shiny Text), butang Sahkan berbingkai bintang berputar (Star Border) & aurora mini dalam kad peti mel",
       "Pustaka Muzik (halaman /muzik) — OST Pokémon (177 trek) + muzik import anda disatukan dalam satu senarai: tab Semua/OST/Import, carian langsung, main terus melalui Pemain Muzik yang sama, badge Import & buang lagu sendiri terus dari senarai",
       "Sistem Generate API Key With PokeAPI 💯 (halaman /api-key) — jana kunci peribadi pkm_live_… (crypto.getRandomValues), label + salin automatik + tarik balik, topeng selamat, disimpan localStorage sahaja, dengan contoh fetch X-Api-Key",
+      "Sistem Multi-lingual — pemilih Bahasa dalam Tetapan dengan 93 bahasa merangkumi bahasa setiap negara + dialek Jawa Pantura (Utara) & Jawa Timur; terjemahan penuh 20 bahasa utama (MS, EN, ID, JV, SU, ZH, JA, KO, HI, AR, ES, FR, PT, DE, RU, TH, VI, TL), carian bahasa, sokongan RTL, disimpan localStorage",
     ],
   },
   {

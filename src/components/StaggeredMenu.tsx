@@ -5,26 +5,28 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cycleSiteTheme, THEME_LABELS, useSiteTheme } from "../lib/site-theme";
 import { getSession, logoutUser } from "../lib/auth";
+import { useT } from "../lib/i18n";
+import LanguagePicker from "./LanguagePicker";
 import ThemeToggle from "./ThemeToggle";
 import SoundToggle from "./SoundToggle";
 import WallpaperControl from "./WallpaperControl";
 import FallbackModeButton from "./FallbackModeButton";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Rumah" },
-  { href: "/kuiz", label: "Kuiz" },
-  { href: "/pokedex", label: "Pokédex" },
-  { href: "/pokex", label: "PokeX" },
-  { href: "/muzik", label: "Muzik" },
-  { href: "/api-key", label: "Kunci API" },
-  { href: "/info", label: "Info" },
-  { href: "/changelog", label: "Changelog" },
+  { href: "/", k: "nav.home" },
+  { href: "/kuiz", k: "nav.quiz" },
+  { href: "/pokedex", k: "nav.pokedex" },
+  { href: "/pokex", k: "nav.pokex" },
+  { href: "/muzik", k: "nav.music" },
+  { href: "/api-key", k: "nav.apiKey" },
+  { href: "/info", k: "nav.info" },
+  { href: "/changelog", k: "nav.changelog" },
 ];
-
-const TEXT_LINES = ["Menu", "Close", "Menu", "Close", "Menu", "Close"];
 
 export default function StaggeredMenu() {
   const siteTheme = useSiteTheme();
+  const t = useT();
+  const textLines = [t("menu"), t("close"), t("menu"), t("close"), t("menu"), t("close")];
   const [open, setOpen] = useState(false);
   const [sessionEmail, setSessionEmail] = useState("");
   useEffect(() => {
@@ -103,7 +105,7 @@ export default function StaggeredMenu() {
                   style={{ ["--sm-delay" as string]: open ? `${0.32 + i * 0.1}s` : "0s" }}
                   onClick={close}
                 >
-                  <span className="sm-panel-itemLabel">{item.label}</span>
+                  <span className="sm-panel-itemLabel">{t(item.k)}</span>
                 </Link>
               </li>
             ))}
@@ -111,19 +113,25 @@ export default function StaggeredMenu() {
         </nav>
 
         <div className="sm-settings">
-          <p className="sm-settings-title">Tetapan &amp; Kawalan</p>
+          <p className="sm-settings-title">{t("set.title")}</p>
           <ul className="sm-settings-list">
+            <li className="sm-settings-row">
+              <span className="sm-settings-icon">
+                <LanguagePicker />
+              </span>
+              <span className="sm-settings-label">{t("set.lang")}</span>
+            </li>
             <li className="sm-settings-row">
               <span className="sm-settings-icon">
                 <SoundToggle />
               </span>
-              <span className="sm-settings-label">Bunyi &amp; SFX</span>
+              <span className="sm-settings-label">{t("set.sound")}</span>
             </li>
             <li className="sm-settings-row">
               <span className="sm-settings-icon">
                 <ThemeToggle compact />
               </span>
-              <span className="sm-settings-label">Cerah / Gelap</span>
+              <span className="sm-settings-label">{t("set.bright")}</span>
             </li>
             <li className="sm-settings-row">
               <span className="sm-settings-icon">
@@ -153,19 +161,19 @@ export default function StaggeredMenu() {
                   </svg>
                 </button>
               </span>
-              <span className="sm-settings-label">Tema: {THEME_LABELS[siteTheme]}</span>
+              <span className="sm-settings-label">{t("set.theme").replace("{t}", THEME_LABELS[siteTheme])}</span>
             </li>
             <li className="sm-settings-row">
               <span className="sm-settings-icon">
                 <WallpaperControl />
               </span>
-              <span className="sm-settings-label">Latar Custom</span>
+              <span className="sm-settings-label">{t("set.wallpaper")}</span>
             </li>
             <li className="sm-settings-row">
               <span className="sm-settings-icon">
                 <FallbackModeButton />
               </span>
-              <span className="sm-settings-label">SPUI</span>
+              <span className="sm-settings-label">{t("set.spui")}</span>
             </li>
             {sessionEmail && (
               <li className="sm-settings-row">
@@ -197,14 +205,14 @@ export default function StaggeredMenu() {
                     </svg>
                   </button>
                 </span>
-                <span className="sm-settings-label">Log Keluar</span>
+                <span className="sm-settings-label">{t("set.logout")}</span>
               </li>
             )}
           </ul>
         </div>
 
         <div className="sm-socials">
-          <p className="sm-socials-title">Terokai</p>
+          <p className="sm-socials-title">{t("set.explore")}</p>
           <div className="sm-socials-row">
             <a
               href="https://pokeapi.co"
@@ -234,7 +242,7 @@ export default function StaggeredMenu() {
         className="sm-toggle"
         aria-expanded={open}
         aria-controls="staggered-menu-panel"
-        aria-label={open ? "Tutup menu" : "Buka menu"}
+        aria-label={open ? t("close") : t("menu")}
         onClick={toggle}
       >
         <span className="sm-toggle-textWrap" aria-hidden="true">
@@ -245,7 +253,7 @@ export default function StaggeredMenu() {
               transitionDuration: open ? "0.92s" : "0.5s",
             }}
           >
-            {TEXT_LINES.map((line, i) => (
+            {textLines.map((line, i) => (
               <span className="sm-toggle-line" key={i}>
                 {line}
               </span>

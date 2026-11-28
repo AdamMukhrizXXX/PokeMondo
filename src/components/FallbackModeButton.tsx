@@ -31,25 +31,23 @@ export default function FallbackModeButton() {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-label="SPUI (Simple Pokedex UI) \u2014 tukar antara UI penuh dan UI ringkas"
-        className={`relative grid size-10 place-items-center rounded-full transition-colors ${
-          isSimple || open
-            ? "bg-primary text-on-primary"
-            : "bg-secondary-container text-on-secondary-container"
+        className={`relative grid size-10 place-items-center rounded-full shadow-e1 transition-all duration-300 hover:scale-110 active:scale-90 ${
+          isSimple || open ? "bg-primary-container" : "bg-secondary-container"
         }`}
       >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.9"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden
-        >
-          <path d="M12 3 3.5 18.5h17L12 3Z" />
-          <path d="M12 9.5v4.5m0 3v.01" />
+        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden>
+          <defs>
+            <linearGradient id="pm-spui-body" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#ff6a48" />
+              <stop offset="1" stopColor="#e3350d" />
+            </linearGradient>
+          </defs>
+          <rect x="5" y="2.8" width="14" height="18.4" rx="3.2" fill="url(#pm-spui-body)" stroke="#7f1d0d" strokeOpacity="0.45" strokeWidth="1.3" />
+          <rect x="7.4" y="5.2" width="9.2" height="7.2" rx="1.6" fill="#eef9ff" stroke="#1a1a1a" strokeOpacity="0.25" strokeWidth="0.9" />
+          <path d="M8.2 11.2 10.6 8.6l2 2 1.4-1.3 2 2.1" fill="none" stroke="#2dd4bf" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+          <circle cx="12" cy="16.4" r="2.5" fill="#ffffff" stroke="#1a1a1a" strokeWidth="1.1" />
+          <circle cx="12" cy="16.4" r="1.05" fill="#1a1a1a" />
+          <circle cx="16.7" cy="4.9" r="0.8" fill="#00a878" />
         </svg>
         {isSimple && (
           <span aria-hidden className="absolute right-1 top-1 size-2 rounded-full bg-[#f0a92e]" />

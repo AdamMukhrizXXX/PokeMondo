@@ -92,26 +92,30 @@ export default function WallpaperControl() {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-label="Latar custom — tukar gambar latar belakang"
-        className={`relative grid size-10 place-items-center rounded-full transition-colors ${
+        className={`relative grid size-10 place-items-center rounded-full transition-all duration-300 hover:scale-110 active:scale-90 ${
           hasWp || open
-            ? "bg-primary text-on-primary"
-            : "bg-secondary-container text-on-secondary-container"
+            ? "bg-primary-container shadow-e1"
+            : "bg-secondary-container shadow-e1"
         }`}
       >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.9"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden
-        >
-          <rect x="3" y="4" width="18" height="16" rx="3" />
-          <circle cx="9" cy="10" r="1.8" />
-          <path d="m4.5 18.5 5-4.5 3.5 3 3-2.5 3.5 4" />
+        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden>
+          <defs>
+            <linearGradient id="pm-wp-frame" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#2dd4bf" />
+              <stop offset="1" stopColor="#2f7cf6" />
+            </linearGradient>
+            <linearGradient id="pm-wp-sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#bfe8ff" />
+              <stop offset="1" stopColor="#eef9ff" />
+            </linearGradient>
+            <linearGradient id="pm-wp-mtn" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#00a878" />
+              <stop offset="1" stopColor="#0d9488" />
+            </linearGradient>
+          </defs>
+          <rect x="2.8" y="3.8" width="18.4" height="16.4" rx="3.2" fill="url(#pm-wp-sky)" stroke="url(#pm-wp-frame)" strokeWidth="1.9" />
+          <circle cx="15.9" cy="9.1" r="2.1" fill="#ffc531" stroke="#ff9800" strokeWidth="0.8" />
+          <path d="M3 20.2 8.4 11.8l4.3 4.4 2.8-2.7 5.5 5.6Z" fill="url(#pm-wp-mtn)" stroke="#065f56" strokeOpacity="0.5" strokeWidth="0.9" />
         </svg>
         {hasWp && (
           <span aria-hidden className="absolute right-1 top-1 size-2 rounded-full bg-[#f0a92e]" />

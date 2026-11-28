@@ -49,7 +49,7 @@ export const viewport: Viewport = {
   ],
 };
 
-const themeInit = `(function(){try{var s=localStorage.getItem("md-theme");var d=s?s==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.dataset.theme=d?"dark":"light";var t=localStorage.getItem("md-site-theme");if(t)document.documentElement.dataset.siteTheme=t;if(!localStorage.getItem("md-session"))document.documentElement.dataset.gate="1";}catch(e){document.documentElement.dataset.theme="light";}})();`;
+const themeInit = `(function(){try{var s=localStorage.getItem("md-theme");var d=s?s==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;document.documentElement.dataset.theme=d?"dark":"light";var t=localStorage.getItem("md-site-theme");if(t)document.documentElement.dataset.siteTheme=t;var l=localStorage.getItem("md-lang");if(l&&l.length<12){document.documentElement.lang=l;if(["ar","fa","ur","he","ps"].indexOf(l.split("-")[0])>=0)document.documentElement.dir="rtl";}if(!localStorage.getItem("md-session"))document.documentElement.dataset.gate="1";}catch(e){document.documentElement.dataset.theme="light";}})();`;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   let initialList: BasicPokemon[] = [];

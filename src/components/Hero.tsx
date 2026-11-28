@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useRef, useState } from "react";
 import { artworkUrl, pixelUrl, useCountUp } from "../lib/pokemon";
+import { useT } from "../lib/i18n";
 import { useRipple } from "../components/Ripple";
 import { useMagnet } from "../lib/motion";
 
@@ -22,17 +23,17 @@ function BlurWords({ text, delay = 0 }: { text: string; delay?: number }) {
   );
 }
 
-const LIVE_WORDS = ["Legenda.", "Cerita.", "Petualangan.", "Misteri.", "Keajaiban."];
-
 function LiveWord() {
+  const t = useT();
+  const LIVE_WORDS = t("hero.live").split("|");
   const [i, setI] = useState(0);
   useEffect(() => {
-    const t = setInterval(() => setI((v) => (v + 1) % LIVE_WORDS.length), 2600);
-    return () => clearInterval(t);
-  }, []);
+    const t2 = setInterval(() => setI((v) => (v + 1) % LIVE_WORDS.length), 2600);
+    return () => clearInterval(t2);
+  }, [LIVE_WORDS.length]);
   return (
     <span className="relative inline-grid" aria-hidden>
-      <span className="invisible">Petualangan.</span>
+      <span className="invisible">{LIVE_WORDS[Math.min(2, LIVE_WORDS.length - 1)]}</span>
       <span key={i} className="live-word absolute inset-0 text-gradient">
         {LIVE_WORDS[i]}
       </span>
@@ -73,6 +74,7 @@ export default function Hero({
   onExplore: () => void;
 }) {
   const ripple = useRipple();
+  const t = useT();
   const [visible, setVisible] = useState(false);
   const ctaRef = useMagnet<HTMLDivElement>(0.18);
   const tiltRef = useRef<HTMLDivElement | null>(null);
@@ -126,20 +128,20 @@ export default function Hero({
           className="shiny-text anim-rise mb-5 inline-flex items-center gap-2 rounded-full border border-outline-variant bg-surface-low/80 px-4 py-1.5 font-display text-xs font-semibold uppercase tracking-widest backdrop-blur-md"
           style={{ animationDelay: "0s" }}
         >
-          Data langsung dari PokéAPI
+          {t("hero.badge")}
         </p>
 
         <h1
           className="font-display text-5xl font-extrabold leading-[1.05] tracking-tight text-on-surface sm:text-6xl lg:text-7xl"
         >
-          <span className="sr-only">Seribu wajah, satu legenda.</span>
+          <span className="sr-only">{t("hero.head1")}</span>
           <div ref={tiltRef} className="tilt-3d" aria-hidden>
             <span className="text-3d">
-              <BlurWords text="Seribu Wajah." delay={0.1} />
+              <BlurWords text={t("hero.head1")} delay={0.1} />
             </span>
             <br />
             <span className="anim-rise" style={{ animationDelay: "0.45s" }}>
-              Satu&nbsp;
+              {t("hero.head2")}&nbsp;
               <LiveWord />
             </span>
           </div>
@@ -149,12 +151,13 @@ export default function Hero({
           className="anim-rise mt-6 max-w-xl text-lg leading-relaxed text-on-surface-variant"
           style={{ animationDelay: "0.8s" }}
         >
-          Tatal untuk menyusuri sembilan generasi, tapis mengikut jenis, dan buka
-          mana-mana kad untuk melihat statistik penuh.{" "}
+          {t("hero.sub")}{" "}
           <span className="font-semibold text-on-surface">
-            {countSpecies} spesies
+            {t("hero.counts")
+              .replace("{s}", String(countSpecies))
+              .replace("{t}", String(countTypes))
+              .replace("{g}", String(countGens))}
           </span>
-          , {countTypes} jenis, {countGens} generasi.
         </p>
 
         <div
@@ -180,8 +183,8 @@ export default function Hero({
               value={query}
               onChange={(e) => onQueryChange(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && onExplore()}
-              placeholder="Cari nama atau nombor, cth. pikachu…"
-              aria-label="Cari Pokémon"
+              placeholder={t("hero.search")}
+              aria-label={t("hero.search")}
               className="h-full w-full bg-transparent text-base text-on-surface outline-none placeholder:text-on-surface-variant/70"
             />
           </div>
@@ -194,7 +197,7 @@ export default function Hero({
             }}
             className="flex h-14 items-center justify-center gap-2 overflow-hidden rounded-full bg-primary px-7 font-display text-base font-bold text-on-primary transition-transform active:scale-95"
           >
-            Terokai Pokédex
+            {t("hero.cta")}
             <svg
               width="18"
               height="18"
@@ -217,24 +220,23 @@ export default function Hero({
             className="anim-rise flex flex-wrap items-center gap-x-7 gap-y-3 rounded-3xl border border-outline-variant bg-surface-low/85 px-7 py-5 shadow-e1 backdrop-blur-sm"
             style={{ animationDelay: "1.15s" }}
           >
-            {[
-              ["Spesies", countSpecies],
-              ["Jenis", countTypes],
-              ["Generasi", countGens],
-            ].map(([label, n], i) => (
-              <Fragment key={label as string}>
+            {t("hero.stats")
+              .split("|")
+              .map((label, i) => [label, [countSpecies, countTypes, countGens][i]] as [string, number])
+              .map(([label, n], i) => (
+              <Fragment key={label}>
                 {i > 0 && (
                   <span aria-hidden className="hidden h-9 w-px bg-outline-variant sm:block" />
                 )}
                 <div className="text-on-surface-variant">
                   <p className="font-display text-3xl font-extrabold text-on-surface">
-                    {n as number}
-                    {label === "Jenis" ? "+" : ""}
+                    {n}
+                    {label === t("hero.stats").split("|")[1] ? "+" : ""}
                   </p>
-                  <p className="text-sm font-medium">{label as string}</p>
+                  <p className="text-sm font-medium">{label}</p>
                 </div>
               </Fragment>
-            ))}
+              ))}
           </div>
         </div>
       </div>

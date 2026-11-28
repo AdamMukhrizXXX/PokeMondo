@@ -4,49 +4,45 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePokedexData } from "../lib/pokedex-context";
+import { useT } from "../lib/i18n";
 import Hero from "./Hero";
 import ScrubGallery from "./ScrubGallery";
 
 const QUICK_LINKS = [
   {
     href: "/pokedex",
-    label: "Pokédex",
-    note: "Semua 1025 spesies, tapis jenis & generasi",
+    k: "dex",
     icon: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 7.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 3a9 9 0 0 1 8.49 6H12m0 6h8.49A9 9 0 0 1 12 21",
   },
   {
     href: "/kuiz",
-    label: "Kuiz",
-    note: "Teka siluet, tanpa had, kejar skor terbaik",
+    k: "quiz",
     icon: "M9.5 9a2.5 2.5 0 1 1 3.4 2.33c-.75.3-1.9 1-1.9 2.17v.5M12 17.5v.01M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z",
   },
   {
     href: "/info",
-    label: "Info",
-    note: "Tentang laman, data terbuka & kredit",
+    k: "info",
     icon: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 4.5v.01M12 11v5.5",
   },
   {
     href: "/muzik",
-    label: "Muzik",
-    note: "Pustaka penuh OST + import anda",
+    k: "music",
     icon: "M9 18V5l11-2v13M6.5 18a2.8 2.8 0 1 1-2.8-2.8 2.8 2.8 0 0 1 2.8 2.8ZM17.5 16a2.8 2.8 0 1 1-2.8-2.8 2.8 2.8 0 0 1 2.8 2.8Z",
   },
   {
     href: "/api-key",
-    label: "Kunci API",
-    note: "Jana kunci API peribadi PokéAPI",
+    k: "key",
     icon: "M8 14a4.2 4.2 0 1 1 4.2-4.2L21 18.5V21h-2.5M8 9.8v.01",
   },
   {
     href: "/pokex",
-    label: "PokeX",
-    note: "Analisis semua Pokémon dengan AI sebenar",
+    k: "pokex",
     icon: "M12 4c1 3 2.5 4.5 5.5 5.5C14.5 10.5 13 12 12 15c-1-3-2.5-4.5-5.5-5.5C9.5 8.5 11 7 12 4Z",
   },
 ];
 
 export default function RumahContent() {
+  const t = useT();
   const { list } = usePokedexData();
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -139,8 +135,8 @@ export default function RumahContent() {
                   </svg>
                 )}
               </span>
-              <span className="font-display text-lg font-extrabold text-on-surface">{item.label}</span>
-              <span className="text-sm leading-snug text-on-surface-variant">{item.note}</span>
+              <span className="font-display text-lg font-extrabold text-on-surface">{t(`ql.${item.k}`)}</span>
+              <span className="text-sm leading-snug text-on-surface-variant">{t(`ql.${item.k}N`)}</span>
               <span className="mt-auto inline-flex items-center gap-1 font-display text-xs font-bold uppercase tracking-widest text-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                 Buka
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>

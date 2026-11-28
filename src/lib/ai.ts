@@ -31,7 +31,7 @@ export const PROVIDERS: Record<
 const BASES: Record<AiProvider, string> = {
   openrouter: "https://openrouter.ai/api/v1",
   groq: "https://api.groq.com/openai/v1",
-  xkiro: "https://api.xkiro.com/v1",
+  xkiro: "/api/xkiro",
 };
 
 const K_PROVIDER = "md-ai-provider";

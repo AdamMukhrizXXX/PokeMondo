@@ -14,10 +14,20 @@ type Entry = {
 
 const ENTRIES: Entry[] = [
   {
-    version: "v1.2.1",
-    title: "SPUI: Rawak 1 Pokémon, Sidebar Tetapan & Prestasi Bertahap",
+    version: "v1.2.2",
+    title: "Pembaikan xKiro — Kini Berfungsi 100%",
     note: "Kemas kini terkini",
     current: true,
+    items: [
+      "Punca xKiro gagal dijumpai — api.xkiro.com tidak menghantar pengepala CORS, jadi pelayar menyekat semua panggilan dan PokeX sentiasa jatuh balik ke OpenRouter (nota “via OpenRouter”)",
+      "Pembaikan: proxy se-origen baharu /api/xkiro meneruskan panggilan xKiro tanpa sekatan CORS — jawapan & strim langsung kini datang terus dari xKiro tanpa nota sandaran",
+      "Cip maklumat PokeX diperbetulkan kepada “3 penyedia • sandaran automatik”",
+    ],
+  },
+  {
+    version: "v1.2.1",
+    title: "SPUI: Rawak 1 Pokémon, Sidebar Tetapan & Prestasi Bertahap",
+    note: "Kemas kini terdahulu",
     items: [
       "Halaman SPUI kini ada Sistem Pokémon Rawak — satu Pokémon terpilih rawak daripada 1,025 spesies, klik kad untuk butiran penuh dan butang Rawak Semula untuk dadu baharu",
       "Sidebar Tetapan SPUI baharu (butang Tetapan di kepala halaman) dengan 5 tahap Prestasi: Very Low, Low, Medium, High dan Extreme",

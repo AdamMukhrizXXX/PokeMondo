@@ -379,7 +379,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
         </span>
         <span className="inline-flex items-center gap-1.5 rounded-full border border-outline-variant/70 bg-surface-container/70 px-3 py-1 text-[11px] font-semibold text-on-surface-variant">
           <i aria-hidden className="size-1.5 rounded-full bg-[#0ea5e9]" />
-          2 penyedia • sandaran automatik
+          3 penyedia • sandaran automatik
         </span>
       </div>
 

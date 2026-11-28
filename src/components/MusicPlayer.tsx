@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import {
   addImportedBgm,
   getBgmShuffle,
@@ -24,6 +25,8 @@ import {
   putImported,
   type ImportedMeta,
 } from "../lib/import-db";
+import { ensureResourcesLoaded } from "../lib/bgm";
+import { useT } from "../lib/i18n";
 import { useRipple } from "./Ripple";
 import { playUiSfx } from "../lib/sound";
 
@@ -85,6 +88,7 @@ export default function MusicPlayer({
   const seekRef = useRef<HTMLDivElement | null>(null);
   const miniRef = useRef<HTMLSpanElement | null>(null);
   const ripple = useRipple();
+  const tr = useT();
 
   useEffect(() => {
     setVolValue(Math.round(getBgmVolume() * 100));
@@ -92,6 +96,7 @@ export default function MusicPlayer({
 
   useEffect(() => {
     let cancelled = false;
+    void ensureResourcesLoaded();
     listImported()
       .then((metas) => {
         if (cancelled) return;
@@ -360,6 +365,16 @@ export default function MusicPlayer({
             >
               {endNote}
             </p>
+          )}
+
+          {count === 0 && (
+            <Link
+              href="/muzik-sumber"
+              data-sfx="click"
+              className="mt-2 block rounded-2xl bg-primary-container px-3.5 py-2 text-[11px] font-bold leading-snug text-on-primary-container transition-transform active:scale-[0.98]"
+            >
+              {tr("mr.needDL")} → {tr("mr.title")}
+            </Link>
           )}
 
           <div

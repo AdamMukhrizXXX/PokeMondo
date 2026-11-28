@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { BGM_TRACKS } from "./bgm-tracks";
 import { getBlobUrl, type ImportedMeta } from "./import-db";
+import { getResBlobUrl, listResources, type ResourceMeta } from "./resource-db";
 
 export type BgmTrack = {
   id: string;
@@ -25,14 +26,32 @@ function prettyName(name: string) {
   return base.replace(/\b\w/g, (c) => c.toUpperCase()) || "Trek import";
 }
 
-let playlist: BgmTrack[] = [...REMOTE];
+let playlist: BgmTrack[] = [];
 let imported: BgmTrack[] = [];
+let downloaded: BgmTrack[] = [];
 let audio: HTMLAudioElement | null = null;
 let masterVol = 0.55;
 let duckTimer = 0;
 
 function rebuild() {
-  playlist = [...REMOTE, ...imported];
+  playlist = [...downloaded, ...imported];
+}
+
+export function getBgmCatalog(): BgmTrack[] {
+  return REMOTE;
+}
+
+let resourcesLoaded = false;
+
+export async function ensureResourcesLoaded() {
+  if (resourcesLoaded) return;
+  resourcesLoaded = true;
+  try {
+    const rows = await listResources();
+    addDownloadedBgm(rows);
+  } catch {
+    resourcesLoaded = false;
+  }
 }
 
 function loadPref(key: string, fallback = "") {
@@ -64,7 +83,7 @@ function emit() {
   );
 }
 
-let currentIndex = Math.floor(Math.random() * REMOTE.length);
+let currentIndex = 0;
 let shuffle = loadPref("md-bgm-shuffle") === "on";
 
 function setupAudio(): HTMLAudioElement {
@@ -118,6 +137,30 @@ export function getBgmPlaylist(): BgmTrack[] {
   return [...playlist];
 }
 
+export function addDownloadedBgm(metas: ResourceMeta[]) {
+  const fresh = metas
+    .map((m) => ({ id: m.key, title: m.title, game: m.game }))
+    .filter((t) => !downloaded.some((x) => x.id === t.id));
+  if (fresh.length === 0) return;
+  downloaded = [...downloaded, ...fresh];
+  rebuild();
+  if (currentIndex >= playlist.length) {
+    currentIndex = playlist.length > 0 ? Math.floor(Math.random() * playlist.length) : 0;
+  }
+  emit();
+}
+
+export function removeDownloadedBgm(key: string) {
+  const wasCurrent = playlist[currentIndex]?.id === key;
+  downloaded = downloaded.filter((t) => t.id !== key);
+  rebuild();
+  currentIndex = playlist.length > 0 ? Math.min(currentIndex, playlist.length - 1) : 0;
+  emit();
+  if (wasCurrent && audio && !audio.paused) {
+    audio.pause();
+  }
+}
+
 export function removeImportedBgm(key: string) {
   const wasCurrent = playlist[currentIndex]?.id === key;
   imported = imported.filter((t) => t.id !== key);
@@ -151,9 +194,11 @@ async function playIndex(i: number) {
   currentIndex = ((i % playlist.length) + playlist.length) % playlist.length;
   savePref("md-bgm", "on");
   const track = playlist[currentIndex];
-  let src = track.url ?? "";
+  let src = "";
   if (track.id.startsWith("imp-")) {
     src = (await getBlobUrl(track.id)) ?? "";
+  } else {
+    src = (await getResBlobUrl(track.id)) ?? "";
   }
   if (!src) {
     emit();

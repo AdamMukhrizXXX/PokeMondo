@@ -18,6 +18,7 @@ const NAV_ITEMS = [
   { href: "/pokedex", k: "nav.pokedex" },
   { href: "/pokex", k: "nav.pokex" },
   { href: "/muzik", k: "nav.music" },
+  { href: "/muzik-sumber", k: "nav.resMusic" },
   { href: "/api-key", k: "nav.apiKey" },
   { href: "/info", k: "nav.info" },
   { href: "/changelog", k: "nav.changelog" },

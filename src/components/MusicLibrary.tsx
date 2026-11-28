@@ -1,12 +1,17 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import {
+  addDownloadedBgm,
   addImportedBgm,
+  ensureResourcesLoaded,
+  getBgmCatalog,
   getBgmIndex,
   getBgmPlaylist,
   isBgmOn,
   playBgmById,
+  removeDownloadedBgm,
   removeImportedBgm,
   useBgmState,
   type BgmTrack,
@@ -18,6 +23,12 @@ import {
   putImported,
   type ImportedMeta,
 } from "../lib/import-db";
+import {
+  deleteResource,
+  isResSupported,
+  listResources,
+  type ResourceMeta,
+} from "../lib/resource-db";
 import { playUiSfx } from "../lib/sound";
 import { useT } from "../lib/i18n";
 import { CryBars } from "./SoundToggle";
@@ -34,17 +45,28 @@ export default function MusicLibrary() {
   const [tab, setTab] = useState<Tab>("semua");
   const [q, setQ] = useState("");
   const [imports, setImports] = useState<ImportedMeta[]>([]);
+  const [resources, setResources] = useState<Record<string, ResourceMeta>>({});
   const [busy, setBusy] = useState(false);
   const [importErr, setImportErr] = useState("");
   const fileRef = useRef<HTMLInputElement | null>(null);
-  const currentIndexRef = useRef(index);
-  currentIndexRef.current = index;
   const tr = useT();
 
   const refresh = useCallback(() => setPlaylist(getBgmPlaylist()), []);
+  const catalog = useMemo(() => getBgmCatalog(), []);
+
+  const refreshResources = useCallback(async () => {
+    try {
+      const rows = await listResources();
+      setResources(Object.fromEntries(rows.map((r) => [r.key, r])));
+    } catch {
+      /* kekal senarai lama */
+    }
+  }, []);
 
   useEffect(() => {
     refresh();
+    void ensureResourcesLoaded().then(refresh);
+    void refreshResources();
     listImported()
       .then((metas) => {
         setImports(metas);
@@ -54,21 +76,29 @@ export default function MusicLibrary() {
       .catch(() => undefined);
     const onBgm = () => refresh();
     window.addEventListener("md-bgm", onBgm);
+    window.addEventListener("md-res", onBgm);
     return () => window.removeEventListener("md-bgm", onBgm);
-  }, [refresh]);
+  }, [refresh, refreshResources]);
 
   const shown = useMemo(() => {
     const needle = q.trim().toLowerCase();
+    if (tab === "ost") {
+      return catalog.filter(
+        (t) =>
+          !needle ||
+          t.title.toLowerCase().includes(needle) ||
+          t.game.toLowerCase().includes(needle),
+      );
+    }
     return playlist.filter((t) => {
       const isImport = t.game === "Import";
-      if (tab === "ost" && isImport) return false;
       if (tab === "import" && !isImport) return false;
       if (!needle) return true;
       return (
         t.title.toLowerCase().includes(needle) || t.game.toLowerCase().includes(needle)
       );
     });
-  }, [playlist, tab, q]);
+  }, [playlist, catalog, tab, q]);
 
   const onPick = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
@@ -127,12 +157,24 @@ export default function MusicLibrary() {
     }
   };
 
+  const onRemoveRes = async (key: string) => {
+    try {
+      await deleteResource(key);
+    } catch {
+      /* ignore */
+    }
+    removeDownloadedBgm(key);
+    refresh();
+    void refreshResources();
+  };
+
   const play = (id: string) => {
     playUiSfx("click");
     void playBgmById(id);
   };
 
   const importedCount = playlist.filter((t) => t.game === "Import").length;
+  const resCount = Object.keys(resources).length;
   const currentId = playlist[getBgmIndex()]?.id;
 
   return (
@@ -156,6 +198,17 @@ export default function MusicLibrary() {
           <p className="max-w-md text-sm leading-relaxed text-on-surface-variant">
             {tr("mu.sub").replace("{n}", String(playlist.length))}
           </p>
+          <Link
+            href="/muzik-sumber"
+            data-sfx="click"
+            className="mt-1 flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 font-display text-xs font-bold text-on-primary shadow-e1 transition-transform active:scale-95"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M12 4v11m0 0-4-4m4 4 4-4" />
+              <path d="M5 18v2h14v-2" />
+            </svg>
+            {tr("mr.title")}
+          </Link>
         </div>
       </FadeIn>
 
@@ -165,7 +218,7 @@ export default function MusicLibrary() {
             {(
               [
                 ["semua", `${tr("mu.all")} (${playlist.length})`],
-                ["ost", `OST (${playlist.length - importedCount})`],
+                ["ost", `OST (${resCount}/${catalog.length})`],
                 ["import", `${tr("mu.import")} (${importedCount})`],
               ] as const
             ).map(([value, labelText]) => (
@@ -247,8 +300,11 @@ export default function MusicLibrary() {
         >
           <div className="flex items-center justify-between gap-2 border-b border-outline-variant px-5 py-3">
             <p className="font-display text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
-              {tab === "semua" ? "Semua runtutan" : tab === "ost" ? "OST rasmi" : "Import anda"} —{" "}
-              {shown.length} lagu
+              {tab === "semua"
+                ? `Semua runtutan — ${shown.length} lagu`
+                : tab === "ost"
+                  ? `OST rasmi — ${shown.length} lagu`
+                  : `Import anda — ${shown.length} lagu`}
             </p>
             {playing && (
               <span className="flex items-center gap-1.5 text-[10px] font-bold text-primary">
@@ -258,78 +314,165 @@ export default function MusicLibrary() {
             )}
           </div>
           <ul className="no-scrollbar max-h-[62svh] overflow-y-auto p-2">
-            {shown.map((t, i) => {
-              const isCurrent = t.id === currentId;
-              const isImport = t.game === "Import";
-              return (
-                <li
-                  key={t.id}
-                  className="anim-rise"
-                  style={{ animationDelay: `${Math.min(i, 24) * 0.02}s` }}
-                >
-                  <div
-                    className={`group flex items-center gap-2.5 rounded-2xl px-3 py-2 transition-colors ${
-                      isCurrent ? "bg-secondary-container/70" : "hover:bg-surface-container"
-                    }`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => play(t.id)}
-                      aria-label={`Main ${t.title}`}
-                      className={`grid size-8 shrink-0 place-items-center rounded-full transition-transform active:scale-90 ${
-                        isCurrent
-                          ? "bg-primary text-on-primary"
-                          : "bg-surface-container-high text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary"
-                      }`}
+            {tab === "ost"
+              ? (shown as BgmTrack[]).map((t, i) => {
+                  const res = resources[t.id];
+                  const has = !!res;
+                  const isCurrent = currentId === t.id;
+                  return (
+                    <li
+                      key={t.id}
+                      className="anim-rise"
+                      style={{ animationDelay: `${Math.min(i, 24) * 0.02}s` }}
                     >
-                      {isCurrent && playing ? (
-                        <CryBars active className="text-on-primary" />
-                      ) : (
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                          <path d="M8 5.5v13l11-6.5z" />
-                        </svg>
-                      )}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => play(t.id)}
-                      className="min-w-0 flex-1 text-left"
-                    >
-                      <p
-                        className={`truncate text-sm font-semibold ${
-                          isCurrent ? "text-primary" : "text-on-surface"
+                      <div
+                        className={`group flex items-center gap-2.5 rounded-2xl px-3 py-2 transition-colors ${
+                          isCurrent ? "bg-secondary-container/70" : "hover:bg-surface-container"
                         }`}
                       >
-                        {t.title}
-                      </p>
-                      <p className="truncate text-[11px] text-on-surface-variant">
-                        {t.game}
-                        {isImport && (
-                          <span className="ml-2 rounded-full bg-tertiary-container px-1.5 py-0.5 text-[9px] font-bold text-on-tertiary-container">
-                            Import
-                          </span>
+                        <button
+                          type="button"
+                          onClick={() => has && play(t.id)}
+                          disabled={!has}
+                          aria-label={has ? `Main ${t.title}` : tr("mr.needDL")}
+                          title={has ? undefined : tr("mr.needDL")}
+                          className={`grid size-8 shrink-0 place-items-center rounded-full transition-transform active:scale-90 disabled:cursor-not-allowed ${
+                            has
+                              ? isCurrent
+                                ? "bg-primary text-on-primary"
+                                : "bg-surface-container-high text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary"
+                              : "bg-surface-container text-on-surface-variant/40"
+                          }`}
+                        >
+                          {has ? (
+                            isCurrent && playing ? (
+                              <CryBars active className="text-on-primary" />
+                            ) : (
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                                <path d="M8 5.5v13l11-6.5z" />
+                              </svg>
+                            )
+                          ) : (
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                              <path d="M12 4v11m0 0-4-4m4 4 4-4" />
+                              <path d="M5 18v2h14v-2" />
+                            </svg>
+                          )}
+                        </button>
+                        <div className="min-w-0 flex-1">
+                          <p
+                            className={`truncate text-sm font-semibold ${
+                              isCurrent ? "text-primary" : has ? "text-on-surface" : "text-on-surface-variant"
+                            }`}
+                          >
+                            {t.title}
+                          </p>
+                          <p className="truncate text-[11px] text-on-surface-variant">
+                            {t.game}
+                          </p>
+                        </div>
+                        {has ? (
+                          <>
+                            <span className="flex shrink-0 items-center gap-1 rounded-full bg-primary-container px-2 py-0.5 text-[9px] font-bold text-on-primary-container">
+                              <span className="size-1.5 rounded-full bg-current" />
+                              {tr("mr.ready")}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => void onRemoveRes(t.id)}
+                              aria-label={`Buang sumber ${t.title}`}
+                              className="grid size-7 shrink-0 place-items-center rounded-full text-on-surface-variant opacity-0 transition-all hover:bg-surface-container-highest hover:text-[var(--md-error)] group-hover:opacity-100"
+                            >
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
+                                <path d="M6 6l12 12M18 6 6 18" />
+                              </svg>
+                            </button>
+                          </>
+                        ) : (
+                          <Link
+                            href="/muzik-sumber"
+                            data-sfx="click"
+                            className="flex h-7 shrink-0 items-center rounded-full bg-tertiary-container px-2.5 text-[10px] font-bold text-on-tertiary-container transition-transform active:scale-95"
+                          >
+                            {tr("mr.download")}
+                          </Link>
                         )}
-                      </p>
-                    </button>
-                    {isImport && (
-                      <button
-                        type="button"
-                        onClick={() => void onRemove(t.id)}
-                        aria-label={`Buang ${t.title}`}
-                        className="grid size-7 shrink-0 place-items-center rounded-full text-on-surface-variant opacity-0 transition-all hover:bg-surface-container-highest hover:text-[var(--md-error)] group-hover:opacity-100"
+                      </div>
+                    </li>
+                  );
+                })
+              : (shown as BgmTrack[]).map((t, i) => {
+                  const isCurrent = t.id === currentId;
+                  const isImport = t.game === "Import";
+                  return (
+                    <li
+                      key={t.id}
+                      className="anim-rise"
+                      style={{ animationDelay: `${Math.min(i, 24) * 0.02}s` }}
+                    >
+                      <div
+                        className={`group flex items-center gap-2.5 rounded-2xl px-3 py-2 transition-colors ${
+                          isCurrent ? "bg-secondary-container/70" : "hover:bg-surface-container"
+                        }`}
                       >
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
-                          <path d="M6 6l12 12M18 6 6 18" />
-                        </svg>
-                      </button>
-                    )}
-                    <span className="w-10 shrink-0 text-right font-display text-[10px] font-bold tabular-nums text-on-surface-variant/70">
-                      #{(playlist.indexOf(t) + 1).toString()}
-                    </span>
-                  </div>
-                </li>
-              );
-            })}
+                        <button
+                          type="button"
+                          onClick={() => play(t.id)}
+                          aria-label={`Main ${t.title}`}
+                          className={`grid size-8 shrink-0 place-items-center rounded-full transition-transform active:scale-90 ${
+                            isCurrent
+                              ? "bg-primary text-on-primary"
+                              : "bg-surface-container-high text-on-surface-variant group-hover:bg-primary group-hover:text-on-primary"
+                          }`}
+                        >
+                          {isCurrent && playing ? (
+                            <CryBars active className="text-on-primary" />
+                          ) : (
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                              <path d="M8 5.5v13l11-6.5z" />
+                            </svg>
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => play(t.id)}
+                          className="min-w-0 flex-1 text-left"
+                        >
+                          <p
+                            className={`truncate text-sm font-semibold ${
+                              isCurrent ? "text-primary" : "text-on-surface"
+                            }`}
+                          >
+                            {t.title}
+                          </p>
+                          <p className="truncate text-[11px] text-on-surface-variant">
+                            {t.game}
+                            {isImport && (
+                              <span className="ml-2 rounded-full bg-tertiary-container px-1.5 py-0.5 text-[9px] font-bold text-on-tertiary-container">
+                                Import
+                              </span>
+                            )}
+                          </p>
+                        </button>
+                        {isImport && (
+                          <button
+                            type="button"
+                            onClick={() => void onRemove(t.id)}
+                            aria-label={`Buang ${t.title}`}
+                            className="grid size-7 shrink-0 place-items-center rounded-full text-on-surface-variant opacity-0 transition-all hover:bg-surface-container-highest hover:text-[var(--md-error)] group-hover:opacity-100"
+                          >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
+                              <path d="M6 6l12 12M18 6 6 18" />
+                            </svg>
+                          </button>
+                        )}
+                        <span className="w-10 shrink-0 text-right font-display text-[10px] font-bold tabular-nums text-on-surface-variant/70">
+                          #{(playlist.indexOf(t) + 1).toString()}
+                        </span>
+                      </div>
+                    </li>
+                  );
+                })}
             {shown.length === 0 && (
               <li className="p-8 text-center text-sm font-semibold text-on-surface-variant">
                 {tr("mu.none").replace("{q}", q ? ` dengan “${q}”` : "")}
@@ -341,9 +484,9 @@ export default function MusicLibrary() {
 
       <FadeIn delay={0.24}>
         <p className="mt-4 text-center text-[11px] leading-relaxed text-on-surface-variant">
-          {isImportSupported()
-            ? "Fail import (≤ 25MB setiap satu) disimpan dalam pelayar ini (IndexedDB) dan kekal selepas refresh — ia muncul dalam senarai ini serta auto-tukar & putar rawak Pemain Muzik."
-            : "Pelayar ini tidak menyokong IndexedDB — import muzik tidak tersedia, senarai OST tetap boleh dimainkan."}{" "}
+          {isResSupported()
+            ? "Lagu OST perlu dimuat turun satu persatu di halaman Download Resource Muzik sebelum boleh diputar — sumber disimpan dalam pelayar ini (IndexedDB) dan kekal selepas refresh. Fail import (≤ 25MB setiap satu) tetap boleh dimain terus."
+            : "Pelayar ini tidak menyokong IndexedDB — muat turun sumber tidak tersedia; hanya fail import anda boleh dimainkan."}{" "}
           Muzik OST: Nintendo / Game Freak / The Pokémon Company.
         </p>
         {!isBgmOn() && (

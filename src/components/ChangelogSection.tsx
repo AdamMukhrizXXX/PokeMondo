@@ -14,10 +14,21 @@ type Entry = {
 
 const ENTRIES: Entry[] = [
   {
-    version: "v1.2.4",
-    title: "24 Lagu Baharu Pokémon (Scarlet/Violet + DLC)",
+    version: "v1.2.5",
+    title: "Download Resource Muzik — Muzik Perlu Dimuat Turun Dahulu",
     note: "Kemas kini terkini",
     current: true,
+    items: [
+      "Halaman baharu Download Resource Muzik (Online) di /muzik-sumber — semua 201 lagu OST boleh dimuat turun satu persatu (satu muat turun aktif pada satu masa, bar kemajuan %/saiz masa-nyata) dan disimpan kekal dalam pelayar (IndexedDB)",
+      "Semua muzik OST kini menjadi Download Resource — lagu hanya boleh diputar selepas sumbernya dimuat turun; kalau tiada resource download, tiada muzik yang keluar atau diputar (pemain kekal senyap dan memaparkan peringatan)",
+      "Pustaka Muzik menunjukkan status setiap lagu OST: Sedia (boleh main terus) atau butang Muat Turun yang memaut ke halaman sumber; lagu import anda tetap boleh dimain seperti biasa",
+      "Ringkasan storan ({n}/{t} lagu · MB/GB) + padam sumber satu persatu; menu samping baharu “Sumber Muzik” (diterjemah 20 bahasa)",
+    ],
+  },
+  {
+    version: "v1.2.4",
+    title: "24 Lagu Baharu Pokémon (Scarlet/Violet + DLC)",
+    note: "Kemas kini terdahulu",
     items: [
       "Pustaka Muzik bertambah daripada 177 kepada 201 trek — 24 lagu baharu ditambah",
       "Lagu baharu dari Scarlet/Violet + The Hidden Treasure of Area Zero: The Teal Mask (Kitakami, Mossui Town, Festival of Masks, Crystal Pool), The Indigo Disk (Blueberry Academy, 4 biome Terarium, Battle! Champion Kieran, Area Zero Underdepths, Battle! Terapagos) dan Epilog Mochi Mayhem (Battle! Pecharunt)",

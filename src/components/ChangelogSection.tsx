@@ -14,10 +14,21 @@ type Entry = {
 
 const ENTRIES: Entry[] = [
   {
-    version: "v1.2.0",
-    title: "Pop Up Kemas Kini, Sistem Rawak & UI/UX Halus",
+    version: "v1.2.1",
+    title: "SPUI: Rawak 1 Pokémon, Sidebar Tetapan & Prestasi Bertahap",
     note: "Kemas kini terkini",
     current: true,
+    items: [
+      "Halaman SPUI kini ada Sistem Pokémon Rawak — satu Pokémon terpilih rawak daripada 1,025 spesies, klik kad untuk butiran penuh dan butang Rawak Semula untuk dadu baharu",
+      "Sidebar Tetapan SPUI baharu (butang Tetapan di kepala halaman) dengan 5 tahap Prestasi: Very Low, Low, Medium, High dan Extreme",
+      "Tahap Prestasi benar-benar berfungsi — mengubah bilangan Pokémon sehalaman (20 hingga 120), kepadatan grid dan cara imej dimuat (lazy/eager); pilihan diingati dalam pelayar",
+      "UI SPUI diubah lebih kemas & mudah difahami — kepala halaman berikon, bar carian & penapis dalam satu kad dengan butang kosongkan + set semula, cip status prestasi, halaman pertama/terakhir, dan keadaan kosong yang jelas — masih mengekalkan Simple UI",
+    ],
+  },
+  {
+    version: "v1.2.0",
+    title: "Pop Up Kemas Kini, Sistem Rawak & UI/UX Halus",
+    note: "Kemas kini terdahulu",
     items: [
       "Pop Up Kemas Kini — pengguna versi lama disambut pop up automatik dengan senarai apa yang baharu setiap kali versi laman naik (dikesan melalui localStorage, sekali sahaja bagi setiap versi)",
       "Sistem Rawak Pokémon dikembalikan semula — bahagian baharu di Halaman Rumah yang memunculkan 2 Pokémon rawak sekaligus setiap roll, dengan kad masuk beranimasi (flip-in 3D) & condong 3D semasa hover",

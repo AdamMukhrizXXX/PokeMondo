@@ -1,8 +1,10 @@
 "use client";
 
 import { FadeIn } from "./Reveal";
+import { useT } from "../lib/i18n";
 
 export default function InfoSection() {
+  const t = useT();
   return (
     <section id="info" className="px-5 pb-8 pt-4 sm:px-8 lg:px-16">
       <div className="mx-auto max-w-7xl">
@@ -10,11 +12,11 @@ export default function InfoSection() {
           <div className="grid gap-8 p-8 sm:p-10 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <p className="font-display text-sm font-bold uppercase tracking-[0.25em] text-primary">
-                <FadeIn><span>Tentang</span></FadeIn>
+                <FadeIn><span>{t("inf.tag")}</span></FadeIn>
               </p>
               <h2 className="mt-1 font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
                 <FadeIn>
-                  <span className="inline-block">Dibina dengan data terbuka</span>
+                  <span className="inline-block">{t("inf.open")}</span>
                 </FadeIn>
               </h2>
               <p className="mt-4 max-w-xl leading-relaxed text-on-surface-variant">

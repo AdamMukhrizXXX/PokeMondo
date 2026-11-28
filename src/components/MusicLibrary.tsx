@@ -19,6 +19,7 @@ import {
   type ImportedMeta,
 } from "../lib/import-db";
 import { playUiSfx } from "../lib/sound";
+import { useT } from "../lib/i18n";
 import { CryBars } from "./SoundToggle";
 import { FadeIn } from "./Reveal";
 
@@ -38,6 +39,7 @@ export default function MusicLibrary() {
   const fileRef = useRef<HTMLInputElement | null>(null);
   const currentIndexRef = useRef(index);
   currentIndexRef.current = index;
+  const tr = useT();
 
   const refresh = useCallback(() => setPlaylist(getBgmPlaylist()), []);
 
@@ -100,7 +102,7 @@ export default function MusicLibrary() {
     }
     setImportErr(
       saved.length === 0
-        ? "Tiada fail audio sah (mp3 / ogg / m4a / wav / flac, ≤ 25MB)."
+        ? tr("mu.errAudio")
         : skipped > 0
           ? `${skipped} fail dilangkau (bukan audio atau melebihi 25MB).`
           : "",
@@ -149,11 +151,10 @@ export default function MusicLibrary() {
             </svg>
           </span>
           <h1 className="font-display text-3xl font-extrabold tracking-tight">
-            <span className="pokex-gradient-text">Pustaka Muzik Pokémon</span>
+            <span className="pokex-gradient-text">{tr("mu.title")}</span>
           </h1>
           <p className="max-w-md text-sm leading-relaxed text-on-surface-variant">
-            {playlist.length} runtutan dalam satu senarai — OST rasmi siri permainan dan fail
-            import anda, bermain melalui Pemain Muzik yang sama.
+            {tr("mu.sub").replace("{n}", String(playlist.length))}
           </p>
         </div>
       </FadeIn>
@@ -163,9 +164,9 @@ export default function MusicLibrary() {
           <div className="flex gap-1.5 rounded-full border border-outline-variant/70 bg-surface-container/70 p-1">
             {(
               [
-                ["semua", `Semua (${playlist.length})`],
+                ["semua", `${tr("mu.all")} (${playlist.length})`],
                 ["ost", `OST (${playlist.length - importedCount})`],
-                ["import", `Import (${importedCount})`],
+                ["import", `${tr("mu.import")} (${importedCount})`],
               ] as const
             ).map(([value, labelText]) => (
               <button
@@ -203,8 +204,8 @@ export default function MusicLibrary() {
               type="search"
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="Cari lagu atau permainan…"
-              aria-label="Cari dalam pustaka muzik"
+              placeholder={tr("mu.search")}
+              aria-label={tr("mu.searchA")}
               className="h-10 w-full rounded-full border border-outline-variant bg-surface-container pl-9 pr-3.5 text-sm text-on-surface outline-none transition-colors focus:border-primary"
             />
           </div>
@@ -219,7 +220,7 @@ export default function MusicLibrary() {
               <path d="M12 16V4m0 0 -5 5m5-5 5 5" />
               <path d="M4 18v2h16v-2" />
             </svg>
-            {busy ? "Mengimport…" : "Import Muzik"}
+            {busy ? tr("mu.importing") : tr("mu.importBtn")}
           </button>
         </div>
         <input
@@ -331,7 +332,7 @@ export default function MusicLibrary() {
             })}
             {shown.length === 0 && (
               <li className="p-8 text-center text-sm font-semibold text-on-surface-variant">
-                Tiada lagu sepadan {q ? `dengan “${q}”` : "dalam tapisan ini"}.
+                {tr("mu.none").replace("{q}", q ? ` dengan “${q}”` : "")}
               </li>
             )}
           </ul>

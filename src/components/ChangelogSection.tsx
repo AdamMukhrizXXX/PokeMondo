@@ -2,6 +2,7 @@
 
 import pkg from "../../package.json";
 import { FadeIn } from "./Reveal";
+import { useT } from "../lib/i18n";
 
 type Entry = {
   version: string;
@@ -27,6 +28,8 @@ const ENTRIES: Entry[] = [
       "Pustaka Muzik (halaman /muzik) — OST Pokémon (177 trek) + muzik import anda disatukan dalam satu senarai: tab Semua/OST/Import, carian langsung, main terus melalui Pemain Muzik yang sama, badge Import & buang lagu sendiri terus dari senarai",
       "Sistem Generate API Key With PokeAPI 💯 (halaman /api-key) — jana kunci peribadi pkm_live_… (crypto.getRandomValues), label + salin automatik + tarik balik, topeng selamat, disimpan localStorage sahaja, dengan contoh fetch X-Api-Key",
       "Sistem Multi-lingual — pemilih Bahasa dalam Tetapan dengan 93 bahasa merangkumi bahasa setiap negara + dialek Jawa Pantura (Utara) & Jawa Timur; terjemahan penuh 20 bahasa utama (MS, EN, ID, JV, SU, ZH, JA, KO, HI, AR, ES, FR, PT, DE, RU, TH, VI, TL), carian bahasa, sokongan RTL, disimpan localStorage",
+      "Perbaikan Multi-lingual — semua halaman kini diterjemah penuh: Pokédex, Kuiz, Info, PokeX, Pustaka Muzik, Kunci API, Modal Butiran & Changelog (55+ kunci baharu × 20 bahasa)",
+      "Ikon Bahasa baharu lebih berwarna & hidup — globe gradien bercahaya denyut, garis bujur merah-amber bernafas, dan 3 titik orbit berwarna (merah, amber, biru) berputar mengelilingi glob; hover mempercepat semua animasi",
     ],
   },
   {
@@ -76,6 +79,7 @@ const ENTRIES: Entry[] = [
 ];
 
 export default function ChangelogSection() {
+  const t = useT();
   return (
     <section
       id="changelog"
@@ -89,15 +93,14 @@ export default function ChangelogSection() {
           </p>
           <div className="mt-1 flex flex-wrap items-center gap-3">
             <h2 className="font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
-              Sejarah Versi PokeMondo
+              {t("cl.title")}
             </h2>
             <span className="rounded-full bg-primary px-3 py-1 font-display text-[11px] font-bold text-on-primary shadow-e1">
-              Semasa v{pkg.version}
+              {t("cl.current").replace("{v}", pkg.version)}
             </span>
           </div>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-on-surface-variant">
-            Setiap kemas kini laman direkodkan di sini — ciri baharu, pembaikan,
-            dan perubahan penting daripada pelancaran pertama hingga kini.
+            {t("cl.sub")}
           </p>
         </div>
 
@@ -123,7 +126,7 @@ export default function ChangelogSection() {
                           : "bg-surface-container text-on-surface-variant"
                       }`}
                     >
-                      {entry.note}
+                      {entry.current ? t("cl.now") : entry.version === "v1.0.0" ? t("cl.first") : t("cl.prev")}
                     </span>
                   </div>
                   <h3 className="mt-3 font-display text-xl font-extrabold text-on-surface">

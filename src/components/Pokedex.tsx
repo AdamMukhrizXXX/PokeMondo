@@ -13,6 +13,7 @@ import {
 } from "../lib/pokemon";
 import PokeCard from "../components/PokeCard";
 import { useRipple } from "../components/Ripple";
+import { useT } from "../lib/i18n";
 
 type GenFilter = "all" | (typeof GEN_RANGES)[number][2];
 
@@ -51,6 +52,7 @@ export default function Pokedex({
   const [page, setPage] = useState(1);
   const gridRef = useRef<HTMLDivElement | null>(null);
   const ripple = useRipple();
+  const t = useT();
 
   useEffect(() => {
     setPage(1);
@@ -103,10 +105,10 @@ export default function Pokedex({
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="font-display text-sm font-bold uppercase tracking-[0.25em] text-primary">
-              <RevealWords text="Koleksi penuh" />
+              <RevealWords text={t("dx.tag")} />
             </p>
             <h2 className="mt-1 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
-              <RevealWords text="Pokédex Lengkap" />
+              <RevealWords text={t("dx.title")} />
             </h2>
           </div>
           <button
@@ -132,7 +134,7 @@ export default function Pokedex({
             >
               <path d="M12 19V5m-6 6 6-6 6 6" />
             </svg>
-            {desc ? "Terbaharu dahulu" : "Tertua dahulu"}
+            {desc ? t("dx.sortNew") : t("dx.sortOld")}
           </button>
         </div>
 
@@ -154,15 +156,15 @@ export default function Pokedex({
           <input
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
-            placeholder="Tapis Pokédex… cth. mew, 25…"
-            aria-label="Tapis Pokédex"
+            placeholder={t("dx.search")}
+            aria-label={t("dx.search")}
             className="h-full w-full bg-transparent text-base outline-none placeholder:text-on-surface-variant/70"
           />
           {query && (
             <button
               type="button"
               onClick={() => onQueryChange("")}
-              aria-label="Kosongkan carian"
+              aria-label={t("dx.clear")}
               className="grid size-8 shrink-0 place-items-center rounded-full text-on-surface-variant hover:bg-surface-container-highest"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
@@ -174,23 +176,23 @@ export default function Pokedex({
 
         <div className="no-scrollbar mt-4 flex gap-2 overflow-x-auto pb-1">
           <Chip active={type === "all"} onClick={() => setType("all")}>
-            Semua jenis
+            {t("dx.allTypes")}
           </Chip>
-          {POKEMON_TYPES.map((t) => (
+          {POKEMON_TYPES.map((ty) => (
             <Chip
-              key={t}
-              active={type === t}
-              onClick={() => setType(type === t ? "all" : t)}
-              color={TYPE_COLORS[t]}
+              key={ty}
+              active={type === ty}
+              onClick={() => setType(type === ty ? "all" : ty)}
+              color={TYPE_COLORS[ty]}
             >
-              {capital(t)}
+              {capital(ty)}
             </Chip>
           ))}
         </div>
 
         <div className="no-scrollbar mt-2 flex gap-2 overflow-x-auto pb-1">
           <Chip active={gen === "all"} onClick={() => setGen("all")}>
-            Semua generasi
+            {t("dx.allGens")}
           </Chip>
           {genLabels.map((lb) => (
             <Chip key={lb} active={gen === lb} onClick={() => setGen(gen === lb ? "all" : lb)}>

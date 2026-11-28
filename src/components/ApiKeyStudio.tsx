@@ -11,6 +11,7 @@ import {
   type ApiKeyEntry,
 } from "../lib/api-keys";
 import { playUiSfx } from "../lib/sound";
+import { useT } from "../lib/i18n";
 import { FadeIn } from "./Reveal";
 
 export default function ApiKeyStudio() {
@@ -19,6 +20,7 @@ export default function ApiKeyStudio() {
   const [fresh, setFresh] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
   const [supported, setSupported] = useState(true);
+  const t = useT();
 
   useEffect(() => {
     setSupported(isKeyGenSupported());
@@ -73,12 +75,10 @@ export default function ApiKeyStudio() {
             </svg>
           </span>
           <h1 className="font-display text-3xl font-extrabold tracking-tight">
-            <span className="pokex-gradient-text">Kunci API PokeAPI</span>
+            <span className="pokex-gradient-text">{t("ak.title")}</span>
           </h1>
           <p className="max-w-md text-sm leading-relaxed text-on-surface-variant">
-            Jana kunci API peribadi untuk aplikasi anda yang dibina atas data PokéAPI —
-            dijana dalam pelayar anda dengan <b className="text-on-surface">crypto.getRandomValues</b>,
-            tidak dihantar ke mana-mana pelayan.
+            {t("ak.sub")}
           </p>
         </div>
       </FadeIn>
@@ -95,8 +95,8 @@ export default function ApiKeyStudio() {
               onChange={(e) => setLabel(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && onGenerate()}
               maxLength={40}
-              placeholder="Nama kunci (cth: App Kuiz Saya)"
-              aria-label="Nama kunci API"
+              placeholder={t("ak.ph")}
+              aria-label={t("ak.phA")}
               className="h-12 flex-1 rounded-xl border border-outline-variant bg-surface-container px-4 text-sm text-on-surface outline-none transition-colors focus:border-primary"
             />
             <div className="star-border shrink-0">
@@ -110,19 +110,17 @@ export default function ApiKeyStudio() {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                   <path d="M13 2 4.5 13.5H11L9.5 22 19 9.5h-6.5L13 2Z" />
                 </svg>
-                Jana Kunci Baharu
+                {t("ak.gen")}
               </button>
             </div>
           </div>
           {!supported && (
             <p role="alert" className="mt-2 text-xs font-semibold" style={{ color: "var(--md-error)" }}>
-              Pelayar ini tidak menyokong crypto.getRandomValues — penjanaan kunci tidak tersedia.
+              {t("ak.unsupported")}
             </p>
           )}
           <p className="mt-3 text-[11px] leading-relaxed text-on-surface-variant">
-            Kunci berformat <code className="rounded bg-surface-container px-1.5 py-0.5 font-mono text-[10px]">pkm_live_…</code> (32 aksara rawak),
-            disimpan <b>hanya dalam pelayar ini</b> dan dipaparkan penuh sekali sahaja selepas dijana —
-            salin serta-merta.
+            {t("ak.note")}
           </p>
         </div>
       </FadeIn>
@@ -196,7 +194,7 @@ export default function ApiKeyStudio() {
                         <rect x="9" y="9" width="11" height="11" rx="2" />
                         <path d="M5 15V5a2 2 0 0 1 2-2h10" />
                       </svg>
-                      Salin
+                      {t("ak.copy")}
                     </>
                   )}
                 </button>
@@ -204,7 +202,7 @@ export default function ApiKeyStudio() {
                   type="button"
                   data-sfx="close"
                   onClick={() => onRevoke(entry.id)}
-                  aria-label={`Tarik balik kunci ${entry.label}`}
+                  aria-label={`${t("ak.revoke")} ${entry.label}`}
                   className="grid size-9 shrink-0 place-items-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-[var(--md-error)]"
                 >
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden>

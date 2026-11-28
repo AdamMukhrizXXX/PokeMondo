@@ -2365,23 +2365,16 @@ html[data-gate="1"] body > *:not(.auth-root) {
   animation: none !important;
 }
 
-/* Ikon Navigasi (Rumah, Kuiz, Pokédex, PokeX, Muzik, API Key, Info, Changelog) — berwarna, hidup & 3D */
-.sm-nav-icon {
-  display: inline-grid;
-  width: 0.82em;
-  height: 0.82em;
-  margin-right: 0.34em;
-  vertical-align: -0.08em;
+/* Ikon kad Terokai (Rumah, Kuiz, Pokédex, PokeX, Muzik, API Key, Info) — berwarna, hidup & 3D */
+.ql-icon {
   transform-style: preserve-3d;
-  perspective: 320px;
+  perspective: 300px;
   filter: drop-shadow(0 4px 8px rgb(0 0 0 / 0.16));
   transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
-.sm-panel-item:hover .sm-nav-icon,
-.sm-panel-item:focus-visible .sm-nav-icon,
-.sm-panel-item[aria-current="page"] .sm-nav-icon {
-  transform: rotateY(-24deg) rotateX(12deg) scale(1.15);
+.group:hover .ql-icon {
+  transform: rotateY(-18deg) rotateX(12deg) scale(1.14);
 }
 .nv-svg {
   width: 100%;
@@ -2416,20 +2409,17 @@ html[data-gate="1"] body > *:not(.auth-root) {
   transform-origin: 12px 12px;
   animation: nv-spin 7s linear infinite;
 }
-.sm-panel-item:hover .nv-float {
+.group:hover .nv-float {
   animation-duration: 1.6s;
 }
-.sm-panel-item:hover .nv-pulse {
+.group:hover .nv-pulse {
   animation-duration: 1.1s;
 }
-.sm-panel-item:hover .nv-bounce {
+.group:hover .nv-bounce {
   animation-duration: 0.8s;
 }
-.sm-panel-item:hover .nv-twinkle {
+.group:hover .nv-twinkle {
   animation-duration: 1s;
-}
-.sm-panel-item:hover .nv-hand {
-  animation-duration: 2.4s;
 }
 
 @keyframes nv-float {
@@ -2478,15 +2468,14 @@ html[data-gate="1"] body > *:not(.auth-root) {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sm-nav-icon,
+  .ql-icon,
   .nv-float,
   .nv-pulse,
   .nv-bounce,
-  .nv-twinkle,
-  .nv-hand {
+  .nv-twinkle {
     animation: none !important;
   }
-  .sm-panel-item:hover .sm-nav-icon {
+  .group:hover .ql-icon {
     transform: none;
   }
 }

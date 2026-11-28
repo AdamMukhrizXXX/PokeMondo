@@ -253,12 +253,7 @@ export default function StaggeredMenu() {
                   style={{ ["--sm-delay" as string]: open ? `${0.32 + i * 0.1}s` : "0s" }}
                   onClick={close}
                 >
-                  <span className="sm-panel-itemLabel">
-                    <span className="sm-nav-icon" aria-hidden>
-                      <NavIcon k={item.k} />
-                    </span>
-                    {t(item.k)}
-                  </span>
+                  <span className="sm-panel-itemLabel">{t(item.k)}</span>
                 </Link>
               </li>
             ))}

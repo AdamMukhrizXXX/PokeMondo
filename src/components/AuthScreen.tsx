@@ -61,7 +61,7 @@ function OtpBoxes({
             verified
               ? "otp-success border-[#00a878] bg-tertiary-container"
               : d
-                ? "border-primary/60"
+                ? "otp-filled border-primary/60"
                 : "border-outline-variant"
           }`}
           style={{ animationDelay: `${i * 0.05}s` }}
@@ -379,21 +379,25 @@ export default function AuthScreen({ onAuthed }: { onAuthed: (s: SessionInfo) =>
           ) : (
             <>
               <div className="flex flex-col items-center gap-2 text-center">
-                <span aria-hidden className="otp-envelope grid size-14 place-items-center rounded-full bg-secondary-container text-on-secondary-container shadow-e1">
+                <span aria-hidden className="otp-mail-live grid size-14 place-items-center rounded-full bg-secondary-container text-on-secondary-container shadow-e1">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <rect x="3" y="5" width="18" height="14" rx="2.5" />
                     <path d="m3.5 7 8.5 6 8.5-6" />
                     <path d="M18.5 3.5v.01M21 6v.01" strokeWidth="2.4" />
                   </svg>
                 </span>
-                <p className="font-display text-lg font-extrabold text-on-surface">Masukkan Kod OTP</p>
+                <p className="pokex-gradient-text font-display text-lg font-extrabold">Masukkan Kod OTP</p>
                 <p className="text-xs leading-relaxed text-on-surface-variant">
                   Kod 6 digit untuk <b className="text-on-surface">{pending?.type === "reg" ? pending.data.email : pending?.type === "login" ? pending.email : ""}</b>
                 </p>
               </div>
 
-              <div className="mt-4 rounded-2xl border-2 border-dashed border-outline-variant/70 bg-surface-container/60 p-4">
-                <div className="flex items-center justify-between gap-2">
+              <div className="relative mt-4 overflow-hidden rounded-2xl border-2 border-dashed border-outline-variant/70 bg-surface-container/60 p-4">
+                <div aria-hidden className="otp-aurora">
+                  <span className="otp-aurora-blob otp-aurora-blob-1" />
+                  <span className="otp-aurora-blob otp-aurora-blob-2" />
+                </div>
+                <div className="relative flex items-center justify-between gap-2">
                   <span className="font-display text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">
                     Peti mel simulasi
                   </span>
@@ -406,10 +410,10 @@ export default function AuthScreen({ onAuthed }: { onAuthed: (s: SessionInfo) =>
                     {copied ? "Disalin ✓" : "Salin kod"}
                   </button>
                 </div>
-                <p className="mt-1.5 text-center font-display text-2xl font-extrabold tracking-[0.4em] text-on-surface">
+                <p className="relative mt-1.5 text-center font-display text-2xl font-extrabold tracking-[0.4em] text-on-surface">
                   {otp?.code ?? "······"}
                 </p>
-                <p className="mt-1 text-center text-[10px] leading-relaxed text-on-surface-variant">
+                <p className="relative mt-1 text-center text-[10px] leading-relaxed text-on-surface-variant">
                   Laman ini statik tanpa pelayan emel — kod OTP rawak dipaparkan di sini. Percubaan
                   &amp; hantar semula tanpa had.
                 </p>
@@ -437,20 +441,30 @@ export default function AuthScreen({ onAuthed }: { onAuthed: (s: SessionInfo) =>
                   Kod disahkan — membuka PokeMondo…
                 </p>
               ) : (
-                <p className={`mt-3 text-center text-xs font-semibold tabular-nums ${expired ? "text-[var(--md-error)]" : "text-on-surface-variant"}`}>
+                <p
+                  className={`mt-3 text-center text-xs font-semibold tabular-nums ${
+                    expired ? "text-[var(--md-error)]" : "shiny-text"
+                  }`}
+                >
                   {expired ? "Kod tamat tempoh" : `Sah selama ${mm}:${ss}`}
                 </p>
               )}
 
-              <button
-                type="button"
-                data-sfx="toggle-on"
-                onClick={() => void verify(digits.join(""))}
-                disabled={busy || verified || expired || digits.some((d) => d === "")}
-                className="mt-4 h-12 w-full rounded-full bg-primary font-display text-sm font-bold text-on-primary shadow-e1 transition-transform active:scale-95 disabled:opacity-50"
+              <div
+                className={`star-border mt-4 ${
+                  busy || verified || expired || digits.some((d) => d === "") ? "opacity-60" : ""
+                }`}
               >
-                {verified ? "Berjaya!" : "Sahkan & Masuk"}
-              </button>
+                <button
+                  type="button"
+                  data-sfx="toggle-on"
+                  onClick={() => void verify(digits.join(""))}
+                  disabled={busy || verified || expired || digits.some((d) => d === "")}
+                  className="h-12 w-full rounded-full bg-primary font-display text-sm font-bold text-on-primary shadow-e1 transition-transform active:scale-95 disabled:opacity-50"
+                >
+                  {verified ? "Berjaya!" : "Sahkan & Masuk"}
+                </button>
+              </div>
 
               <div className="mt-3 flex items-center justify-between gap-2">
                 <button

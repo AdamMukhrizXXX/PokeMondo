@@ -17,6 +17,7 @@ import {
 } from "../lib/ai";
 import { playUiSfx } from "../lib/sound";
 import { useT } from "../lib/i18n";
+import { pokexClosedNow, pokexDaysLeft, pokexReopenDate } from "../lib/pokex-status";
 
 type Msg = {
   role: "user" | "assistant";
@@ -253,6 +254,76 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
   };
 
   const proActive = pro && provider === "openrouter";
+
+  const closed = pokexClosedNow();
+  const [reopen, setReopen] = useState<{ days: number; date: string } | null>(null);
+  useEffect(() => {
+    if (!closed) return;
+    setReopen({ days: pokexDaysLeft(), date: pokexReopenDate() });
+  }, [closed]);
+
+  if (closed) {
+    return (
+      <section
+        aria-label="PokeX — ditutup sementara"
+        className="relative mx-auto flex min-h-svh w-full max-w-5xl flex-col px-5 pb-10 pt-24 sm:px-8"
+      >
+        <div className="anim-rise flex shrink-0 items-center gap-4" style={{ animationDelay: "0.05s" }}>
+          <span
+            className="px-icon relative grid size-14 shrink-0 place-items-center rounded-[1.4rem] shadow-e2"
+            style={{ background: "linear-gradient(135deg, #64748b, #334155)" }}
+          >
+            <XMark size={32} />
+            <span aria-hidden className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-[#e3350d] font-display text-[10px] font-black text-white shadow-e1">×</span>
+          </span>
+          <div>
+            <h1 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">
+              <span className="pokex-gradient-text">PokeX</span>
+            </h1>
+            <p className="mt-0.5 text-sm leading-snug text-on-surface-variant">
+              {tr("px.closedSub")}
+            </p>
+          </div>
+        </div>
+
+        <div
+          className="anim-rise mx-auto mt-10 w-full max-w-xl rounded-[1.75rem] border border-outline-variant p-8 text-center shadow-e2"
+          style={{ background: "var(--md-surface-container-low)", animationDelay: "0.1s" }}
+        >
+          <span
+            aria-hidden
+            className="mx-auto grid size-16 place-items-center rounded-full"
+            style={{ background: "color-mix(in srgb, var(--md-surface-container-high) 85%, transparent)" }}
+          >
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" className="text-on-surface-variant" aria-hidden>
+              <circle cx="12" cy="12" r="9" />
+              <path d="M10 9.5v5m0-5h3.2a1.8 1.8 0 1 1 0 3.6H10m0 0h3.6a1.8 1.8 0 1 1 0 3.6H10" />
+            </svg>
+          </span>
+          <h2 className="mt-4 font-display text-xl font-extrabold tracking-tight text-on-surface">
+            {tr("px.closed")}
+          </h2>
+          <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-on-surface-variant">
+            {tr("px.closedDesc")}
+          </p>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-tertiary-container px-3.5 py-1.5 font-display text-xs font-bold text-on-tertiary-container">
+              <i aria-hidden className="size-1.5 rounded-full bg-[#00a878]" />
+              {reopen ? tr("px.reopen").replace("{d}", reopen.date) : "…"}
+            </span>
+            {reopen && reopen.days > 0 && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary-container px-3.5 py-1.5 font-display text-xs font-bold text-on-secondary-container">
+                {tr("px.days").replace("{n}", String(reopen.days))}
+              </span>
+            )}
+          </div>
+          <p className="mt-6 text-[11px] leading-relaxed text-on-surface-variant">
+            {tr("px.closedFoot")}
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section

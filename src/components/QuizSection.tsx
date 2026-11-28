@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { capital, pixelUrl, type BasicPokemon } from "../lib/pokemon";
 import { RevealWords } from "./Reveal";
 import { playUiSfx } from "../lib/sound";
+import { useT } from "../lib/i18n";
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -23,6 +24,7 @@ const NEXT_WRONG_MS = 1800;
 
 export default function QuizSection({ list }: { list: BasicPokemon[] }) {
   const pool = useMemo(() => (list.length > 0 ? list : []), [list]);
+  const t = useT();
 
   const makeRound = useCallback(() => {
     if (pool.length < 8) return null;
@@ -98,13 +100,13 @@ export default function QuizSection({ list }: { list: BasicPokemon[] }) {
       >
         <div className="px-8 pt-8 text-center sm:px-10">
           <p className="font-display text-sm font-bold uppercase tracking-[0.25em] text-primary">
-            <RevealWords text="Cabaran pantas" />
+            <RevealWords text={t("qz.tag")} />
           </p>
           <h2 className="mt-1 font-display text-3xl font-extrabold sm:text-4xl">
-            <RevealWords text="Kuiz Rawak" />
+            <RevealWords text={t("qz.title")} />
           </h2>
           <p className="mt-2 text-sm text-on-surface-variant">
-            Teka siluet Pokémon — jawapan betul mahupun salah akan terus ke soalan seterusnya secara automatik.
+            {t("qz.hint")}
           </p>
         </div>
 
@@ -116,7 +118,7 @@ export default function QuizSection({ list }: { list: BasicPokemon[] }) {
               data-sfx="dice"
               className="quiz-pop inline-flex h-12 items-center rounded-full bg-primary px-8 font-display text-base font-bold text-on-primary shadow-e2 transition-transform active:scale-95"
             >
-              Mula Kuiz
+              {t("qz.start")}
             </button>
             {pool.length === 0 && (
               <p className="mt-3 text-xs text-on-surface-variant">Data Pokémon sedang dimuat…</p>
@@ -126,10 +128,10 @@ export default function QuizSection({ list }: { list: BasicPokemon[] }) {
           <div className="px-6 pb-8 pt-6 sm:px-10">
             <div className="mx-auto flex max-w-md items-center justify-between gap-3 font-display text-xs font-bold text-on-surface-variant">
               <span className="tabular-nums">
-                Skor {score}/{asked}
+                {t("qz.score").replace("{s}", String(score)).replace("{a}", String(asked))}
               </span>
               <span className="tabular-nums" style={{ color: streak > 1 ? "var(--md-tertiary)" : undefined }}>
-                Rentetan {streak} · Terbaik {best}
+                {t("qz.streak").replace("{s}", String(streak)).replace("{b}", String(best))}
               </span>
             </div>
 
@@ -164,7 +166,7 @@ export default function QuizSection({ list }: { list: BasicPokemon[] }) {
               style={{ color: answered ? (correct ? "var(--md-tertiary)" : "var(--md-error)") : undefined }}
               role="status"
             >
-              {answered ? (correct ? `Betul! Ia ${pretty(round.answer.name)}.` : `Salah — ia ${pretty(round.answer.name)}.`) : "Siapakah Pokémon ini?"}
+              {answered ? (correct ? t("qz.correct").replace("{n}", pretty(round.answer.name)) : t("qz.wrong").replace("{n}", pretty(round.answer.name))) : t("qz.who")}
             </p>
 
             <div className="mx-auto mt-5 grid max-w-md grid-cols-1 gap-2.5 sm:grid-cols-2">

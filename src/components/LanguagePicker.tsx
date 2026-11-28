@@ -54,19 +54,28 @@ export default function LanguagePicker() {
         onClick={() => setOpen((v) => !v)}
         className="group relative grid size-10 place-items-center rounded-full text-on-surface-variant transition-all duration-300 hover:scale-110 hover:bg-surface-container-high hover:text-on-surface active:scale-90"
       >
-        <svg width="22" height="22" viewBox="0 0 24 24" className="transition-transform duration-500 group-hover:rotate-[25deg]" aria-hidden>
+        <svg width="24" height="24" viewBox="0 0 24 24" className="lp-globe transition-transform duration-500 group-hover:rotate-[25deg]" aria-hidden>
           <defs>
             <linearGradient id="pm-globe" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0" stopColor="var(--md-primary)" />
               <stop offset="0.55" stopColor="var(--md-tertiary)" />
               <stop offset="1" stopColor="#2f7cf6" />
             </linearGradient>
+            <linearGradient id="pm-globe-meridian" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#e3350d" />
+              <stop offset="1" stopColor="#ffc531" />
+            </linearGradient>
           </defs>
           <circle cx="12" cy="12" r="9" fill="none" stroke="url(#pm-globe)" strokeWidth="2" />
-          <ellipse cx="12" cy="12" rx="4" ry="9" fill="none" stroke="url(#pm-globe)" strokeWidth="1.6" />
+          <ellipse className="lp-meridian" cx="12" cy="12" rx="4" ry="9" fill="none" stroke="url(#pm-globe-meridian)" strokeWidth="1.7" strokeLinecap="round" />
           <path d="M3.5 9h17M3.5 15h17" fill="none" stroke="url(#pm-globe)" strokeWidth="1.6" strokeLinecap="round" />
         </svg>
-        <span className="absolute bottom-0.5 right-0.5 text-[9px] leading-none">{info?.flag ?? "🇲🇾"}</span>
+        <span aria-hidden className="lp-orbit pointer-events-none absolute inset-0">
+          <i className="lp-dot lp-dot-1" />
+          <i className="lp-dot lp-dot-2" />
+          <i className="lp-dot lp-dot-3" />
+        </span>
+        <span suppressHydrationWarning className="absolute bottom-0.5 right-0.5 text-[9px] leading-none">{info?.flag ?? "🇲🇾"}</span>
       </button>
 
       {open &&

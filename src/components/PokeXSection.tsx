@@ -16,6 +16,7 @@ import {
   type AiProvider,
 } from "../lib/ai";
 import { playUiSfx } from "../lib/sound";
+import { useT } from "../lib/i18n";
 
 type Msg = {
   role: "user" | "assistant";
@@ -118,6 +119,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
   const [thinkSec, setThinkSec] = useState(0);
   const [live, setLive] = useState<{ content: string; reasoning: string } | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const tr = useT();
 
   useEffect(() => {
     const p = getAiProvider();
@@ -209,8 +211,8 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
       const msg = (e as Error).message;
       const detail =
         msg === "NO_KEY"
-          ? "Tiada kunci API. Buka tab Tetapan dan masukkan kunci anda sendiri — AI sebenar memerlukan kunci peribadi (percuma untuk OpenRouter, Groq atau xKiro). Penyedia lain menjadi sandaran automatik jika pilihan utama gagal."
-          : `Permintaan gagal — ${msg}. Sandaran telah dicuba juga; semak kunci/model dalam tab Tetapan atau cuba penyedia lain.`;
+          ? tr("px.noKey")
+          : tr("px.err").replace("{m}", msg);
       setMsgs((m) => [...m, { role: "assistant", content: detail, error: true }]);
     }
     setLive(null);
@@ -278,7 +280,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
         </div>
         {(keyStatus.openrouter || keyStatus.groq || keyStatus.xkiro) && (
           <span className="ml-auto hidden rounded-full bg-secondary-container px-3 py-1 font-display text-[11px] font-bold text-on-secondary-container sm:block">
-            Kunci aktif
+            {tr("px.keyActive")}
           </span>
         )}
       </div>
@@ -302,20 +304,20 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
       </div>
 
       <div className="anim-rise mt-6 flex shrink-0 gap-1.5 rounded-full border border-outline-variant/70 bg-surface-low/85 p-1 shadow-e1 backdrop-blur-md sm:w-fit" style={{ animationDelay: "0.12s" }}>
-        {(["Sembang", "Tetapan"] as const).map((t) => (
+        {(["Sembang", "Tetapan"] as const).map((lbl) => (
           <button
-            key={t}
+            key={lbl}
             type="button"
             data-sfx="click"
-            onClick={() => setTab(t === "Sembang" ? "chat" : "tetapan")}
-            aria-pressed={t === "Sembang" ? tab === "chat" : tab === "tetapan"}
+            onClick={() => setTab(lbl === "Sembang" ? "chat" : "tetapan")}
+            aria-pressed={lbl === "Sembang" ? tab === "chat" : tab === "tetapan"}
             className={`h-9 flex-1 rounded-full px-6 font-display text-xs font-bold transition-colors sm:flex-none ${
-              (t === "Sembang" ? tab === "chat" : tab === "tetapan")
+              (lbl === "Sembang" ? tab === "chat" : tab === "tetapan")
                 ? "bg-primary text-on-primary shadow-e1"
                 : "text-on-surface-variant hover:bg-surface-container"
             }`}
           >
-            {t}
+            {lbl === "Sembang" ? tr("px.chat") : tr("px.set")}
           </button>
         ))}
       </div>
@@ -395,7 +397,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
 
           <div className="mt-5 rounded-2xl border border-outline-variant/70 bg-surface-container/60 p-4">
             <p className="font-display text-xs font-bold uppercase tracking-widest text-on-surface-variant">
-              Uji API masa-nyata
+              {tr("px.testReal")}
             </p>
             <p className="mt-1 text-[11px] leading-relaxed text-on-surface-variant">
               Hantar satu permintaan kecil ke {PROVIDERS[provider].label} — jika gagal, sandaran
@@ -409,7 +411,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
                 disabled={test.status === "testing"}
                 className="h-10 shrink-0 rounded-full bg-secondary-container px-5 font-display text-xs font-bold text-on-secondary-container transition-transform active:scale-95 disabled:opacity-50"
               >
-                {test.status === "testing" ? "Menguji…" : "Uji API"}
+                {test.status === "testing" ? tr("px.testing") : tr("px.test")}
               </button>
               {test.status !== "idle" && (
                 <p
@@ -459,7 +461,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
         >
           <div className="flex shrink-0 items-center gap-2.5 border-b border-outline-variant/60 px-5 py-3">
             <XMark size={18} />
-            <p className="font-display text-sm font-extrabold text-on-surface">Sembang PokeX</p>
+            <p className="font-display text-sm font-extrabold text-on-surface">{tr("px.chatTitle")}</p>
             <span className="ml-auto rounded-full bg-secondary-container px-2.5 py-1 text-[10px] font-bold text-on-secondary-container">
               {PROVIDERS[getAiProvider()].label}
             </span>
@@ -692,7 +694,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
               data-sfx="click"
               onClick={() => void request(input.trim())}
               disabled={busy || input.trim().length === 0}
-              aria-label="Hantar soalan"
+              aria-label={tr("px.send")}
               className="grid size-11 shrink-0 place-items-center rounded-full bg-primary text-on-primary transition-transform active:scale-90 disabled:opacity-40"
             >
               <svg

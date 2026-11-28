@@ -14,6 +14,7 @@ import {
 import { useRipple } from "../components/Ripple";
 import { CryBars } from "./SoundToggle";
 import { isSoundEnabled, playCry, playUiSfx, stopCry, useCryState } from "../lib/sound";
+import { useT } from "../lib/i18n";
 
 const STAT_ROWS: Array<{ key: keyof PokemonDetail["stats"]; label: string; max: number }> = [
   { key: "hp", label: "HP", max: 255 },
@@ -41,6 +42,7 @@ export default function DetailModal({
   const [error, setError] = useState(false);
   const { playingId } = useCryState();
   const ripple = useRipple();
+  const tr = useT();
   const accent = detail?.types?.[0]
     ? TYPE_COLORS[detail.types[0] as PokemonType]
     : "var(--md-primary)";
@@ -115,7 +117,7 @@ export default function DetailModal({
               type="button"
               onClick={onClose}
               data-sfx="close"
-              aria-label="Tutup"
+              aria-label={tr("close")}
               className="grid size-10 place-items-center overflow-hidden rounded-full bg-white/20 transition-transform hover:rotate-90 active:scale-90"
             >
               <svg
@@ -286,7 +288,7 @@ export default function DetailModal({
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="M19 12H5m6 6-6-6 6-6" />
               </svg>
-              Sebelum
+              {tr("dm.prev")}
             </button>
             <button
               type="button"
@@ -297,7 +299,7 @@ export default function DetailModal({
               }}
               className="flex h-11 flex-1 items-center justify-center gap-2 overflow-hidden rounded-full bg-surface-container font-display text-sm font-bold text-on-surface disabled:opacity-40"
             >
-              Seterusnya
+              {tr("dm.next")}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d="M5 12h14m-6-6 6 6-6 6" />
               </svg>

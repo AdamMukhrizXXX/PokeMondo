@@ -14,10 +14,20 @@ type Entry = {
 
 const ENTRIES: Entry[] = [
   {
-    version: "v1.2.2",
-    title: "Pembaikan xKiro — Kini Berfungsi 100%",
+    version: "v1.2.3",
+    title: "Muat Turun Semua Sumber (11.8MB) dalam Pop Up Kemas Kini",
     note: "Kemas kini terkini",
     current: true,
+    items: [
+      "Pop Up Kemas Kini kini ada sistem Muat Turun Semua Sumber — satu klik memuat semua 1,025 sprite Pokémon (±11.8MB) ke cache pelayar dengan bar kemajuan masa-nyata (bilangan sumber + MB dimuat)",
+      "Selepas selesai, kad & modal Pokémon buka segera dan sprite sedia offline — status “Selesai” diingati dalam pelayar untuk setiap versi",
+      "Muat turun 12 sumber serentak dengan ralat selamat (sumber gagal dilangkau, kemajuan tetap berjalan) dan disambung terus walaupun pop up ditutup",
+    ],
+  },
+  {
+    version: "v1.2.2",
+    title: "Pembaikan xKiro — Kini Berfungsi 100%",
+    note: "Kemas kini terdahulu",
     items: [
       "Punca xKiro gagal dijumpai — api.xkiro.com tidak menghantar pengepala CORS, jadi pelayar menyekat semua panggilan dan PokeX sentiasa jatuh balik ke OpenRouter (nota “via OpenRouter”)",
       "Pembaikan: proxy se-origen baharu /api/xkiro meneruskan panggilan xKiro tanpa sekatan CORS — jawapan & strim langsung kini datang terus dari xKiro tanpa nota sandaran",

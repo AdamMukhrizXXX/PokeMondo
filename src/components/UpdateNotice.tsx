@@ -4,12 +4,60 @@ import { useEffect, useState } from "react";
 import pkg from "../../package.json";
 import { useT } from "../lib/i18n";
 import { playUiSfx } from "../lib/sound";
+import { pixelUrl } from "../lib/pokemon";
 
 const KEY = "md-seen-ver";
+const DL_KEY = "md-res-dl";
+const RES_TOTAL = 1025;
+const RES_MB = 11.8;
 
 export default function UpdateNotice() {
   const t = useT();
   const [show, setShow] = useState(false);
+  const [dl, setDl] = useState<{ done: number; bytes: number } | null>(null);
+  const [dlDone, setDlDone] = useState(false);
+
+  useEffect(() => {
+    try {
+      setDlDone(localStorage.getItem(DL_KEY) === pkg.version);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const startDownload = async () => {
+    if (dl) return;
+    setDl({ done: 0, bytes: 0 });
+    playUiSfx("click");
+    const BATCH = 12;
+    for (let start = 1; start <= RES_TOTAL; start += BATCH) {
+      const ids: number[] = [];
+      for (let id = start; id < start + BATCH && id <= RES_TOTAL; id++) ids.push(id);
+      const sizes = await Promise.all(
+        ids.map(async (id) => {
+          try {
+            const r = await fetch(pixelUrl(id), { cache: "force-cache" });
+            if (!r.ok) return 0;
+            return (await r.arrayBuffer()).byteLength;
+          } catch {
+            return 0;
+          }
+        })
+      );
+      setDl((d) =>
+        d
+          ? { done: d.done + ids.length, bytes: d.bytes + sizes.reduce((a, b) => a + b, 0) }
+          : d
+      );
+    }
+    try {
+      localStorage.setItem(DL_KEY, pkg.version);
+    } catch {
+      /* ignore */
+    }
+    setDlDone(true);
+    playUiSfx("success");
+  };
 
   useEffect(() => {
     let seen: string | null = null;
@@ -58,7 +106,7 @@ export default function UpdateNotice() {
       aria-modal="true"
       aria-label={t("up.title").replace("{v}", pkg.version)}
     >
-      <div className="up-card relative w-full max-w-md overflow-hidden rounded-[2rem] border border-outline-variant bg-surface-container-low shadow-e3">
+      <div className="up-card relative max-h-[88svh] w-full max-w-md overflow-y-auto rounded-[2rem] border border-outline-variant bg-surface-container-low shadow-e3">
         <span aria-hidden className="up-aurora" />
         <div className="relative p-7 text-center">
           <span aria-hidden className="up-badge mx-auto grid size-14 place-items-center rounded-[1.4rem]">
@@ -87,6 +135,69 @@ export default function UpdateNotice() {
               </li>
             ))}
           </ul>
+
+          <div className="mt-5 rounded-2xl border border-outline-variant/70 bg-surface-container/60 p-4 text-left">
+            <div className="flex items-center gap-2">
+              <span
+                aria-hidden
+                className="grid size-8 shrink-0 place-items-center rounded-full bg-secondary-container text-on-secondary-container"
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 3v12m0 0 4-4m-4 4-4-4" />
+                  <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+                </svg>
+              </span>
+              <div className="min-w-0">
+                <p className="font-display text-sm font-extrabold text-on-surface">
+                  {t("dl.title")}
+                </p>
+                <p className="text-[11px] leading-snug text-on-surface-variant">
+                  {t("dl.desc").replace("{mb}", RES_MB.toFixed(1))}
+                </p>
+              </div>
+            </div>
+
+            {dlDone ? (
+              <p className="mt-3 flex items-center gap-1.5 rounded-xl bg-tertiary-container px-3 py-2 font-display text-xs font-bold text-on-tertiary-container">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
+                {t("dl.done")}
+              </p>
+            ) : dl ? (
+              <div className="mt-3">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-surface-container-highest">
+                  <div
+                    className="h-full rounded-full transition-[width] duration-200"
+                    style={{
+                      width: `${Math.round((dl.done / RES_TOTAL) * 100)}%`,
+                      background: "linear-gradient(90deg, #2dd4bf, #0ea5e9)",
+                    }}
+                  />
+                </div>
+                <p className="mt-1.5 font-display text-[11px] font-bold tabular-nums text-on-surface-variant">
+                  {t("dl.doing")
+                    .replace("{n}", String(dl.done))
+                    .replace("{t}", String(RES_TOTAL))
+                    .replace("{mb}", (dl.bytes / 1048576).toFixed(1))}
+                </p>
+              </div>
+            ) : (
+              <button
+                type="button"
+                data-sfx="toggle-on"
+                onClick={startDownload}
+                className="mt-3 flex h-9 w-full items-center justify-center gap-1.5 rounded-full border border-primary/60 font-display text-xs font-bold text-primary transition-colors hover:bg-primary/10"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M12 3v12m0 0 4-4m-4 4-4-4" />
+                  <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+                </svg>
+                {t("dl.btn").replace("{mb}", RES_MB.toFixed(1))}
+              </button>
+            )}
+          </div>
+
           <button
             type="button"
             data-sfx="success"

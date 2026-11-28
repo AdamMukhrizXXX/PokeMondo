@@ -51,6 +51,16 @@ Buka `http://localhost:3000`. Untuk binaan produksi: `npm run build && npm start
 
 ## Deploy ke Vercel
 
+### Auto Deploy (GitHub Actions — terus ke produksi)
+
+Setiap push ke `main` (atau jalankan manual melalui tab **Actions → Deploy Produksi (Vercel) → Run workflow**) akan deploy terus ke produksi **https://poke-mondo.vercel.app/** melalui GitHub Actions — tanpa menunggu Vercel Bot.
+
+Sekali sahaja, sediakan:
+1. Cipta token di [vercel.com/account/tokens](https://vercel.com/account/tokens) (scope: Full Account).
+2. Dalam repo: **Settings → Secrets and variables → Actions → New repository secret**, nama `VERCEL_TOKEN`, nilai token tadi.
+
+Workflow: `.github/workflows/deploy-vercel.yml`. Preview Vercel Bot pada PR boleh dimatikan di dashboard Vercel (projek **poke-mondo** → Settings → Git → matikan bot komen preview) supaya tiada langkah tambahan yang perlu ditunggu.
+
 ### Cara dashboard (paling pantas)
 1. Buka [vercel.com/new](https://vercel.com/new) dan pilih repo **PokeMondo**.
 2. Vercel mengesan Next.js secara automatik — tiada tetapan diperlukan (`vercel.json` sudah disertakan).

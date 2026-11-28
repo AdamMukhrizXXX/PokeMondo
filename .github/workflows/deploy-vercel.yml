@@ -1,0 +1,24 @@
+name: Deploy Produksi (Vercel)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-produksi
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy ke Vercel (Produksi)
+        run: npx vercel@latest deploy --prod --yes
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: team_zsYAFdacprsn6otV7PuLNLP1
+          VERCEL_PROJECT_ID: prj_8CmjUYnzDOXzk2317JTt72V2uP2J

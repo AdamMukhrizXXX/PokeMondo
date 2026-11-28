@@ -14,7 +14,7 @@ type Entry = {
 const ENTRIES: Entry[] = [
   {
     version: "v1.1.5",
-    title: "xKiro — Penyedia AI Ketiga untuk PokeX",
+    title: "Pustaka Muzik, Kunci API PokeAPI & xKiro",
     note: "Kemas kini terkini",
     current: true,
     items: [
@@ -24,6 +24,8 @@ const ENTRIES: Entry[] = [
       "Kunci xKiro disimpan per penyedia hanya dalam pelayar; status tersimpan ✓ ditunjuk dalam Tetapan PokeX",
       "Latar belakang web utama kini Live Motion 3D — aurora besar bergerak berputar perlahan + tiga orbs 3D realistik (sorotan kilau & bayang dalam) melayang + parallax tetikus mengikut kedalaman (adaptasi reactbits Aurora, CSS tulen, reduced-motion & GPU Lite dihormati)",
       "UI OTP lebih hidup — tajuk gradien bergerak, kotak digit bercahaya denyut, fokus terangkat 3D, peti mel berhalo denyut, kira detik berkilau (Shiny Text), butang Sahkan berbingkai bintang berputar (Star Border) & aurora mini dalam kad peti mel",
+      "Pustaka Muzik (halaman /muzik) — OST Pokémon (177 trek) + muzik import anda disatukan dalam satu senarai: tab Semua/OST/Import, carian langsung, main terus melalui Pemain Muzik yang sama, badge Import & buang lagu sendiri terus dari senarai",
+      "Sistem Generate API Key With PokeAPI 💯 (halaman /api-key) — jana kunci peribadi pkm_live_… (crypto.getRandomValues), label + salin automatik + tarik balik, topeng selamat, disimpan localStorage sahaja, dengan contoh fetch X-Api-Key",
     ],
   },
   {

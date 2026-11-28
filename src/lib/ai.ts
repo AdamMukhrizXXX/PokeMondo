@@ -2,7 +2,7 @@
 
 import { GEN_RANGES, genOf, type BasicPokemon } from "./pokemon";
 
-export type AiProvider = "openrouter" | "groq";
+export type AiProvider = "openrouter" | "groq" | "xkiro";
 
 export const PROVIDERS: Record<
   AiProvider,
@@ -20,11 +20,18 @@ export const PROVIDERS: Record<
     keyHint: "Kunci percuma di console.groq.com",
     keyUrl: "https://console.groq.com/keys",
   },
+  xkiro: {
+    label: "xKiro",
+    model: "qwen/qwen3.8-max:free",
+    keyHint: "Kunci percuma di xkiro.com (ada 38+ model percuma)",
+    keyUrl: "https://xkiro.com/dashboard",
+  },
 };
 
 const BASES: Record<AiProvider, string> = {
   openrouter: "https://openrouter.ai/api/v1",
   groq: "https://api.groq.com/openai/v1",
+  xkiro: "https://api.xkiro.com/v1",
 };
 
 const K_PROVIDER = "md-ai-provider";
@@ -211,11 +218,14 @@ export async function askAi(
 ): Promise<{ text: string; via: AiProvider; reasoning?: string }> {
   const sys = SYSTEM_PROMPT + (context ? `\n\n${context}` : "");
   const preferred = getAiProvider();
-  const fallback: AiProvider = preferred === "openrouter" ? "groq" : "openrouter";
+  const order: AiProvider[] = [
+    preferred,
+    ...(["openrouter", "groq", "xkiro"] as AiProvider[]).filter((p) => p !== preferred),
+  ];
   const errors: string[] = [];
   let sawKey = false;
 
-  for (const p of [preferred, fallback]) {
+  for (const p of order) {
     const key = getAiKey(p);
     if (!key) continue;
     sawKey = true;

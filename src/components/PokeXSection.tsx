@@ -108,9 +108,10 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
   const [provider, setProvider] = useState<AiProvider>("openrouter");
   const [model, setModel] = useState("");
   const [keyField, setKeyField] = useState("");
-  const [keyStatus, setKeyStatus] = useState<{ openrouter: boolean; groq: boolean }>({
+  const [keyStatus, setKeyStatus] = useState<Record<AiProvider, boolean>>({
     openrouter: false,
     groq: false,
+    xkiro: false,
   });
   const [test, setTest] = useState<TestState>({ status: "idle", note: "" });
   const [pro, setPro] = useState(false);
@@ -125,6 +126,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
     setKeyStatus({
       openrouter: !!getAiKey("openrouter"),
       groq: !!getAiKey("groq"),
+      xkiro: !!getAiKey("xkiro"),
     });
     const id = window.setTimeout(() => playUiSfx("pokex"), 260);
     return () => window.clearTimeout(id);
@@ -207,7 +209,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
       const msg = (e as Error).message;
       const detail =
         msg === "NO_KEY"
-          ? "Tiada kunci API. Buka tab Tetapan dan masukkan kunci anda sendiri — AI sebenar memerlukan kunci peribadi (percuma untuk OpenRouter atau Groq). Groq menjadi sandaran automatik jika OpenRouter gagal."
+          ? "Tiada kunci API. Buka tab Tetapan dan masukkan kunci anda sendiri — AI sebenar memerlukan kunci peribadi (percuma untuk OpenRouter, Groq atau xKiro). Penyedia lain menjadi sandaran automatik jika pilihan utama gagal."
           : `Permintaan gagal — ${msg}. Sandaran telah dicuba juga; semak kunci/model dalam tab Tetapan atau cuba penyedia lain.`;
       setMsgs((m) => [...m, { role: "assistant", content: detail, error: true }]);
     }
@@ -274,7 +276,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
             Analisis semua Pokémon dengan AI sebenar — kunci anda sendiri, tanpa pelayan perantara
           </p>
         </div>
-        {(keyStatus.openrouter || keyStatus.groq) && (
+        {(keyStatus.openrouter || keyStatus.groq || keyStatus.xkiro) && (
           <span className="ml-auto hidden rounded-full bg-secondary-container px-3 py-1 font-display text-[11px] font-bold text-on-secondary-container sm:block">
             Kunci aktif
           </span>
@@ -429,6 +431,7 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
           <p className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-[11px] font-semibold text-on-surface-variant">
             <span>Kunci OpenRouter: {keyStatus.openrouter ? "tersimpan ✓" : "tiada"}</span>
             <span>Kunci Groq: {keyStatus.groq ? "tersimpan ✓" : "tiada"}</span>
+            <span>Kunci xKiro: {keyStatus.xkiro ? "tersimpan ✓" : "tiada"}</span>
           </p>
           <p className="mt-2 text-xs leading-relaxed text-on-surface-variant">
             Kunci disimpan <b>hanya dalam pelayar anda</b> (localStorage) dan dihantar terus ke

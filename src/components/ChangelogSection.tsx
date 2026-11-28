@@ -13,16 +13,26 @@ type Entry = {
 
 const ENTRIES: Entry[] = [
   {
-    version: "v1.1.0",
-    title: "AI Masa-Nyata, Lesen & Sumber Terbuka",
+    version: "v1.1.4",
+    title: "Ikon Tetapan Hidup — Latar Custom & SPUI",
     note: "Kemas kini terkini",
     current: true,
+    items: [
+      "Ikon Latar Custom kini langit hidup — matahari amber dengan 8 sinar berputar + denyut lembut, awan putih hanyut beransur, dan kilauan cahaya melintasi gunung hijau-teal",
+      "Ikon SPUI kini peranti hidup — imbasan berkilau menyapu skrin mini, lensa putih dengan halo teal berdenyut + titik kilau, dan LED hijau berkelip",
+      "Hover mempercepat semua animasi ikon (sinar, awan, imbasan, halo & LED) dan dot indikator aktif berdenyut",
+      "CSS keyframes tulen tanpa dependensi, corak sama dengan ikon Bunyi & Cerah/Gelap — prefers-reduced-motion dihormati penuh",
+    ],
+  },
+  {
+    version: "v1.1.0",
+    title: "AI Masa-Nyata, Lesen & Sumber Terbuka",
+    note: "Kemas kini terdahulu",
     items: [
       "AI streaming masa-nyata — jawapan dan proses pemikiran muncul semasa dijana (OpenRouter & Groq, SSE)",
       "Uji API masa-nyata dengan kiraan aksara langsung",
       "Pro Thinking dipindahkan ke OpenRouter sahaja (reasoning effort tinggi, sasaran 50 saat)",
       "Ikon X baharu gaya tanda tangan profesional — lengkung kaligrafi + permata berlian",
-      "Ikon Latar Custom & SPUI kini hidup — matahari bersinar berputar, awan hanyut & kilauan gunung; skrin mini diimbas berkilau, lensa berhalo berdenyut & LED berkelip (hover mempercepat, reduced-motion dihormati)",
       "Halaman Info: kad Pembangun (Adam & Mistral), sistem Lesen MIT dan maklumat Kod Penuh & Sumber Terbuka",
       "Halaman Changelog baharu (halaman ini)",
     ],

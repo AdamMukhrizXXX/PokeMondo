@@ -30,6 +30,7 @@ const ENTRIES: Entry[] = [
       "Sistem Multi-lingual — pemilih Bahasa dalam Tetapan dengan 93 bahasa merangkumi bahasa setiap negara + dialek Jawa Pantura (Utara) & Jawa Timur; terjemahan penuh 20 bahasa utama (MS, EN, ID, JV, SU, ZH, JA, KO, HI, AR, ES, FR, PT, DE, RU, TH, VI, TL), carian bahasa, sokongan RTL, disimpan localStorage",
       "Perbaikan Multi-lingual — semua halaman kini diterjemah penuh: Pokédex, Kuiz, Info, PokeX, Pustaka Muzik, Kunci API, Modal Butiran & Changelog (55+ kunci baharu × 20 bahasa)",
       "Ikon Bahasa baharu lebih berwarna & hidup — globe gradien bercahaya denyut, garis bujur merah-amber bernafas, dan 3 titik orbit berwarna (merah, amber, biru) berputar mengelilingi glob; hover mempercepat semua animasi",
+      "Ikon Theme (palet) lebih berwarna & hidup — badan palet gradien pelangi 5 warna (merah, amber, teal, biru, hijau) dengan kilauan cahaya bernafas, 4 titik cat berdenyut berperingkat, dan 2 bintang berkelip; hover mempercepat semua animasi",
     ],
   },
   {

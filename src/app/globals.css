@@ -2263,3 +2263,104 @@ html[data-gate="1"] body > *:not(.auth-root) {
 [data-gpu-lite="on"] .lp-orbit {
   animation: none !important;
 }
+
+/* Ikon Theme (palet) — palet pelangi hidup (Live Animation) */
+.th-palette {
+  filter: drop-shadow(0 0 3px color-mix(in oklab, var(--md-tertiary) 45%, transparent));
+  animation: th-glow 3.2s ease-in-out infinite;
+}
+.th-shine {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: th-shine 3.6s ease-in-out infinite;
+}
+.th-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: th-dot 2.4s ease-in-out infinite;
+}
+.th-dot-2 {
+  animation-delay: 0.3s;
+}
+.th-dot-3 {
+  animation-delay: 0.6s;
+}
+.th-dot-4 {
+  animation-delay: 0.9s;
+}
+.th-spark {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: th-spark 2.2s ease-in-out infinite;
+}
+.th-spark-2 {
+  animation-delay: 1.1s;
+}
+.group:hover .th-palette {
+  animation-duration: 1.6s;
+}
+.group:hover .th-shine {
+  animation-duration: 1.8s;
+}
+.group:hover .th-dot {
+  animation-duration: 1.1s;
+}
+.group:hover .th-spark {
+  animation-duration: 1s;
+}
+
+@keyframes th-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 2px color-mix(in oklab, var(--md-tertiary) 35%, transparent));
+  }
+  50% {
+    filter: drop-shadow(0 0 6px color-mix(in oklab, var(--md-tertiary) 70%, transparent))
+      drop-shadow(0 0 12px color-mix(in oklab, var(--md-primary) 45%, transparent));
+  }
+}
+@keyframes th-shine {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes th-dot {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4);
+    filter: brightness(1.35);
+  }
+}
+@keyframes th-spark {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.65) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1) rotate(45deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .th-palette,
+  .th-shine,
+  .th-dot,
+  .th-spark {
+    animation: none !important;
+  }
+}
+[data-gpu-lite="on"] .th-palette,
+[data-gpu-lite="on"] .th-shine,
+[data-gpu-lite="on"] .th-dot,
+[data-gpu-lite="on"] .th-spark {
+  animation: none !important;
+}

@@ -13,10 +13,21 @@ type Entry = {
 
 const ENTRIES: Entry[] = [
   {
-    version: "v1.1.4",
-    title: "Ikon Tetapan Hidup — Latar Custom & SPUI",
+    version: "v1.1.5",
+    title: "xKiro — Penyedia AI Ketiga untuk PokeX",
     note: "Kemas kini terkini",
     current: true,
+    items: [
+      "Penyedia baharu xKiro (api.xkiro.com) — gateway serasi OpenAI dengan 38+ model percuma pada satu kunci",
+      "Model lalai xKiro: qwen/qwen3.8-max:free — konteks 1M token, menyokong reasoning, harga percuma (RM0/USD0 setiap 1M token)",
+      "Sandaran automatik kini tiga hala: jika penyedia pilihan gagal, PokeX mencuba penyedia lain mengikut giliran (OpenRouter → Groq → xKiro)",
+      "Kunci xKiro disimpan per penyedia hanya dalam pelayar; status tersimpan ✓ ditunjuk dalam Tetapan PokeX",
+    ],
+  },
+  {
+    version: "v1.1.4",
+    title: "Ikon Tetapan Hidup — Latar Custom & SPUI",
+    note: "Kemas kini terdahulu",
     items: [
       "Ikon Latar Custom kini langit hidup — matahari amber dengan 8 sinar berputar + denyut lembut, awan putih hanyut beransur, dan kilauan cahaya melintasi gunung hijau-teal",
       "Ikon SPUI kini peranti hidup — imbasan berkilau menyapu skrin mini, lensa putih dengan halo teal berdenyut + titik kilau, dan LED hijau berkelip",

@@ -1765,3 +1765,141 @@ html[data-gate="1"] body > *:not(.auth-root) {
     animation: none !important;
   }
 }
+
+/* ====== Ikon Latar Custom beranimasi: langit hidup ====== */
+@keyframes wp-rays-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.wp-rays {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wp-rays-spin 12s linear infinite;
+}
+@keyframes wp-sun-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.07);
+  }
+}
+.wp-sun {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: wp-sun-pulse 2.6s ease-in-out infinite;
+}
+@keyframes wp-cloud-drift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(4.5px, 0.4px);
+  }
+}
+.wp-cloud {
+  animation: wp-cloud-drift 7s ease-in-out infinite;
+}
+@keyframes wp-glint-sweep {
+  0%,
+  55% {
+    transform: translateX(-5px);
+    opacity: 0;
+  }
+  65% {
+    opacity: 0.5;
+  }
+  85%,
+  100% {
+    transform: translateX(9px);
+    opacity: 0;
+  }
+}
+.wp-glint {
+  animation: wp-glint-sweep 5.5s ease-in-out infinite;
+}
+
+/* ====== Ikon SPUI beranimasi: skrin hidup ====== */
+@keyframes spui-scan-sweep {
+  0% {
+    transform: translateX(-4px);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  85%,
+  100% {
+    transform: translateX(13px);
+    opacity: 0;
+  }
+}
+.spui-scan {
+  animation: spui-scan-sweep 3.2s linear infinite;
+}
+@keyframes spui-lens-halo-pulse {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.12);
+  }
+}
+.spui-lens-halo {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spui-lens-halo-pulse 2.4s ease-in-out infinite;
+}
+@keyframes spui-led-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+.spui-led {
+  animation: spui-led-blink 1.6s ease-in-out infinite;
+}
+
+/* Hover: pemandangan menjadi lebih hidup */
+.group:hover .wp-rays {
+  animation-duration: 4s;
+}
+.group:hover .wp-sun {
+  animation-duration: 1.4s;
+}
+.group:hover .wp-cloud {
+  animation-duration: 3s;
+}
+.group:hover .spui-scan {
+  animation-duration: 1.1s;
+}
+.group:hover .spui-lens-halo {
+  animation-duration: 1.2s;
+}
+.group:hover .spui-led {
+  animation-duration: 0.7s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wp-rays,
+  .wp-sun,
+  .wp-cloud,
+  .wp-glint,
+  .spui-scan,
+  .spui-lens-halo,
+  .spui-led {
+    animation: none !important;
+  }
+}

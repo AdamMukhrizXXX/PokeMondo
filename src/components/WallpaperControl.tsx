@@ -92,7 +92,7 @@ export default function WallpaperControl() {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-label="Latar custom — tukar gambar latar belakang"
-        className={`relative grid size-10 place-items-center rounded-full transition-all duration-300 hover:scale-110 active:scale-90 ${
+        className={`group relative grid size-10 place-items-center rounded-full transition-all duration-300 hover:scale-110 active:scale-90 ${
           hasWp || open
             ? "bg-primary-container shadow-e1"
             : "bg-secondary-container shadow-e1"
@@ -112,13 +112,76 @@ export default function WallpaperControl() {
               <stop offset="0" stopColor="#00a878" />
               <stop offset="1" stopColor="#0d9488" />
             </linearGradient>
+            <linearGradient id="pm-wp-glint" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
+              <stop offset="0.5" stopColor="#ffffff" stopOpacity="0.85" />
+              <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+            </linearGradient>
+            <clipPath id="pm-wp-clip">
+              <rect x="3.75" y="4.75" width="16.5" height="14.5" rx="2.4" />
+            </clipPath>
           </defs>
-          <rect x="2.8" y="3.8" width="18.4" height="16.4" rx="3.2" fill="url(#pm-wp-sky)" stroke="url(#pm-wp-frame)" strokeWidth="1.9" />
-          <circle cx="15.9" cy="9.1" r="2.1" fill="#ffc531" stroke="#ff9800" strokeWidth="0.8" />
-          <path d="M3 20.2 8.4 11.8l4.3 4.4 2.8-2.7 5.5 5.6Z" fill="url(#pm-wp-mtn)" stroke="#065f56" strokeOpacity="0.5" strokeWidth="0.9" />
+          <rect x="2.8" y="3.8" width="18.4" height="16.4" rx="3.2" fill="url(#pm-wp-sky)" />
+          <g clipPath="url(#pm-wp-clip)">
+            <g className="wp-cloud" fill="#ffffff">
+              <circle cx="5.6" cy="7.4" r="1.05" />
+              <circle cx="7.2" cy="6.8" r="1.25" />
+              <circle cx="8.7" cy="7.6" r="0.9" />
+              <rect x="5.6" y="7.4" width="3.1" height="1.1" rx="0.55" />
+            </g>
+            <g className="wp-rays" stroke="#ff9800" strokeWidth="1.1" strokeLinecap="round">
+              <path d="M18.9 9.1h1.1" />
+              <path d="M18 11.2l0.8 0.8" />
+              <path d="M15.9 12.1v1.1" />
+              <path d="M13.8 11.2l-0.8 0.8" />
+              <path d="M12.9 9.1h-1.1" />
+              <path d="M13.8 7l-0.8-0.8" />
+              <path d="M15.9 6.1V5" />
+              <path d="M18 7l0.8-0.8" />
+            </g>
+            <circle
+              cx="15.9"
+              cy="9.1"
+              r="2.1"
+              fill="#ffc531"
+              stroke="#ff9800"
+              strokeWidth="0.8"
+              className="wp-sun"
+            />
+            <path
+              d="M3 20.2 8.4 11.8l4.3 4.4 2.8-2.7 5.5 5.6Z"
+              fill="url(#pm-wp-mtn)"
+              stroke="#065f56"
+              strokeOpacity="0.5"
+              strokeWidth="0.9"
+            />
+            <g className="wp-glint">
+              <rect
+                x="7.6"
+                y="9.6"
+                width="1.7"
+                height="13"
+                fill="url(#pm-wp-glint)"
+                transform="rotate(32 8.45 16.1)"
+              />
+            </g>
+          </g>
+          <rect
+            x="2.8"
+            y="3.8"
+            width="18.4"
+            height="16.4"
+            rx="3.2"
+            fill="none"
+            stroke="url(#pm-wp-frame)"
+            strokeWidth="1.9"
+          />
         </svg>
         {hasWp && (
-          <span aria-hidden className="absolute right-1 top-1 size-2 rounded-full bg-[#f0a92e]" />
+          <span
+            aria-hidden
+            className="absolute right-1 top-1 size-2 animate-pulse rounded-full bg-[#f0a92e]"
+          />
         )}
       </button>
 

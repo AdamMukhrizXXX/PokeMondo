@@ -31,7 +31,7 @@ export default function FallbackModeButton() {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-label="SPUI (Simple Pokedex UI) \u2014 tukar antara UI penuh dan UI ringkas"
-        className={`relative grid size-10 place-items-center rounded-full shadow-e1 transition-all duration-300 hover:scale-110 active:scale-90 ${
+        className={`group relative grid size-10 place-items-center rounded-full shadow-e1 transition-all duration-300 hover:scale-110 active:scale-90 ${
           isSimple || open ? "bg-primary-container" : "bg-secondary-container"
         }`}
       >
@@ -41,16 +41,74 @@ export default function FallbackModeButton() {
               <stop offset="0" stopColor="#ff6a48" />
               <stop offset="1" stopColor="#e3350d" />
             </linearGradient>
+            <linearGradient id="pm-spui-scan" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
+              <stop offset="0.5" stopColor="#ffffff" stopOpacity="0.8" />
+              <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+            </linearGradient>
+            <clipPath id="pm-spui-clip">
+              <rect x="7.4" y="5.2" width="9.2" height="7.2" rx="1.6" />
+            </clipPath>
           </defs>
-          <rect x="5" y="2.8" width="14" height="18.4" rx="3.2" fill="url(#pm-spui-body)" stroke="#7f1d0d" strokeOpacity="0.45" strokeWidth="1.3" />
-          <rect x="7.4" y="5.2" width="9.2" height="7.2" rx="1.6" fill="#eef9ff" stroke="#1a1a1a" strokeOpacity="0.25" strokeWidth="0.9" />
-          <path d="M8.2 11.2 10.6 8.6l2 2 1.4-1.3 2 2.1" fill="none" stroke="#2dd4bf" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+          <rect
+            x="5"
+            y="2.8"
+            width="14"
+            height="18.4"
+            rx="3.2"
+            fill="url(#pm-spui-body)"
+            stroke="#7f1d0d"
+            strokeOpacity="0.45"
+            strokeWidth="1.3"
+          />
+          <rect
+            x="7.4"
+            y="5.2"
+            width="9.2"
+            height="7.2"
+            rx="1.6"
+            fill="#eef9ff"
+            stroke="#1a1a1a"
+            strokeOpacity="0.25"
+            strokeWidth="0.9"
+          />
+          <g clipPath="url(#pm-spui-clip)">
+            <path
+              d="M8.2 11.2 10.6 8.6l2 2 1.4-1.3 2 2.1"
+              fill="none"
+              stroke="#2dd4bf"
+              strokeWidth="1.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <rect
+              className="spui-scan"
+              x="6.6"
+              y="4.8"
+              width="2.6"
+              height="8"
+              fill="url(#pm-spui-scan)"
+            />
+          </g>
+          <circle
+            className="spui-lens-halo"
+            cx="12"
+            cy="16.4"
+            r="2.9"
+            fill="none"
+            stroke="#2dd4bf"
+            strokeWidth="1"
+          />
           <circle cx="12" cy="16.4" r="2.5" fill="#ffffff" stroke="#1a1a1a" strokeWidth="1.1" />
           <circle cx="12" cy="16.4" r="1.05" fill="#1a1a1a" />
-          <circle cx="16.7" cy="4.9" r="0.8" fill="#00a878" />
+          <circle cx="12.5" cy="15.9" r="0.32" fill="#ffffff" opacity="0.9" />
+          <circle className="spui-led" cx="16.7" cy="4.9" r="0.8" fill="#00a878" />
         </svg>
         {isSimple && (
-          <span aria-hidden className="absolute right-1 top-1 size-2 rounded-full bg-[#f0a92e]" />
+          <span
+            aria-hidden
+            className="absolute right-1 top-1 size-2 animate-pulse rounded-full bg-[#f0a92e]"
+          />
         )}
       </button>
 

@@ -22,6 +22,7 @@ const ENTRIES: Entry[] = [
       "Uji API masa-nyata dengan kiraan aksara langsung",
       "Pro Thinking dipindahkan ke OpenRouter sahaja (reasoning effort tinggi, sasaran 50 saat)",
       "Ikon X baharu gaya tanda tangan profesional — lengkung kaligrafi + permata berlian",
+      "Ikon Latar Custom & SPUI kini hidup — matahari bersinar berputar, awan hanyut & kilauan gunung; skrin mini diimbas berkilau, lensa berhalo berdenyut & LED berkelip (hover mempercepat, reduced-motion dihormati)",
       "Halaman Info: kad Pembangun (Adam & Mistral), sistem Lesen MIT dan maklumat Kod Penuh & Sumber Terbuka",
       "Halaman Changelog baharu (halaman ini)",
     ],

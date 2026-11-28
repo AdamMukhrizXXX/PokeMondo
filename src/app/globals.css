@@ -2486,3 +2486,55 @@ html[data-gate="1"] body > *:not(.auth-root) {
 [data-gpu-lite="on"] .nv-hand {
   animation: none !important;
 }
+
+/* Ikon PokeX — gradien teal-biru hidup, bingkai konik pelangi berputar & 3D */
+.px-icon {
+  transform-style: preserve-3d;
+  perspective: 300px;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+  animation: px-glow 3.2s ease-in-out infinite;
+}
+.px-icon:hover {
+  transform: rotateY(-18deg) rotateX(12deg) scale(1.08);
+}
+.px-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 1.5rem;
+  background: conic-gradient(from 0deg, #ffc531, #2dd4bf, #0ea5e9, #a855f7, #ffc531);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3.5px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3.5px), #000 calc(100% - 3.5px));
+  opacity: 0.9;
+  animation: px-ring-spin 7s linear infinite;
+  pointer-events: none;
+}
+@keyframes px-ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes px-glow {
+  0%,
+  100% {
+    box-shadow: 0 6px 16px rgb(0 0 0 / 0.14), 0 0 10px color-mix(in oklab, #0ea5e9 30%, transparent);
+  }
+  50% {
+    box-shadow: 0 6px 16px rgb(0 0 0 / 0.14),
+      0 0 22px color-mix(in oklab, #0ea5e9 65%, transparent),
+      0 0 34px color-mix(in oklab, #2dd4bf 45%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .px-icon,
+  .px-ring {
+    animation: none !important;
+  }
+  .px-icon:hover {
+    transform: none;
+  }
+}
+[data-gpu-lite="on"] .px-icon,
+[data-gpu-lite="on"] .px-ring {
+  animation: none !important;
+}

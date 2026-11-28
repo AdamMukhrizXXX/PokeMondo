@@ -17,7 +17,7 @@ const REMOTE: BgmTrack[] = BGM_TRACKS.map((t) => ({
   id: t.file,
   title: t.title,
   game: t.game,
-  url: BASE_URL + t.file,
+  url: t.url ?? BASE_URL + t.file,
 }));
 
 function prettyName(name: string) {

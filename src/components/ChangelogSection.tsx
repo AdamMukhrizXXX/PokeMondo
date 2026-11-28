@@ -14,10 +14,21 @@ type Entry = {
 
 const ENTRIES: Entry[] = [
   {
-    version: "v1.2.3",
-    title: "Muat Turun Semua Sumber (11.8MB) dalam Pop Up Kemas Kini",
+    version: "v1.2.4",
+    title: "24 Lagu Baharu Pokémon (Scarlet/Violet + DLC)",
     note: "Kemas kini terkini",
     current: true,
+    items: [
+      "Pustaka Muzik bertambah daripada 177 kepada 201 trek — 24 lagu baharu ditambah",
+      "Lagu baharu dari Scarlet/Violet + The Hidden Treasure of Area Zero: The Teal Mask (Kitakami, Mossui Town, Festival of Masks, Crystal Pool), The Indigo Disk (Blueberry Academy, 4 biome Terarium, Battle! Champion Kieran, Area Zero Underdepths, Battle! Terapagos) dan Epilog Mochi Mayhem (Battle! Pecharunt)",
+      "Termasuk juga lagu asas Paldea yang dinanti — Welcome to the Paldea Region!, Mesagoza, Tera Raid Battle!, Battle! (Top Champion), Area Zero dan Paradise Protection Protocol",
+      "Semua lagu baharu disemak satu persatu (audio/mpeg) dan dimain terus melalui Pemain Muzik & Pustaka Muzik yang sama",
+    ],
+  },
+  {
+    version: "v1.2.3",
+    title: "Muat Turun Semua Sumber (11.8MB) dalam Pop Up Kemas Kini",
+    note: "Kemas kini terdahulu",
     items: [
       "Pop Up Kemas Kini kini ada sistem Muat Turun Semua Sumber — satu klik memuat semua 1,025 sprite Pokémon (±11.8MB) ke cache pelayar dengan bar kemajuan masa-nyata (bilangan sumber + MB dimuat)",
       "Selepas selesai, kad & modal Pokémon buka segera dan sprite sedia offline — status “Selesai” diingati dalam pelayar untuk setiap versi",

@@ -1657,3 +1657,111 @@ html[data-gate="1"] body > *:not(.auth-root) {
 .pokex-spotlight:hover::before {
   opacity: 1;
 }
+
+/* ====== Ikon Tetapan beranimasi: Bunyi & SFX / Cerah-Gelap ====== */
+@keyframes snd-dance {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.82);
+  }
+}
+.snd-wave {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: snd-dance 1.1s ease-in-out infinite;
+}
+.snd-wave-2 {
+  animation-delay: 0.18s;
+}
+.snd-wave-3 {
+  animation-delay: 0.36s;
+}
+@keyframes snd-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.7px);
+  }
+}
+.snd-core {
+  animation: snd-bounce 1.4s ease-in-out infinite;
+}
+@keyframes tt-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.tt-rays {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: tt-spin 14s linear infinite;
+}
+@keyframes tt-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+.tt-core {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: tt-pulse 2.4s ease-in-out infinite;
+}
+@keyframes tt-halo {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.1);
+  }
+}
+.tt-halo {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: tt-halo 2.8s ease-in-out infinite;
+}
+@keyframes tt-twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.7);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+.tt-twinkle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: tt-twinkle 1.8s ease-in-out infinite;
+}
+.tt-twinkle-2 {
+  animation-delay: 0.5s;
+}
+.tt-twinkle-3 {
+  animation-delay: 1s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .snd-wave,
+  .snd-core,
+  .tt-rays,
+  .tt-core,
+  .tt-halo,
+  .tt-twinkle {
+    animation: none !important;
+  }
+}

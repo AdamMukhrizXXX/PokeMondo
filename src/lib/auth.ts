@@ -4,6 +4,7 @@ const USERS_KEY = "md-auth-users";
 const SESSION_KEY = "md-session";
 
 export type SessionInfo = { email: string; at: number };
+export type PendingReg = { email: string; salt: string; hash: string };
 type UserRecord = { salt: string; hash: string };
 type UsersMap = Record<string, UserRecord>;
 
@@ -62,6 +63,18 @@ export const validEmail = (email: string) =>
 
 export const validPassword = (password: string) => password.length >= 6;
 
+export function generateOtp(): string {
+  const buf = new Uint32Array(6);
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    crypto.getRandomValues(buf);
+  } else {
+    for (let i = 0; i < 6; i++) buf[i] = Math.floor(Math.random() * 1e9);
+  }
+  return Array.from(buf, (n) => n % 10).join("");
+}
+
+export const OTP_TTL_MS = 5 * 60 * 1000;
+
 export const getSession = (): SessionInfo | null => {
   try {
     const raw = localStorage.getItem(SESSION_KEY);
@@ -79,19 +92,24 @@ export const logoutUser = () => {
   } catch {
     /* ignore */
   }
-};
+}
 
-export async function registerUser(email: string, password: string): Promise<SessionInfo> {
+export async function prepareRegistration(email: string, password: string): Promise<PendingReg> {
   const key = normalizeEmail(email);
   if (!validEmail(key)) throw new Error("Format emel tidak sah.");
   if (!validPassword(password)) throw new Error("Kata laluan mesti sekurang-kurangnya 6 aksara.");
-  const users = readUsers();
-  if (users[key]) throw new Error("Emel ini sudah didaftarkan — sila log masuk.");
+  if (readUsers()[key]) throw new Error("Emel ini sudah didaftarkan — sila log masuk.");
   const salt = randomSalt();
   const hash = await digest(salt + password);
-  users[key] = { salt, hash };
+  return { email: key, salt, hash };
+}
+
+export async function commitRegistration(pending: PendingReg): Promise<SessionInfo> {
+  const users = readUsers();
+  if (users[pending.email]) throw new Error("Emel ini sudah didaftarkan — sila log masuk.");
+  users[pending.email] = { salt: pending.salt, hash: pending.hash };
   writeUsers(users);
-  const session: SessionInfo = { email: key, at: Date.now() };
+  const session: SessionInfo = { email: pending.email, at: Date.now() };
   try {
     localStorage.setItem(SESSION_KEY, JSON.stringify(session));
   } catch {
@@ -100,14 +118,18 @@ export async function registerUser(email: string, password: string): Promise<Ses
   return session;
 }
 
-export async function loginUser(email: string, password: string): Promise<SessionInfo> {
+export async function verifyLogin(email: string, password: string): Promise<string> {
   const key = normalizeEmail(email);
   if (!key || !password) throw new Error("Masukkan emel dan kata laluan.");
   const rec = readUsers()[key];
   if (!rec) throw new Error("Akaun tidak dijumpai — sila daftar dahulu.");
   const hash = await digest(rec.salt + password);
   if (hash !== rec.hash) throw new Error("Kata laluan salah.");
-  const session: SessionInfo = { email: key, at: Date.now() };
+  return key;
+}
+
+export function commitLogin(email: string): SessionInfo {
+  const session: SessionInfo = { email: normalizeEmail(email), at: Date.now() };
   try {
     localStorage.setItem(SESSION_KEY, JSON.stringify(session));
   } catch {

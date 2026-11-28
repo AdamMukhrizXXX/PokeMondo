@@ -963,6 +963,78 @@ html[data-gate="1"] body > *:not(.auth-root) {
   visibility: hidden !important;
 }
 
+/* ====== OTP: kotak kod & motion live ====== */
+.otp-box:focus {
+  border-color: var(--md-primary) !important;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--shadow-e2);
+}
+.otp-pop {
+  animation: otp-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes otp-pop {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.otp-shake {
+  animation: otp-shake 0.45s ease;
+}
+@keyframes otp-shake {
+  20% {
+    transform: translateX(-7px);
+  }
+  40% {
+    transform: translateX(6px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(3px);
+  }
+}
+.otp-success {
+  animation: otp-success 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes otp-success {
+  0% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.14);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.otp-envelope {
+  animation: otp-envelope 3s ease-in-out infinite;
+}
+@keyframes otp-envelope {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(2deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .otp-pop,
+  .otp-shake,
+  .otp-success,
+  .otp-envelope {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
 /* ====== Boot: skeleton shimmer ====== */
 .boot-skel {
   position: relative;

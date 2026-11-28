@@ -16,6 +16,7 @@ import ErrorBoundary from "./ErrorBoundary";
 import AuthScreen from "./AuthScreen";
 import BootScreen from "./BootScreen";
 import LiveBackground from "./LiveBackground";
+import UpdateNotice from "./UpdateNotice";
 
 export default function SiteShell({ children }: { children: React.ReactNode }) {
   const { list, loading, degraded, selectedId, openDetail, closeDetail } = usePokedexData();
@@ -114,6 +115,10 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
       </ErrorBoundary>
 
       <main className="relative">{children}</main>
+
+      <ErrorBoundary label="Pop Kemas Kini">
+        <UpdateNotice />
+      </ErrorBoundary>
 
       {selected && (
         <ErrorBoundary label="Modal Butiran">

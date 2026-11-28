@@ -14,10 +14,23 @@ type Entry = {
 
 const ENTRIES: Entry[] = [
   {
-    version: "v1.1.5",
-    title: "Pustaka Muzik, Kunci API PokeAPI & xKiro",
+    version: "v1.2.0",
+    title: "Pop Up Kemas Kini, Sistem Rawak & UI/UX Halus",
     note: "Kemas kini terkini",
     current: true,
+    items: [
+      "Pop Up Kemas Kini — pengguna versi lama disambut pop up automatik dengan senarai apa yang baharu setiap kali versi laman naik (dikesan melalui localStorage, sekali sahaja bagi setiap versi)",
+      "Sistem Rawak Pokémon dikembalikan semula — bahagian baharu di Halaman Rumah yang memunculkan 2 Pokémon rawak sekaligus setiap roll, dengan kad masuk beranimasi (flip-in 3D) & condong 3D semasa hover",
+      "Pengesanan Bateri untuk semua peranti — paras % dan status mengecas secara langsung (Battery Status API); pelayar yang tidak menyokong dipaparkan dengan jelas tanpa rosak",
+      "Pengesanan GPU & Storan — nama GPU sebenar pelayar (WebGL/WebGPU) dan penggunaan storan (GB digunakan / kuota) dipaparkan bersama Sistem Rawak",
+      "UI/UX dihaluskan sepenuhnya di semua halaman — transisi spring yang lebih lembut pada semua butang & pautan, skrol licin dan fokus papan kekunci yang jelas",
+      "Pembaikan bug & lag berlebihan — Latar Live Motion 3D dihentikan sepenuhnya dalam Mod GPU Lite dan backdrop-blur berat dilumpuhkan pada peranti lemah",
+    ],
+  },
+  {
+    version: "v1.1.5",
+    title: "Pustaka Muzik, Kunci API PokeAPI & xKiro",
+    note: "Kemas kini terdahulu",
     items: [
       "Penyedia baharu xKiro (api.xkiro.com) — gateway serasi OpenAI dengan 38+ model percuma pada satu kunci",
       "Model lalai xKiro: qwen/qwen3.8-max:free — konteks 1M token, menyokong reasoning, harga percuma (RM0/USD0 setiap 1M token)",

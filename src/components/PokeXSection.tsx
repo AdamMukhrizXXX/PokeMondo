@@ -267,8 +267,17 @@ export default function PokeXSection({ list }: { list: BasicPokemon[] }) {
       </span>
 
       <div className="anim-rise flex shrink-0 items-center gap-4" style={{ animationDelay: "0.05s" }}>
-        <span className="grid size-14 shrink-0 place-items-center rounded-[1.4rem] bg-primary-container shadow-e2 transition-transform duration-300 hover:scale-105 hover:rotate-3">
+        <span
+          className="px-icon relative grid size-14 shrink-0 place-items-center rounded-[1.4rem] shadow-e2"
+          style={{ background: "linear-gradient(135deg, #0d9488, #0369a1)" }}
+        >
           <XMark size={32} />
+          <span aria-hidden className="px-ring" />
+          <span aria-hidden className="absolute -right-1 -top-1">
+            <svg width="14" height="14" viewBox="0 0 24 24" className="nv-twinkle" aria-hidden>
+              <path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2Z" fill="#ffc531" />
+            </svg>
+          </span>
         </span>
         <div>
           <h1 className="font-display text-4xl font-extrabold tracking-tight sm:text-5xl">

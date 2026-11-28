@@ -23,6 +23,154 @@ const NAV_ITEMS = [
   { href: "/changelog", k: "nav.changelog" },
 ];
 
+function NavIcon({ k }: { k: string }) {
+  switch (k) {
+    case "nav.home":
+      return (
+        <svg viewBox="0 0 24 24" className="nv-svg" aria-hidden>
+          <defs>
+            <linearGradient id="nv-g-home" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#ffd54d" />
+              <stop offset="1" stopColor="#ff6a48" />
+            </linearGradient>
+          </defs>
+          <g className="nv-float">
+            <path d="M4 11.2 12 4l8 7.2V20a1 1 0 0 1-1 1h-4.6v-5.2h-4.8V21H5a1 1 0 0 1-1-1Z" fill="url(#nv-g-home)" />
+            <path d="M12 4l8 7.2-1.2 1.1L12 6.2 5.2 12.3 4 11.2Z" fill="#ffffff" opacity="0.45" />
+            <rect x="10.6" y="15.8" width="2.8" height="5.2" rx="0.6" fill="#2b2320" opacity="0.75" className="nv-pulse" />
+          </g>
+        </svg>
+      );
+    case "nav.quiz":
+      return (
+        <svg viewBox="0 0 24 24" className="nv-svg" aria-hidden>
+          <defs>
+            <linearGradient id="nv-g-quiz" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#ffd54d" />
+              <stop offset="1" stopColor="#ff9800" />
+            </linearGradient>
+          </defs>
+          <g className="nv-float">
+            <circle cx="12" cy="12" r="9.4" fill="url(#nv-g-quiz)" />
+            <circle cx="12" cy="12" r="9.4" fill="none" stroke="#8a4b00" strokeOpacity="0.3" strokeWidth="1.3" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" fill="none" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="12" cy="16.9" r="1.3" fill="#ffffff" className="nv-pulse" />
+          </g>
+        </svg>
+      );
+    case "nav.pokedex":
+      return (
+        <svg viewBox="0 0 24 24" className="nv-svg" aria-hidden>
+          <defs>
+            <linearGradient id="nv-g-dex" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#ff6a48" />
+              <stop offset="1" stopColor="#e3350d" />
+            </linearGradient>
+          </defs>
+          <g className="nv-float">
+            <path d="M2.6 12a9.4 9.4 0 0 1 18.8 0Z" fill="url(#nv-g-dex)" />
+            <path d="M21.4 12a9.4 9.4 0 0 1-18.8 0Z" fill="#f7f4ef" />
+            <rect x="2.6" y="10.85" width="18.8" height="2.3" fill="#2b2320" />
+            <circle cx="12" cy="12" r="9.4" fill="none" stroke="#2b2320" strokeWidth="1.4" />
+            <circle cx="12" cy="12" r="3.3" fill="#2b2320" stroke="#f7f4ef" strokeWidth="1.1" className="nv-pulse" />
+            <circle cx="12" cy="12" r="1.5" fill="#ffffff" />
+          </g>
+        </svg>
+      );
+    case "nav.pokex":
+      return (
+        <svg viewBox="0 0 24 24" className="nv-svg" aria-hidden>
+          <defs>
+            <linearGradient id="nv-g-pokex" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#2dd4bf" />
+              <stop offset="1" stopColor="#0d9488" />
+            </linearGradient>
+          </defs>
+          <g className="nv-float">
+            <circle cx="12" cy="12" r="9.4" fill="url(#nv-g-pokex)" />
+            <circle cx="12" cy="12" r="9.4" fill="none" stroke="#065f56" strokeOpacity="0.3" strokeWidth="1.3" />
+            <path d="M12 6.8 17.2 12 12 17.2 6.8 12Z" fill="#ffffff" className="nv-pulse" />
+            <path d="M12 9.4 14.6 12 12 14.6 9.4 12Z" fill="#0d9488" />
+          </g>
+          <path d="M19.8 3.2l.5 1.2 1.2.5-1.2.5-.5 1.2-.5-1.2-1.2-.5 1.2-.5Z" fill="#ffc531" className="nv-twinkle" />
+        </svg>
+      );
+    case "nav.music":
+      return (
+        <svg viewBox="0 0 24 24" className="nv-svg" aria-hidden>
+          <defs>
+            <linearGradient id="nv-g-muzik" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#f472b6" />
+              <stop offset="1" stopColor="#a855f7" />
+            </linearGradient>
+          </defs>
+          <g className="nv-float">
+            <g className="nv-bounce">
+              <circle cx="7" cy="17.6" r="2.7" fill="url(#nv-g-muzik)" />
+              <rect x="9" y="6" width="1.9" height="11.6" rx="0.9" fill="url(#nv-g-muzik)" />
+              <path d="M9 6c3 .4 5.6 1.4 6.4 3.4-2.2-.8-4.2-1-6.4-.8Z" fill="url(#nv-g-muzik)" />
+            </g>
+            <g className="nv-bounce nv-bounce-2">
+              <circle cx="17.8" cy="16" r="2.2" fill="#ffc531" />
+              <rect x="19.3" y="6.6" width="1.6" height="9.4" rx="0.8" fill="#ffc531" />
+            </g>
+          </g>
+        </svg>
+      );
+    case "nav.apiKey":
+      return (
+        <svg viewBox="0 0 24 24" className="nv-svg" aria-hidden>
+          <defs>
+            <linearGradient id="nv-g-key" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#ffd54d" />
+              <stop offset="1" stopColor="#ff9800" />
+            </linearGradient>
+          </defs>
+          <g className="nv-float" fill="none" stroke="url(#nv-g-key)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M8 14a4.2 4.2 0 1 1 4.2-4.2L21 18.5V21h-2.5M8 9.8v.01" className="nv-pulse" />
+          </g>
+          <path d="M20.2 4.2l.5 1.2 1.2.5-1.2.5-.5 1.2-.5-1.2-1.2-.5 1.2-.5Z" fill="#ffe082" className="nv-twinkle" />
+        </svg>
+      );
+    case "nav.info":
+      return (
+        <svg viewBox="0 0 24 24" className="nv-svg" aria-hidden>
+          <defs>
+            <linearGradient id="nv-g-info" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#4facfe" />
+              <stop offset="1" stopColor="#2f7cf6" />
+            </linearGradient>
+          </defs>
+          <g className="nv-float">
+            <circle cx="12" cy="12" r="9.4" fill="url(#nv-g-info)" />
+            <circle cx="12" cy="12" r="9.4" fill="none" stroke="#0b4a8f" strokeOpacity="0.3" strokeWidth="1.3" />
+            <circle cx="12" cy="7.6" r="1.35" fill="#ffffff" className="nv-pulse" />
+            <rect x="10.9" y="10.8" width="2.2" height="6" rx="1.1" fill="#ffffff" />
+          </g>
+        </svg>
+      );
+    case "nav.changelog":
+      return (
+        <svg viewBox="0 0 24 24" className="nv-svg" aria-hidden>
+          <defs>
+            <linearGradient id="nv-g-cl" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#34d399" />
+              <stop offset="1" stopColor="#0ea5e9" />
+            </linearGradient>
+          </defs>
+          <g className="nv-float">
+            <circle cx="12" cy="12" r="9.4" fill="url(#nv-g-cl)" />
+            <circle cx="12" cy="12" r="9.4" fill="none" stroke="#065f56" strokeOpacity="0.3" strokeWidth="1.3" />
+            <path d="M12 7v5l3.4 2" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" className="nv-hand" />
+            <circle cx="12" cy="12" r="1.3" fill="#ffffff" />
+          </g>
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
+
 export default function StaggeredMenu() {
   const siteTheme = useSiteTheme();
   const t = useT();
@@ -105,7 +253,12 @@ export default function StaggeredMenu() {
                   style={{ ["--sm-delay" as string]: open ? `${0.32 + i * 0.1}s` : "0s" }}
                   onClick={close}
                 >
-                  <span className="sm-panel-itemLabel">{t(item.k)}</span>
+                  <span className="sm-panel-itemLabel">
+                    <span className="sm-nav-icon" aria-hidden>
+                      <NavIcon k={item.k} />
+                    </span>
+                    {t(item.k)}
+                  </span>
                 </Link>
               </li>
             ))}

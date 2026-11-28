@@ -1,5 +1,5 @@
 export const POKEX_CLOSED = true;
-export const POKEX_REOPENS_AT = "2026-12-18T00:00:00Z";
+export const POKEX_REOPENS_AT = "2026-11-29T00:00:00Z";
 
 export function pokexClosedNow(now = Date.now()): boolean {
   return POKEX_CLOSED && now < Date.parse(POKEX_REOPENS_AT);
